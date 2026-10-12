@@ -22,10 +22,12 @@ jobs:
           [ -f index.html ] && cp index.html app/src/main/assets/ || echo '<html><body><h1>Garmin Matrix</h1></body></html>' > app/src/main/assets/index.html
           [ -f database.json ] && cp database.json app/src/main/assets/ || echo '{"giorni":[]}' > app/src/main/assets/database.json
           echo "include ':app'" > settings.gradle
+          echo "sdk.dir=$ANDROID_HOME" > local.properties
+          echo "android.useAndroidX=true" > gradle.properties
           cat > build.gradle << 'EOF'
           buildscript {
             repositories { google(); mavenCentral() }
-            dependencies { classpath 'com.android.tools.build:gradle:8.2.0' }
+            dependencies { classpath 'com.android.tools.build:gradle:8.2.2' }
           }
           allprojects { repositories { google(); mavenCentral() } }
           EOF
@@ -41,29 +43,29 @@ jobs:
           cat > app/src/main/AndroidManifest.xml << 'EOF'
           <?xml version="1.0" encoding="utf-8"?>
           <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+            <uses-permission android:name="android.permission.INTERNET"/>
             <application android:allowBackup="true" android:label="Garmin Matrix">
               <activity android:name=".MainActivity" android:exported="true">
-                <intent-filter>
-                  <action android:name="android.intent.action.MAIN"/>
-                  <category android:name="android.intent.category.LAUNCHER"/>
-                </intent-filter>
+                <intent-filter><action android:name="android.intent.action.MAIN"/><category android:name="android.intent.category.LAUNCHER"/></intent-filter>
               </activity>
             </application>
           </manifest>
           EOF
-          cat > app/src/main/java/com/garminmatrix/MainActivity.kt << 'EOF'
-          package com.garminmatrix
-          import android.os.Bundle
-          import android.webkit.WebView
-          import androidx.appcompat.app.AppCompatActivity
-          class MainActivity : AppCompatActivity() {
-            override fun onCreate(b: Bundle?) {
-              super.onCreate(b)
-              val wv = WebView(this); setContentView(wv)
-              wv.settings.javaScriptEnabled = true
-              wv.settings.allowFileAccess = true
-              wv.settings.domStorageEnabled = true
-              wv.loadUrl("file:///android_asset/index.html")
+          cat > app/src/main/java/com/garminmatrix/MainActivity.java << 'EOF'
+          package com.garminmatrix;
+          import android.os.Bundle;
+          import android.webkit.WebView;
+          import androidx.appcompat.app.AppCompatActivity;
+          public class MainActivity extends AppCompatActivity {
+            @Override
+            protected void onCreate(Bundle b) {
+              super.onCreate(b);
+              WebView wv = new WebView(this);
+              setContentView(wv);
+              wv.getSettings().setJavaScriptEnabled(true);
+              wv.getSettings().setAllowFileAccess(true);
+              wv.getSettings().setDomStorageEnabled(true);
+              wv.loadUrl("file:///android_asset/index.html");
             }
           }
           EOF
