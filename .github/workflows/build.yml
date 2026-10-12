@@ -36,7 +36,7 @@ jobs:
           android {
             namespace 'com.garminmatrix'
             compileSdk 34
-            defaultConfig { applicationId "com.garminmatrix"; minSdk 24; targetSdk 34; versionCode 3; versionName "1.2" }
+            defaultConfig { applicationId "com.garminmatrix"; minSdk 24; targetSdk 34; versionCode 4; versionName "1.3-fix-chat" }
           }
           dependencies { 
             implementation 'androidx.appcompat:appcompat:1.6.1'
@@ -46,7 +46,9 @@ jobs:
           cat > app/src/main/AndroidManifest.xml << 'EOF'
           <?xml version="1.0" encoding="utf-8"?>
           <manifest xmlns:android="http://schemas.android.com/apk/res/android">
-            <application android:allowBackup="true" android:label="Garmin Matrix" android:theme="@style/Theme.AppCompat.Light.NoActionBar">
+            <uses-permission android:name="android.permission.INTERNET"/>
+            <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+            <application android:allowBackup="true" android:label="Garmin Matrix" android:usesCleartextTraffic="true" android:theme="@style/Theme.AppCompat.Light.NoActionBar">
               <activity android:name=".MainActivity" android:exported="true">
                 <intent-filter><action android:name="android.intent.action.MAIN"/><category android:name="android.intent.category.LAUNCHER"/></intent-filter>
               </activity>
@@ -56,7 +58,7 @@ jobs:
           cat > app/src/main/java/com/garminmatrix/MainActivity.java << 'EOF'
           package com.garminmatrix;
           import android.os.Bundle;
-          import android.widget.TextView;
+          import android.webkit.WebSettings;
           import android.webkit.WebView;
           import androidx.appcompat.app.AppCompatActivity;
           import androidx.webkit.WebViewAssetLoader;
@@ -64,24 +66,23 @@ jobs:
             @Override
             protected void onCreate(Bundle b) {
               super.onCreate(b);
-              try {
-                WebView wv = new WebView(this);
-                setContentView(wv);
-                wv.getSettings().setJavaScriptEnabled(true);
-                wv.getSettings().setDomStorageEnabled(true);
-                wv.getSettings().setAllowFileAccess(true);
-                wv.getSettings().setAllowFileAccessFromFileURLs(true);
-                wv.getSettings().setAllowUniversalAccessFromFileURLs(true);
-                final WebViewAssetLoader loader = new WebViewAssetLoader.Builder().addPathHandler("/assets/", new WebViewAssetLoader.AssetsPathHandler(this)).build();
-                wv.setWebViewClient(new androidx.webkit.WebViewClientCompat() {
-                  @Override public android.webkit.WebResourceResponse shouldInterceptRequest(WebView view, android.webkit.WebResourceRequest req) { return loader.shouldInterceptRequest(req.getUrl()); }
-                });
-                wv.loadUrl("https://appassets.androidplatform.net/assets/index.html");
-              } catch (Exception e) {
-                TextView tv = new TextView(this);
-                tv.setText("ERRORE: " + e.toString() + "\n" + android.util.Log.getStackTraceString(e));
-                setContentView(tv);
-              }
+              WebView wv = new WebView(this);
+              setContentView(wv);
+              WebView.setWebContentsDebuggingEnabled(true);
+              WebSettings s = wv.getSettings();
+              s.setJavaScriptEnabled(true);
+              s.setDomStorageEnabled(true);
+              s.setAllowFileAccess(true);
+              s.setAllowContentAccess(true);
+              s.setAllowFileAccessFromFileURLs(true);
+              s.setAllowUniversalAccessFromFileURLs(true);
+              s.setMixedContentMode(WebSettings.MIXED_CONTENT_ALWAYS_ALLOW);
+              s.setCacheMode(WebSettings.LOAD_DEFAULT);
+              final WebViewAssetLoader loader = new WebViewAssetLoader.Builder().addPathHandler("/assets/", new WebViewAssetLoader.AssetsPathHandler(this)).build();
+              wv.setWebViewClient(new androidx.webkit.WebViewClientCompat() {
+                @Override public android.webkit.WebResourceResponse shouldInterceptRequest(WebView view, android.webkit.WebResourceRequest req) { return loader.shouldInterceptRequest(req.getUrl()); }
+              });
+              wv.loadUrl("https://appassets.androidplatform.net/assets/index.html");
             }
           }
           EOF
