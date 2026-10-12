@@ -11,23 +11,17 @@ jobs:
         with:
           distribution: temurin
           java-version: '17'
-      - uses: android-actions/setup-android@v3
-      - name: Create Android project from zero
+      - uses: gradle/actions/setup-gradle@v3
+        with:
+          gradle-version: 8.4
+      - name: Create project
         run: |
           rm -rf app build .gradle
           mkdir -p app/src/main/assets
           mkdir -p app/src/main/java/com/garminmatrix
-          mkdir -p gradle/wrapper
-
-          # copia i tuoi file se esistono
-          [ -f index.html ] && cp index.html app/src/main/assets/
-          [ -f database.json ] && cp database.json app/src/main/assets/
-          if [ ! -f app/src/main/assets/index.html ]; then echo '<html><body><h1>Garmin Matrix OK - metti index.html nel repo</h1></body></html>' > app/src/main/assets/index.html; fi
-
-          cat > settings.gradle << 'EOF'
-          include ':app'
-          EOF
-
+          [ -f index.html ] && cp index.html app/src/main/assets/ || echo '<html><body><h1>Garmin Matrix</h1></body></html>' > app/src/main/assets/index.html
+          [ -f database.json ] && cp database.json app/src/main/assets/ || echo '{"giorni":[]}' > app/src/main/assets/database.json
+          echo "include ':app'" > settings.gradle
           cat > build.gradle << 'EOF'
           buildscript {
             repositories { google(); mavenCentral() }
@@ -35,11 +29,6 @@ jobs:
           }
           allprojects { repositories { google(); mavenCentral() } }
           EOF
-
-          cat > gradle.properties << 'EOF'
-          android.useAndroidX=true
-          EOF
-
           cat > app/build.gradle << 'EOF'
           apply plugin: 'com.android.application'
           android {
@@ -49,7 +38,6 @@ jobs:
           }
           dependencies { implementation 'androidx.appcompat:appcompat:1.6.1' }
           EOF
-
           cat > app/src/main/AndroidManifest.xml << 'EOF'
           <?xml version="1.0" encoding="utf-8"?>
           <manifest xmlns:android="http://schemas.android.com/apk/res/android">
@@ -63,15 +51,14 @@ jobs:
             </application>
           </manifest>
           EOF
-
           cat > app/src/main/java/com/garminmatrix/MainActivity.kt << 'EOF'
           package com.garminmatrix
           import android.os.Bundle
           import android.webkit.WebView
           import androidx.appcompat.app.AppCompatActivity
           class MainActivity : AppCompatActivity() {
-            override fun onCreate(savedInstanceState: Bundle?) {
-              super.onCreate(savedInstanceState)
+            override fun onCreate(b: Bundle?) {
+              super.onCreate(b)
               val wv = WebView(this); setContentView(wv)
               wv.settings.javaScriptEnabled = true
               wv.settings.allowFileAccess = true
@@ -80,25 +67,8 @@ jobs:
             }
           }
           EOF
-
-          cat > gradle/wrapper/gradle-wrapper.properties << 'EOF'
-          distributionBase=GRADLE_USER_HOME
-          distributionPath=wrapper/dists
-          distributionUrl=https\://services.gradle.org/distributions/gradle-8.4-bin.zip
-          zipStoreBase=GRADLE_USER_HOME
-          zipStorePath=wrapper/dists
-          EOF
-
-          curl -L -o gradle/wrapper/gradle-wrapper.jar https://github.com/gradle/gradle/raw/v8.4.0/gradle/wrapper/gradle-wrapper.jar
-          cat > gradlew << 'EOF'
-          #!/bin/sh
-          exec java -classpath gradle/wrapper/gradle-wrapper.jar org.gradle.wrapper.GradleWrapperMain "$@"
-          EOF
-          chmod +x gradlew
-          ./gradlew assembleDebug
-
-      - name: Upload APK
-        uses: actions/upload-artifact@v4
+          gradle assembleDebug --stacktrace
+      - uses: actions/upload-artifact@v4
         with:
           name: GarminMatrix-APK
           path: app/build/outputs/apk/debug/*.apk
