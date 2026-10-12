@@ -36,16 +36,19 @@ jobs:
           android {
             namespace 'com.garminmatrix'
             compileSdk 34
-            defaultConfig { applicationId "com.garminmatrix"; minSdk 24; targetSdk 34; versionCode 1; versionName "1.0" }
+            defaultConfig { applicationId "com.garminmatrix"; minSdk 24; targetSdk 34; versionCode 2; versionName "1.1" }
           }
-          dependencies { implementation 'androidx.appcompat:appcompat:1.6.1' }
+          dependencies { 
+            implementation 'androidx.appcompat:appcompat:1.6.1'
+            implementation 'androidx.webkit:webkit:1.9.0'
+          }
           EOF
           cat > app/src/main/AndroidManifest.xml << 'EOF'
           <?xml version="1.0" encoding="utf-8"?>
           <manifest xmlns:android="http://schemas.android.com/apk/res/android">
             <uses-permission android:name="android.permission.INTERNET"/>
             <application android:allowBackup="true" android:label="Garmin Matrix">
-              <activity android:name=".MainActivity" android:exported="true">
+              <activity android:name=".MainActivity" android:exported="true" android:theme="@android:style/Theme.NoTitleBar">
                 <intent-filter><action android:name="android.intent.action.MAIN"/><category android:name="android.intent.category.LAUNCHER"/></intent-filter>
               </activity>
             </application>
@@ -54,8 +57,13 @@ jobs:
           cat > app/src/main/java/com/garminmatrix/MainActivity.java << 'EOF'
           package com.garminmatrix;
           import android.os.Bundle;
+          import android.webkit.WebResourceRequest;
+          import android.webkit.WebResourceResponse;
           import android.webkit.WebView;
           import androidx.appcompat.app.AppCompatActivity;
+          import androidx.webkit.WebViewAssetLoader;
+          import androidx.webkit.WebViewClientCompat;
+
           public class MainActivity extends AppCompatActivity {
             @Override
             protected void onCreate(Bundle b) {
@@ -63,9 +71,26 @@ jobs:
               WebView wv = new WebView(this);
               setContentView(wv);
               wv.getSettings().setJavaScriptEnabled(true);
-              wv.getSettings().setAllowFileAccess(true);
               wv.getSettings().setDomStorageEnabled(true);
-              wv.loadUrl("file:///android_asset/index.html");
+              wv.getSettings().setAllowFileAccess(true);
+              wv.getSettings().setAllowFileAccessFromFileURLs(true);
+              wv.getSettings().setAllowUniversalAccessFromFileURLs(true);
+
+              final WebViewAssetLoader assetLoader = new WebViewAssetLoader.Builder()
+                  .addPathHandler("/assets/", new WebViewAssetLoader.AssetsPathHandler(this))
+                  .build();
+
+              wv.setWebViewClient(new WebViewClientCompat() {
+                @Override
+                public WebResourceResponse shouldInterceptRequest(WebView view, WebResourceRequest request) {
+                  return assetLoader.shouldInterceptRequest(request.getUrl());
+                }
+                @Override
+                public WebResourceResponse shouldInterceptRequest(WebView view, String url) {
+                  return assetLoader.shouldInterceptRequest(android.net.Uri.parse(url));
+                }
+              });
+              wv.loadUrl("https://appassets.androidplatform.net/assets/index.html");
             }
           }
           EOF
