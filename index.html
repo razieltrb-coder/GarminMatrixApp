@@ -236,7 +236,7 @@ async function sendChat(){
   try{
     let context='';
     if(DB){ let ultimi=DB.giorni?DB.giorni.slice(-3):[]; context='Dati ultimi allenamenti: '+JSON.stringify(ultimi).slice(0,4000); }
-    const r=await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${key}`,{
+    const r=await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${key}`,{
       method:'POST',headers:{'Content-Type':'application/json'},
       body:JSON.stringify({contents:[{parts:[{text:`Sei un coach di corsa. Contesto atleta: ${context}. Domanda utente: ${msg}. Rispondi in italiano, breve, da coach.`}]}]})
     });
