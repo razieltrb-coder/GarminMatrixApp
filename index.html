@@ -2,250 +2,128 @@
 <html lang="it">
 <head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Garmin Dashboard - MATRIX OFFLINE</title>
+<title>Garmin MATRIX OFFLINE V2</title>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <style>
-:root{--bg:#070a07;--card:#0f1a0f;--border:#1a3a1a;--text:#e0ffe0;--muted:#6b8a6b;--orange:#ff6a00;--matrix:#00ff41;--matrix-dim:#00cc33}
-*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at top, #0a1a0a 0%, #070a07 60%);color:var(--text);font-family:Inter,system-ui,sans-serif;font-size:13px;min-height:100vh}
+:root{--bg:#070a07;--text:#e0ffe0;--muted:#6b8a6b;--matrix:#00ff41}
+*{box-sizing:border-box}body{margin:0;background:#070a07;color:var(--text);font-family:Inter,sans-serif;font-size:13px}
 .top{max-width:1400px;margin:0 auto;padding:14px 18px;display:flex;justify-content:space-between;align-items:center}
-.top-left{font-size:10px;letter-spacing:2px;color:var(--matrix);text-shadow:0 0 8px var(--matrix)}
-.badge-top{font-size:9px;background:#0f1f0f;border:1px solid var(--matrix);padding:4px 8px;border-radius:20px;color:var(--matrix);box-shadow:0 0 6px rgba(0,255,65,0.3)}
-.btn-top{background:var(--matrix);color:#000;border-radius:20px;padding:4px 12px;font-size:11px;font-weight:800;cursor:pointer;border:none;box-shadow:0 0 10px var(--matrix)}
+.top-left{font-size:10px;letter-spacing:2px;color:var(--matrix)}
+.badge-top{font-size:9px;background:#0f1f0f;border:1px solid var(--matrix);padding:4px 8px;border-radius:20px;color:var(--matrix)}
+.btn-top{background:var(--matrix);color:#000;border-radius:20px;padding:4px 12px;font-size:11px;font-weight:800;cursor:pointer;border:none}
 .app{max-width:1400px;margin:0 auto;padding:0 18px 30px}
 .section{margin-top:22px}
-.section-title{font-size:12px;font-weight:800;letter-spacing:1px;margin-bottom:10px;display:flex;align-items:center;gap:6px;color:var(--matrix);text-shadow:0 0 10px rgba(0,255,65,0.8)}
-.dot{width:6px;height:6px;border-radius:50%;background:var(--matrix);display:inline-block;box-shadow:0 0 6px var(--matrix)}
+.section-title{font-size:12px;font-weight:800;margin-bottom:10px;color:var(--matrix)}
 .grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
-.grid5{display:grid;grid-template-columns:repeat(5,1fr);gap:10px}
-.grid6{display:grid;grid-template-columns:repeat(6,1fr);gap:10px}
 .grid9{display:grid;grid-template-columns:repeat(5,1fr);gap:10px}
-.card{background:linear-gradient(180deg, rgba(15,30,15,0.9) 0%, rgba(10,20,10,0.9) 100%);border:1px solid rgba(0,255,65,0.35);border-radius:12px;padding:12px;position:relative;overflow:hidden;box-shadow:0 0 5px rgba(0,255,65,0.25),0 0 15px rgba(0,255,65,0.15),inset 0 0 12px rgba(0,255,65,0.05);transition:all 0.3s ease}
-.card:hover{border-color:rgba(0,255,65,0.9);box-shadow:0 0 10px rgba(0,255,65,0.6),0 0 25px rgba(0,255,65,0.35),0 0 45px rgba(0,255,65,0.15),inset 0 0 18px rgba(0,255,65,0.1);transform:translateY(-2px)}
-.card-top{border-top:3px solid var(--matrix)}
-.chart-card{background:linear-gradient(180deg, rgba(15,30,15,0.9) 0%, rgba(10,20,10,0.9) 100%);border:1px solid rgba(0,255,65,0.35);border-radius:12px;padding:12px;margin-top:10px;box-shadow:0 0 5px rgba(0,255,65,0.25),0 0 15px rgba(0,255,65,0.15),inset 0 0 12px rgba(0,255,65,0.05);transition:all 0.3s ease}
-.chart-card:hover{border-color:rgba(0,255,65,0.7);box-shadow:0 0 12px rgba(0,255,65,0.5),0 0 30px rgba(0,255,65,0.25)}
-.kpi-lb{font-size:9px;color:var(--muted);letter-spacing:.8px;text-transform:uppercase;display:flex;gap:6px;align-items:center}
-.kpi-lb-icon{font-size:22px!important; line-height:1; filter:drop-shadow(0 0 4px currentColor)}
-.kpi-val{font-size:22px;font-weight:800;margin-top:6px;color:#eaffea;text-shadow:0 0 8px rgba(0,255,65,0.6)}
-.kpi-sub{font-size:10px;color:var(--muted);margin-top:2px}
-.chart-title{font-size:10px;color:var(--matrix);margin-bottom:8px;letter-spacing:1px;text-transform:uppercase;opacity:0.8}
+.card{background:#0f1a0f;border:1px solid rgba(0,255,65,0.35);border-radius:12px;padding:12px}
+.kpi-val{font-size:22px;font-weight:800;margin-top:6px}
+.kpi-sub{font-size:10px;color:var(--muted)}
+.chart-card{background:#0f1a0f;border:1px solid rgba(0,255,65,0.35);border-radius:12px;padding:12px;margin-top:10px}
 .row{display:flex;justify-content:space-between;align-items:center;padding:10px 8px;border-bottom:1px solid #1a2e1a;font-size:12px}
-.row:hover{background:#0f1f0f}
-.ico{width:44px;height:44px;border-radius:10px;display:inline-flex;align-items:center;justify-content:center;font-size:26px;margin-right:10px;filter:drop-shadow(0 0 6px currentColor)}
-.corsa{border-top:3px solid #ef4444}.trail{border-top:3px solid var(--matrix)}.escurs{border-top:3px solid #86efac}.bici{border-top:3px solid #22d3ee}.kayak{border-top:3px solid #6366f1}.nuoto{border-top:3px solid #0ea5e9}
-@media(max-width:900px){.grid4,.grid5,.grid6,.grid9{grid-template-columns:repeat(2,1fr)}}
-#bilancio-carico{background:linear-gradient(180deg, rgba(15,30,15,0.9) 0%, rgba(10,20,10,0.9) 100%)!important;border:1px solid rgba(0,255,65,0.35)!important;box-shadow:0 0 8px rgba(0,255,65,0.3),0 0 20px rgba(0,255,65,0.15),inset 0 0 15px rgba(0,255,65,0.05)!important}
-#bilancio-carico.bar-track{background:#0a1a0a!important;border:1px solid rgba(0,255,65,0.2)}
-#bar-basso{box-shadow:0 0 8px #7be8e8, 0 0 15px rgba(123,232,232,0.5)!important}
-#bar-alto{box-shadow:0 0 8px #ffb84d, 0 0 15px rgba(255,184,77,0.5)!important}
-#bar-ana{box-shadow:0 0 8px #a8a8a8, 0 0 15px rgba(168,168,168,0.4)!important}
-.hrv-green{color:#00ff41!important; text-shadow:0 0 8px #00ff41, 0 0 15px rgba(0,255,65,0.6)!important;}
-.hrv-green-icon{font-size:24px!important; color:#00ff41!important; filter:drop-shadow(0 0 8px #00ff41)!important;}
+@media(max-width:900px){.grid4,.grid9{grid-template-columns:repeat(2,1fr)}}
 </style>
 </head>
 <body>
-<div class="top"><div class="top-left" id="top-label">GARMIN DASHBOARD // RAZIEL - OFFLINE</div><div><span class="badge-top" id="badge-date">OFFLINE MODE</span> <span class="btn-top" onclick="location.reload()">Aggiorna dati</span></div></div>
+<div class="top"><div class="top-left" id="top-label">GARMIN DASHBOARD // OFFLINE V2</div><div><span class="badge-top" id="badge-date">CARICO...</span> <span class="btn-top" onclick="location.reload()">Aggiorna</span></div></div>
 <div class="app">
-<div class="section">
-<div class="section-title"><span class="dot"></span> Forma & Training Status</div>
-<div class="grid4">
-<div class="card card-top corsa"><div class="kpi-lb"><span class="kpi-lb-icon">🏋️</span> Sovraccarico</div><div class="kpi-val" id="kpi-sovra">--</div><div class="kpi-sub" id="kpi-sovra-sub">Rapporto Acuto/Cronico</div></div>
-<div class="card card-top" style="border-top-color:#00ff41"><div class="kpi-lb"><span class="kpi-lb-icon">⚡</span> Prontezza</div><div class="kpi-val" id="kpi-pron">--</div><div class="kpi-sub">Training Readiness</div></div>
-<div class="card card-top" style="border-top-color:#22d3ee"><div class="kpi-lb"><span class="kpi-lb-icon">📊</span> Bilancio Carico</div><div class="kpi-val" id="kpi-bil">Ottimale</div><div class="kpi-sub" id="kpi-bil-sub">Acuto / Cronico</div></div>
-<div class="card card-top" style="border-top-color:#00ff41"><div class="kpi-lb"><span class="kpi-lb-icon">🫀</span> VO₂ Max</div><div class="kpi-val" id="kpi-vo2">--</div><div class="kpi-sub">Stimato ultimi 7gg</div></div>
-</div>
-<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px">
-<div class="chart-card"><div class="chart-title">VO₂ Max - Ultimi 7 giorni</div><canvas id="cVO2" height="130"></canvas></div>
-<div class="chart-card"><div class="chart-title">⚖️ Bilancio del Carico</div><canvas id="cBilancio" height="130"></canvas></div>
-</div>
-</div>
-<div id="bilancio-carico" style="border-radius:12px; padding:18px; margin:15px 0; color:white; font-family:Inter, sans-serif;">
-  <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
-    <div style="font-size:11px; font-weight:800; letter-spacing:1.5px; color:#00ff41; text-shadow:0 0 8px #00ff41;">BILANCIO DEL CARICO - <span id="periodo-carico">ULTIMI 28 GIORNI</span></div>
-    <div id="msg-carico" style="font-size:11px; font-weight:700; color:#ffcc00;"></div>
-  </div>
-  <div id="fonte-carico" style="font-size:9px; opacity:0.4; margin-bottom:14px;"></div>
-  <div style="margin-bottom:14px;">
-    <div style="display:flex; justify-content:space-between; font-size:11px; margin-bottom:5px;"><span style="color:#b084ff; display:flex; align-items:center; gap:8px;"><span class="kpi-lb-icon" style="font-size:20px;">⚡</span> Anaerobico</span><span id="val-ana" style="color:#b084ff; font-weight:800; font-size:13px">--</span></div>
-    <div class="bar-track" style="background:#0a1a0a; height:14px; border-radius:7px; overflow:hidden;"><div id="bar-ana" style="height:100%; width:0%; background:linear-gradient(90deg,#b084ff,#8a5cff); border-radius:7px; transition:width 1.2s ease;"></div></div>
-  </div>
-  <div style="margin-bottom:14px;">
-    <div style="display:flex; justify-content:space-between; font-size:11px; margin-bottom:5px;"><span style="color:#ffb84d; display:flex; align-items:center; gap:8px;"><span class="kpi-lb-icon" style="font-size:20px;">🔥</span> Aerobico alto</span><span id="val-alto" style="color:#ffb84d; font-weight:800; font-size:13px">--</span></div>
-    <div class="bar-track" style="background:#0a1a0a; height:14px; border-radius:7px; overflow:hidden;"><div id="bar-alto" style="height:100%; width:0%; background:linear-gradient(90deg,#ffb84d,#ff8c00); border-radius:7px; transition:width 1.2s ease;"></div></div>
-  </div>
-  <div style="margin-bottom:10px;">
-    <div style="display:flex; justify-content:space-between; font-size:11px; margin-bottom:5px;"><span style="color:#00e5ff; display:flex; align-items:center; gap:8px;"><span class="kpi-lb-icon" style="font-size:20px;">💧</span> Aerobico basso</span><span id="val-basso" style="color:#7be8e8; font-weight:800; font-size:13px">--</span></div>
-    <div class="bar-track" style="background:#0a1a0a; height:14px; border-radius:7px; overflow:hidden;"><div id="bar-basso" style="height:100%; width:0%; background:linear-gradient(90deg,#7be8e8,#00e5ff); border-radius:7px; transition:width 1.2s ease;"></div></div>
-  </div>
-  <div id="carenza-msg" style="font-size:11px; color:#00ff41; opacity:0.9; margin-top:12px; display:flex; align-items:center; gap:6px; text-shadow:0 0 6px rgba(0,255,65,0.6);">◆ Carico bilanciato ✓</div>
-</div>
-<div class="section">
-<div class="section-title"><span class="dot"></span> Salute & Recovery</div>
-<div class="grid5">
-<div class="card card-top" style="border-top-color:#facc15"><div class="kpi-lb"><span class="kpi-lb-icon">😴</span> Sleep Score</div><div class="kpi-val" id="s-sleep">--</div><div class="kpi-sub" id="s-sleep-sub">--</div></div>
-<div class="card card-top" style="border-top-color:#00ff41"><div class="kpi-lb hrv-green"><span class="kpi-lb-icon hrv-green-icon">💚</span> HRV</div><div class="kpi-val" id="s-hrv">--</div><div class="kpi-sub" id="s-hrv-sub">Media 7gg</div></div>
-<div class="card card-top" style="border-top-color:#ef4444"><div class="kpi-lb"><span class="kpi-lb-icon">❤️</span> FC Riposo</div><div class="kpi-val" id="s-fc">--</div><div class="kpi-sub" id="s-fc-sub">--</div></div>
-<div class="card card-top" style="border-top-color:#00ff41"><div class="kpi-lb"><span class="kpi-lb-icon">🔋</span> Body Battery</div><div class="kpi-val" id="s-batt">--</div><div class="kpi-sub" id="s-batt-sub">Max / Min</div></div>
-<div class="card card-top"><div class="kpi-lb"><span class="kpi-lb-icon">😰</span> Stress</div><div class="kpi-val" id="s-stress">--</div><div class="kpi-sub" id="s-stress-sub">--</div></div>
-</div>
-<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px">
-<div class="chart-card"><div class="chart-title"><span class="kpi-lb-icon" style="font-size:18px;">😴</span> Sleep score - ultimi 7</div><canvas id="cSleep" height="140"></canvas></div>
-<div class="chart-card"><div class="chart-title"><span class="kpi-lb-icon hrv-green-icon" style="font-size:18px;">💚</span> HRV - ultimi 7</div><canvas id="cHRV" height="140"></canvas></div>
-<div class="chart-card"><div class="chart-title"><span class="kpi-lb-icon" style="font-size:18px;">❤️</span> FC a riposo - ultimi 7</div><canvas id="cFC" height="140"></canvas></div>
-<div class="chart-card"><div class="chart-title"><span class="kpi-lb-icon" style="font-size:18px;">😰</span> Stress - ultimi 7</div><canvas id="cStress" height="140"></canvas></div>
-<div class="chart-card"><div class="chart-title"><span class="kpi-lb-icon" style="font-size:18px;">🔋</span> Body Battery max - ultimi 7</div><canvas id="cBatt" height="140"></canvas></div>
-<div class="chart-card"><div class="chart-title"><span class="kpi-lb-icon" style="font-size:18px;">🌙</span> Ore sonno - ultimi 7</div><canvas id="cSonno" height="140"></canvas></div>
-</div>
-</div>
-<div class="section">
-<div class="section-title"><span class="dot"></span> Overview - Volume settimanale</div>
-<div class="grid6" id="overview-grid"></div>
-<div class="chart-card"><div class="chart-title">Volume settimanale - Per disciplina (KM)</div><canvas id="cVolume" height="160"></canvas></div>
-</div>
-<div class="section">
-<div class="section-title"><span class="dot"></span> Distanza & Record - TEMPI REALI</div>
-<div class="grid9">
-<div class="card" style="border-top:3px solid #ef4444"><div class="kpi-lb"><span class="kpi-lb-icon">⚡</span> 1 KM PIÙ VELOCE</div><div class="kpi-val" style="font-size:18px" id="r-1k-t">--</div><div class="kpi-sub" id="r-1k-i">--</div></div>
-<div class="card" style="border-top:3px solid #ef4444"><div class="kpi-lb"><span class="kpi-lb-icon">🔥</span> 5 KM PIÙ VELOCE</div><div class="kpi-val" style="font-size:18px" id="r-5k-t">--</div><div class="kpi-sub" id="r-5k-i">--</div></div>
-<div class="card" style="border-top:3px solid #ef4444"><div class="kpi-lb"><span class="kpi-lb-icon">🏃</span> 10 KM PIÙ VELOCE</div><div class="kpi-val" style="font-size:18px" id="r-10k-t">--</div><div class="kpi-sub" id="r-10k-i">--</div></div>
-<div class="card" style="border-top:3px solid #f97316"><div class="kpi-lb"><span class="kpi-lb-icon">🏅</span> MEZZA MARATONA</div><div class="kpi-val" style="font-size:18px" id="r-mezza-t">--</div><div class="kpi-sub" id="r-mezza-i">--</div></div>
-<div class="card" style="border-top:3px solid #f97316"><div class="kpi-lb"><span class="kpi-lb-icon">👑</span> MARATONA</div><div class="kpi-val" style="font-size:18px" id="r-mara-t">--</div><div class="kpi-sub" id="r-mara-i">--</div></div>
+<div class="section"><div class="section-title">Overview</div><div class="grid4">
+<div class="card"><div>Tot Attivita</div><div class="kpi-val" id="kpi-tot">--</div><div class="kpi-sub" id="kpi-tot-sub">--</div></div>
+<div class="card"><div>Distanza Totale</div><div class="kpi-val" id="kpi-dist">--</div></div>
+<div class="card"><div>Durata Totale</div><div class="kpi-val" id="kpi-dur">--</div></div>
+<div class="card"><div>VO2 Medio</div><div class="kpi-val" id="kpi-vo2">--</div></div>
+</div></div>
+<div class="section"><div class="section-title">Volume settimanale KM - ultime 12 sett</div><div class="chart-card"><canvas id="cVolume" height="160"></canvas></div></div>
+<div class="section"><div class="section-title">Record REALI</div><div class="grid9">
+<div class="card"><div>1 KM</div><div class="kpi-val" style="font-size:18px" id="r-1k-t">--</div><div class="kpi-sub" id="r-1k-i">--</div></div>
+<div class="card"><div>5 KM</div><div class="kpi-val" style="font-size:18px" id="r-5k-t">--</div><div class="kpi-sub" id="r-5k-i">--</div></div>
+<div class="card"><div>10 KM</div><div class="kpi-val" style="font-size:18px" id="r-10k-t">--</div><div class="kpi-sub" id="r-10k-i">--</div></div>
+<div class="card"><div>MEZZA</div><div class="kpi-val" style="font-size:18px" id="r-mezza-t">--</div><div class="kpi-sub" id="r-mezza-i">--</div></div>
+<div class="card"><div>MARATONA</div><div class="kpi-val" style="font-size:18px" id="r-mara-t">--</div><div class="kpi-sub" id="r-mara-i">--</div></div>
 </div>
 <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:10px">
-<div class="card" style="border-top:3px solid #00ff41"><div class="kpi-lb"><span class="kpi-lb-icon">🏃</span> Corsa più lunga in km</div><div class="kpi-val" id="r-clunga-t">-- km</div><div class="kpi-sub" id="r-clunga-i">--</div></div>
-<div class="card" style="border-top:3px solid #00ff41"><div class="kpi-lb"><span class="kpi-lb-icon">⛰️</span> Dislivello + alto Corsa</div><div class="kpi-val" id="r-dcorsa-t">-- m</div><div class="kpi-sub" id="r-dcorsa-i">--</div></div>
-<div class="card" style="border-top:3px solid #22d3ee"><div class="kpi-lb"><span class="kpi-lb-icon">🚴</span> Uscita più lunga Bici in km</div><div class="kpi-val" id="r-blunga-t">-- km</div><div class="kpi-sub" id="r-blunga-i">--</div></div>
-<div class="card" style="border-top:3px solid #22d3ee"><div class="kpi-lb"><span class="kpi-lb-icon">⛰️</span> Dislivello + grande Bici</div><div class="kpi-val" id="r-dbici-t">-- m</div><div class="kpi-sub" id="r-dbici-i">--</div></div>
-</div>
-</div>
-<div class="section">
-<div class="section-title"><span class="dot"></span> Ultime 10 Attività</div>
-<div class="chart-card" id="attivita-box">carico attività...</div>
-</div>
-</div>
+<div class="card"><div>Corsa piu lunga</div><div class="kpi-val" id="r-clunga-t">--</div><div class="kpi-sub" id="r-clunga-i">--</div></div>
+<div class="card"><div>Dislivello Corsa</div><div class="kpi-val" id="r-dcorsa-t">--</div><div class="kpi-sub" id="r-dcorsa-i">--</div></div>
+<div class="card"><div>Bici piu lunga</div><div class="kpi-val" id="r-blunga-t">--</div><div class="kpi-sub" id="r-blunga-i">--</div></div>
+<div class="card"><div>Dislivello Bici</div><div class="kpi-val" id="r-dbici-t">--</div><div class="kpi-sub" id="r-dbici-i">--</div></div>
+</div></div>
+<div class="section"><div class="section-title">Ultime 20 Attivita</div><div class="chart-card" id="attivita-box">carico...</div></div>
+<div id="chatBox" style="max-width:900px;margin:40px auto;background:#111;border-radius:16px;padding:20px;">
+<h3 style="color:#fff">Chat Coach AI - FIX Gemini 2.0</h3>
+<div><input id="apiKeyInput" placeholder="Incolla GEMINI API KEY" style="width:100%;padding:8px;border-radius:6px;background:#222;color:#fff;border:1px solid #333"><button onclick="saveKey()" style="margin-top:6px;padding:6px 12px;border-radius:6px;background:#00ff41;color:#000;border:none;font-weight:700">Salva KEY</button><span id="keyStatus" style="margin-left:10px;color:#00ff41"></span></div>
+<div id="chatLog" style="height:300px;overflow-y:auto;background:#000;padding:12px;border-radius:8px;color:#eee;font-size:14px;margin-bottom:12px;margin-top:10px"></div>
+<div style="display:flex;gap:8px;"><input id="chatInput" placeholder="Come sto andando?" style="flex:1;padding:10px;border-radius:8px;border:none;background:#222;color:#fff"><button onclick="sendChat()" style="padding:10px 18px;border-radius:8px;background:#4CAF50;color:#fff;border:none;cursor:pointer;">Invia</button></div>
+</div></div>
 <script>
-Chart.defaults.color='#6b8a6b'; Chart.defaults.borderColor='#1a3a1a';
+Chart.defaults.color='#6b8a6b';
 let DB=null;
 async function fetchDB(){
-  const urls=['./database.json','database.json','https://appassets.androidplatform.net/assets/database.json','/assets/database.json','file:///android_asset/database.json'];
-  for(let u of urls){
-    try{ console.log('Provo '+u); let r=await fetch(u); if(r.ok){ let j=await r.json(); console.log('DB caricato da '+u); return j; } }catch(e){ console.log('fail '+u+': '+e); }
-  }
+  const urls=['./database.json','database.json','https://appassets.androidplatform.net/assets/database.json','/assets/database.json'];
+  for(let u of urls){ try{ let r=await fetch(u); if(r.ok) return await r.json(); }catch(e){} }
   throw new Error('database.json non trovato');
 }
-function oreSonno(g){ if(!g) return 0; if(g.sonno_ore) return parseFloat(g.sonno_ore); if(g.sonno_totale_s) return g.sonno_totale_s/3600; return 0; }
-function parseDB(raw){
-  // raw può essere {giorni:[...], attivita:[...]} o array diretto
-  let giorni=[]; let attivita=[];
-  if(Array.isArray(raw)) giorni=raw;
-  else if(raw.giorni) giorni=raw.giorni;
-  else if(raw.days) giorni=raw.days;
-  else if(raw.data) giorni=raw.data;
-  else giorni=raw;
-  if(raw.attivita) attivita=raw.attivita;
-  if(raw.activities) attivita=raw.activities;
-  if(raw.ultime_attivita) attivita=raw.ultime_attivita;
-  // se i giorni contengono già attività annidate
-  if(!attivita.length && giorni.length){
-    giorni.forEach(g=>{ if(g.attivita) attivita=attivita.concat(g.attivita); });
-  }
-  // ultimi 7 giorni ordinati per data
-  giorni.sort((a,b)=> (a.data||'').localeCompare(b.data||''));
-  let ultimi7=giorni.slice(-7);
-  let ultimo=giorni[giorni.length-1]||{};
-  return {giorni, ultimi7, ultimo, attivita: attivita.slice(-10).reverse()};
-}
+function fmtTempo(sec){ if(!sec) return '--'; let m=Math.floor(sec/60); let s=Math.round(sec%60); if(m>=60){ let h=Math.floor(m/60); m=m%60; return h+'h '+m+'m'; } return m+':'+String(s).padStart(2,'0'); }
+function fmtDist(m){ return (m/1000).toFixed(2); }
 async function loadAll(){
   try{
-    document.getElementById('top-label').innerText='CARICO DATABASE.JSON...';
     DB=await fetchDB();
-    const {giorni, ultimi7, ultimo, attivita}=parseDB(DB);
-    console.log('ultimo',ultimo,'ultimi7 len',ultimi7.length);
-    const prontezzaVal=ultimo.prontezza?? ultimo.readiness?? ultimo.training_readiness?? 70;
-    const oreUltimo=oreSonno(ultimo);
-    const maxFC=Math.max(...ultimi7.map(g=>g.fc_riposo||0));
-    const maxHRV=Math.max(...ultimi7.map(g=>g.hrv||0));
-    const maxBatt=Math.max(...ultimi7.map(g=>g.body_battery_max||0));
-    const maxSleep=Math.max(...ultimi7.map(g=>g.sonno_punteggio||0));
-    const dMaxFC=(ultimi7.find(g=>g.fc_riposo==maxFC)?.data||'').slice(5,10);
-    const dMaxHRV=(ultimi7.find(g=>g.hrv==maxHRV)?.data||'').slice(5,10);
-    const dMaxSleep=(ultimi7.find(g=>g.sonno_punteggio==maxSleep)?.data||'').slice(5,10);
-    document.getElementById('top-label').innerText=`GARMIN DASHBOARD // RAZIEL - ${ultimo.data||''} - FC ${ultimo.fc_riposo||''} BPM - ${giorni.length} giorni caricati`;
-    document.getElementById('badge-date').innerText=(ultimo.data||'OFFLINE').slice(0,10);
-    document.getElementById('s-sleep').innerText=ultimo.sonno_punteggio?? '--';
-    document.getElementById('s-sleep-sub').innerText=`${oreUltimo.toFixed(1)}h - Top: ${maxSleep} il ${dMaxSleep}`;
-    document.getElementById('s-hrv').innerText=(ultimo.hrv?? '--')+' ms';
-    document.getElementById('s-hrv-sub').innerText=`Top: ${maxHRV} il ${dMaxHRV}`;
-    document.getElementById('s-fc').innerText=(ultimo.fc_riposo||'--')+' bpm';
-    document.getElementById('s-fc-sub').innerText=`Top: ${maxFC} il ${dMaxFC}`;
-    document.getElementById('s-batt').innerText=`${ultimo.body_battery_max??'--'} / ${ultimo.body_battery_min??'--'}`;
-    document.getElementById('s-batt-sub').innerText=`Top: ${maxBatt} - Max / Min oggi`;
-    document.getElementById('s-stress').innerText=ultimo.stress_medio?? '--';
-    document.getElementById('s-stress-sub').innerText=`${ultimo.passi||0} passi • ${((ultimo.distanza_m||0)/1000).toFixed(2)}km oggi`;
-    document.getElementById('kpi-sovra').innerText=(ultimo.sovraccarico?? ultimo.acwr?? 1.13);
-    document.getElementById('kpi-pron').innerText=prontezzaVal;
-    document.getElementById('kpi-vo2').innerText=(ultimo.vo2max?? 48.0);
-    const labels=ultimi7.map(g=>(g.data||'').slice(5,10).replace('-','/'));
-    const sleepScores=ultimi7.map(g=>g.sonno_punteggio||0); const hrv=ultimi7.map(g=>g.hrv||0); const fc=ultimi7.map(g=>g.fc_riposo||0); const stress=ultimi7.map(g=>g.stress_medio||0); const batt=ultimi7.map(g=>g.body_battery_max||0); const sonnoOre=ultimi7.map(g=>oreSonno(g)); const vo2=ultimi7.map(g=>g.vo2max||48.0);
-    new Chart(document.getElementById('cVO2'),{type:'line',data:{labels:labels,datasets:[{label:'VO2 Max',data:vo2,borderColor:'#00ff41',backgroundColor:'rgba(0,255,65,0.15)',tension:0.4,fill:true}]},options:{plugins:{legend:{display:false}},scales:{x:{grid:{color:'#122212'}},y:{grid:{color:'#122212'}}}}});
-    new Chart(document.getElementById('cBilancio'),{type:'bar',data:{labels:['Acuto','Cronico'],datasets:[{label:'Carico',data:[ultimo.carico_acuto||30, ultimo.carico_cronico||70],backgroundColor:['#00ff41','#22d3ee']}]},options:{plugins:{legend:{display:false}},scales:{x:{grid:{display:false}},y:{grid:{color:'#122212'}}}}});
-    new Chart(document.getElementById('cSleep'),{type:'bar',data:{labels:labels,datasets:[{label:'Sleep',data:sleepScores,backgroundColor:'#facc15'}]},options:{plugins:{legend:{display:false}},scales:{x:{grid:{display:false}},y:{grid:{color:'#122212'}}}}});
-    new Chart(document.getElementById('cHRV'),{type:'line',data:{labels:labels,datasets:[{label:'HRV',data:hrv,borderColor:'#00ff41',tension:0.4,fill:true,backgroundColor:'rgba(0,255,65,0.15)'}]},options:{plugins:{legend:{display:false}},scales:{x:{grid:{display:false}},y:{grid:{color:'#122212'}}}}});
-    new Chart(document.getElementById('cFC'),{type:'line',data:{labels:labels,datasets:[{label:'FC riposo',data:fc,borderColor:'#ef4444',tension:0.4}]},options:{plugins:{legend:{display:false}},scales:{x:{grid:{display:false}},y:{grid:{color:'#122212'}}}}});
-    new Chart(document.getElementById('cStress'),{type:'line',data:{labels:labels,datasets:[{label:'Stress',data:stress,borderColor:'#ff6a00',tension:0.4}]},options:{plugins:{legend:{display:false}},scales:{x:{grid:{display:false}},y:{grid:{color:'#122212'}}}}});
-    new Chart(document.getElementById('cBatt'),{type:'line',data:{labels:labels,datasets:[{label:'Battery',data:batt,borderColor:'#00ff41',tension:0.4,fill:true,backgroundColor:'rgba(0,255,65,0.1)'}]},options:{plugins:{legend:{display:false}},scales:{x:{grid:{display:false}},y:{grid:{color:'#122212'}}}}});
-    new Chart(document.getElementById('cSonno'),{type:'bar',data:{labels:labels,datasets:[{label:'Ore sonno',data:sonnoOre,backgroundColor:'#a78bfa'}]},options:{plugins:{legend:{display:false}},scales:{x:{grid:{display:false}},y:{grid:{color:'#122212'}}}}});
-    // overview
-    let over={corsa:0,trail:0,escursionismo:0,bici:0,kayak:0,nuoto:0};
-    giorni.slice(-7).forEach(g=>{ over.corsa+=(g.corsa_ore||0); over.bici+=(g.bici_ore||0); over.trail+=(g.trail_ore||0); });
-    document.getElementById('overview-grid').innerHTML=`<div class="card corsa"><div class="kpi-lb"><span class="kpi-lb-icon">🏃</span> Corsa</div><div class="kpi-val">${over.corsa.toFixed(1)}h</div></div><div class="card trail"><div class="kpi-lb"><span class="kpi-lb-icon">🌲</span> Trail Run</div><div class="kpi-val">${over.trail.toFixed(1)}h</div></div><div class="card escurs"><div class="kpi-lb"><span class="kpi-lb-icon">🥾</span> Escursionismo</div><div class="kpi-val">${over.escursionismo.toFixed(1)}h</div></div><div class="card bici"><div class="kpi-lb"><span class="kpi-lb-icon">🚴</span> Bici</div><div class="kpi-val">${over.bici.toFixed(1)}h</div></div><div class="card kayak"><div class="kpi-lb"><span class="kpi-lb-icon">🛶</span> Kayak</div><div class="kpi-val">${over.kayak.toFixed(1)}h</div></div><div class="card nuoto"><div class="kpi-lb"><span class="kpi-lb-icon">🏊</span> Nuoto</div><div class="kpi-val">${over.nuoto.toFixed(1)}h</div></div>`;
-    document.getElementById('attivita-box').innerHTML=attivita.map(a=>`<div class="row"><span><span class="ico" style="width:30px;height:30px;font-size:16px;background:#0f1f0f;border:1px solid #1a3a1a">🏃</span> ${a.data||''} - ${a.tipo||a.sport||''} - ${a.nome||a.title||''}</span><b>${a.distanza||a.km||0}km • ${a.durata||a.min||0}min</b></div>`).join('')||'Nessuna attività - ma giorni caricati: '+giorni.length;
-    // bilancio
-    try{
-      let bil=DB.bilancio || DB.bilancio_carico || {aerobico_basso:120, aerobico_alto:80, anaerobico:30, messaggio:'Carico bilanciato - dati offline', periodo:'ULTIMI 28 GIORNI', fonte:'database.json offline'};
-      const ana=bil.anaerobico||0; const alto=bil.aerobico_alto||0; const basso=bil.aerobico_basso||0; const maxVal=Math.max(ana,alto,basso,1);
-      document.getElementById('val-basso').innerText=basso; document.getElementById('val-alto').innerText=alto; document.getElementById('val-ana').innerText=ana;
-      document.getElementById('bar-basso').style.width=Math.round((basso/maxVal)*100)+'%'; document.getElementById('bar-alto').style.width=Math.round((alto/maxVal)*100)+'%'; document.getElementById('bar-ana').style.width=Math.round((ana/maxVal)*100)+'%';
-      document.getElementById('carenza-msg').innerText='◆ '+(bil.messaggio||bil.feedback||'Carico bilanciato - OFFLINE'); document.getElementById('periodo-carico').innerText=bil.periodo||'ULTIMI 28 GIORNI'; document.getElementById('fonte-carico').innerText='Fonte: '+(bil.fonte||'database.json offline');
-    }catch(e){}
-  }catch(e){ document.getElementById('top-label').innerText='ERRORE DB: '+e.message; document.getElementById('attivita-box').innerText='Errore caricamento database.json: '+e+' - Assicurati che database.json sia nella root del repo'; console.log(e); }
+    let attivita = DB.attivita || DB.activities || DB || [];
+    if(!Array.isArray(attivita)) attivita=[];
+    attivita.sort((a,b)=> new Date(b.inizio||0) - new Date(a.inizio||0));
+    let tot=attivita.length;
+    let dist=attivita.reduce((s,a)=>s+(a.distanza_m||0),0);
+    let dur=attivita.reduce((s,a)=>s+(a.durata_s||0),0);
+    let vo2list=attivita.filter(a=>a.vo2max_attivita); let vo2avg=vo2list.reduce((s,a)=>s+a.vo2max_attivita,0)/Math.max(1,vo2list.length);
+    document.getElementById('top-label').innerText='GARMIN // '+tot+' ATTIVITA - '+ (DB.periodo?DB.periodo.da+' > '+DB.periodo.a:'');
+    document.getElementById('badge-date').innerText=attivita[0]?.inizio?.slice(0,10)||'OFFLINE';
+    document.getElementById('kpi-tot').innerText=tot;
+    document.getElementById('kpi-tot-sub').innerText=DB.periodo?DB.periodo.da+' al '+DB.periodo.a:'';
+    document.getElementById('kpi-dist').innerText=(dist/1000).toFixed(0)+' km';
+    document.getElementById('kpi-dur').innerText=(dur/3600).toFixed(1)+' h';
+    document.getElementById('kpi-vo2').innerText=vo2avg.toFixed(1);
+    let best1k=null,best5k=null,best10k=null,bestMezza=null,bestMara=null,longestRun=null,maxElevRun=null,longestBike=null,maxElevBike=null;
+    attivita.forEach(a=>{
+      let raw=a.raw||{};
+      if(raw.fastestSplit_1000 && (!best1k||raw.fastestSplit_1000<best1k.sec)) best1k={sec:raw.fastestSplit_1000,nome:a.nome,data:a.inizio?.slice(0,10)};
+      if(raw.fastestSplit_5000 && (!best5k||raw.fastestSplit_5000<best5k.sec)) best5k={sec:raw.fastestSplit_5000,nome:a.nome,data:a.inizio?.slice(0,10)};
+      if(raw.fastestSplit_10000 && (!best10k||raw.fastestSplit_10000<best10k.sec)) best10k={sec:raw.fastestSplit_10000,nome:a.nome,data:a.inizio?.slice(0,10)};
+      if(raw.fastestSplit_21098 && (!bestMezza||raw.fastestSplit_21098<bestMezza.sec)) bestMezza={sec:raw.fastestSplit_21098,nome:a.nome,data:a.inizio?.slice(0,10)};
+      if(raw.fastestSplit_42195 && (!bestMara||raw.fastestSplit_42195<bestMara.sec)) bestMara={sec:raw.fastestSplit_42195,nome:a.nome,data:a.inizio?.slice(0,10)};
+      if((a.tipo||'').includes('running')){ if(!longestRun||a.distanza_m>longestRun.distanza_m) longestRun=a; if(!maxElevRun||(a.dislivello_positivo_m||0)>(maxElevRun.dislivello_positivo_m||0)) maxElevRun=a; }
+      if((a.tipo||'').includes('cycling')||a.tipo=='bici'){ if(!longestBike||a.distanza_m>longestBike.distanza_m) longestBike=a; if(!maxElevBike||(a.dislivello_positivo_m||0)>(maxElevBike.dislivello_positivo_m||0)) maxElevBike=a; }
+    });
+    document.getElementById('r-1k-t').innerText=best1k?fmtTempo(best1k.sec):'--'; document.getElementById('r-1k-i').innerText=best1k?best1k.nome+' - '+best1k.data:'--';
+    document.getElementById('r-5k-t').innerText=best5k?fmtTempo(best5k.sec):'--'; document.getElementById('r-5k-i').innerText=best5k?best5k.nome+' - '+best5k.data:'--';
+    document.getElementById('r-10k-t').innerText=best10k?fmtTempo(best10k.sec):'--'; document.getElementById('r-10k-i').innerText=best10k?best10k.nome+' - '+best10k.data:'--';
+    document.getElementById('r-mezza-t').innerText=bestMezza?fmtTempo(bestMezza.sec):'--'; document.getElementById('r-mezza-i').innerText=bestMezza?bestMezza.nome+' - '+bestMezza.data:'--';
+    document.getElementById('r-mara-t').innerText=bestMara?fmtTempo(bestMara.sec):'--'; document.getElementById('r-mara-i').innerText=bestMara?bestMara.nome+' - '+bestMara.data:'--';
+    document.getElementById('r-clunga-t').innerText=longestRun?fmtDist(longestRun.distanza_m)+' km':'--'; document.getElementById('r-clunga-i').innerText=longestRun?longestRun.nome+' - '+longestRun.inizio?.slice(0,10):'--';
+    document.getElementById('r-dcorsa-t').innerText=maxElevRun?(maxElevRun.dislivello_positivo_m+' m'):'--'; document.getElementById('r-dcorsa-i').innerText=maxElevRun?maxElevRun.nome+' - '+maxElevRun.inizio?.slice(0,10):'--';
+    document.getElementById('r-blunga-t').innerText=longestBike?fmtDist(longestBike.distanza_m)+' km':'--'; document.getElementById('r-blunga-i').innerText=longestBike?longestBike.nome+' - '+longestBike.inizio?.slice(0,10):'--';
+    document.getElementById('r-dbici-t').innerText=maxElevBike?(maxElevBike.dislivello_positivo_m+' m'):'--'; document.getElementById('r-dbici-i').innerText=maxElevBike?maxElevBike.nome+' - '+maxElevBike.inizio?.slice(0,10):'--';
+    document.getElementById('attivita-box').innerHTML=attivita.slice(0,20).map(a=>'<div class="row"><span>'+a.inizio?.slice(0,16)+' - '+a.tipo+' - '+a.nome+'</span><b>'+fmtDist(a.distanza_m)+'km - '+Math.round((a.durata_s||0)/60)+'min</b></div>').join('');
+    let weekly={}; attivita.forEach(a=>{ let d=new Date(a.inizio); if(isNaN(d)) return; let y=d.getFullYear(); let jan1=new Date(y,0,1); let week=Math.ceil((((d-jan1)/86400000)+jan1.getDay()+1)/7); let key=y+'-W'+String(week).padStart(2,'0'); weekly[key]=(weekly[key]||0)+(a.distanza_m||0)/1000; });
+    let wKeys=Object.keys(weekly).sort().slice(-12); let wVals=wKeys.map(k=>weekly[k].toFixed(1));
+    new Chart(document.getElementById('cVolume'),{type:'bar',data:{labels:wKeys,datasets:[{label:'KM',data:wVals,backgroundColor:'#00ff41'}]},options:{plugins:{legend:{display:false}},scales:{y:{beginAtZero:true}}}});
+  }catch(e){ document.getElementById('top-label').innerText='ERRORE: '+e.message; document.getElementById('attivita-box').innerText='Errore: '+e; console.error(e); }
 }
 loadAll();
 </script>
-<div id="chatBox" style="max-width:900px;margin:40px auto;background:#111;border-radius:16px;padding:20px;">
-  <h3 style="color:#fff">💬 Chat col tuo Coach AI (OFFLINE)</h3>
-  <div style="margin-bottom:8px"><input id="apiKeyInput" placeholder="Incolla qui la tua GEMINI API KEY (salvata solo sul telefono)" style="width:100%;padding:8px;border-radius:6px;background:#222;color:#fff;border:1px solid #333"><button onclick="saveKey()" style="margin-top:6px;padding:6px 12px;border-radius:6px;background:#00ff41;color:#000;border:none;font-weight:700">Salva KEY</button><span id="keyStatus" style="margin-left:10px;color:#00ff41"></span></div>
-  <div id="chatLog" style="height:300px;overflow-y:auto;background:#000;padding:12px;border-radius:8px;color:#eee;font-size:14px;margin-bottom:12px;"></div>
-  <div style="display:flex;gap:8px;">
-    <input id="chatInput" placeholder="Es: come sto andando? devo fare più fondo?" style="flex:1;padding:10px;border-radius:8px;border:none;background:#222;color:#fff">
-    <button onclick="sendChat()" style="padding:10px 18px;border-radius:8px;background:#4CAF50;color:#fff;border:none;cursor:pointer;">Invia</button>
-  </div>
-</div>
 <script>
 function saveKey(){ let k=document.getElementById('apiKeyInput').value.trim(); if(k){ localStorage.setItem('gemini_key',k); document.getElementById('keyStatus').innerText='KEY salvata!'; document.getElementById('apiKeyInput').value=''; } }
 (function(){ let k=localStorage.getItem('gemini_key'); if(k) document.getElementById('keyStatus').innerText='KEY presente ✓'; })();
 async function sendChat(){
-  const input=document.getElementById('chatInput');
-  const log=document.getElementById('chatLog');
-  const key=localStorage.getItem('gemini_key');
-  if(!key){ alert('Metti prima la GEMINI API KEY sopra'); return; }
+  const input=document.getElementById('chatInput'); const log=document.getElementById('chatLog'); const key=localStorage.getItem('gemini_key');
+  if(!key){ alert('Metti API KEY'); return; }
   const msg=input.value.trim(); if(!msg) return;
-  log.innerHTML+=`<div style="margin:8px 0"><b>Tu:</b> ${msg}</div>`;
-  input.value=''; log.scrollTop=log.scrollHeight;
-  log.innerHTML+=`<div id="tmp" style="color:#888">Coach sta analizzando i tuoi allenamenti...</div>`;
+  log.innerHTML+='<div style="margin:8px 0"><b>Tu:</b> '+msg+'</div>'; input.value=''; log.scrollTop=log.scrollHeight;
+  log.innerHTML+='<div id="tmp" style="color:#888">Coach...</div>';
   try{
-    let context='';
-    if(DB){ let ultimi=DB.giorni?DB.giorni.slice(-3):[]; context='Dati ultimi allenamenti: '+JSON.stringify(ultimi).slice(0,4000); }
-    const r=await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${key}`,{
-      method:'POST',headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({contents:[{parts:[{text:`Sei un coach di corsa. Contesto atleta: ${context}. Domanda utente: ${msg}. Rispondi in italiano, breve, da coach.`}]}]})
-    });
-    const j=await r.json();
-    document.getElementById('tmp').remove();
-    let reply=j.candidates?.[0]?.content?.parts?.[0]?.text || 'Errore: '+(j.error?.message||JSON.stringify(j).slice(0,500));
-    log.innerHTML+=`<div style="margin:8px 0;background:#1a1a1a;padding:8px;border-radius:6px"><b>Coach:</b> ${reply.replace(/\n/g,'<br>')}</div>`;
-  }catch(e){ let t=document.getElementById('tmp'); if(t) t.innerHTML='Errore: '+e; }
-  log.scrollTop=log.scrollHeight;
+    let ctx=''; if(DB && DB.attivita){ let ult=DB.attivita.slice(0,3).map(a=>({nome:a.nome,dist:(a.distanza_m/1000).toFixed(2)})); ctx='Ultime: '+JSON.stringify(ult); }
+    const models=['gemini-2.0-flash','gemini-2.0-flash-exp','gemini-1.5-flash-latest','gemini-1.5-flash-001'];
+    let last=''; for(let m of models){ try{ let r=await fetch('https://generativelanguage.googleapis.com/v1/models/'+m+':generateContent?key='+key,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({contents:[{parts:[{text:'Sei coach running. '+ctx+' Domanda: '+msg+' Rispondi in italiano breve.'}]}]})}); let j=await r.json(); if(j.error){ last=j.error.message; continue; } let reply=j.candidates?.[0]?.content?.parts?.[0]?.text; if(reply){ document.getElementById('tmp').remove(); log.innerHTML+='<div style="margin:8px 0;background:#1a1a1a;padding:8px;border-radius:6px"><b>Coach ('+m+'):</b> '+reply.replace(/\n/g,'<br>')+'</div>'; log.scrollTop=log.scrollHeight; return; } }catch(e){ last=e.message; } }
+    document.getElementById('tmp').innerHTML='Errore: '+last;
+  }catch(e){ document.getElementById('tmp').innerHTML='Errore: '+e; }
 }
 document.getElementById('chatInput').addEventListener('keydown',e=>{if(e.key==='Enter')sendChat()});
 </script>
