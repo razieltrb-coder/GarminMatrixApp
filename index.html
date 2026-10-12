@@ -1,131 +1,203 @@
 <!DOCTYPE html>
 <html lang="it">
 <head>
-<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Garmin MATRIX OFFLINE V2</title>
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>GARMIN // MATRIX COACH</title>
 <style>
-:root{--bg:#070a07;--text:#e0ffe0;--muted:#6b8a6b;--matrix:#00ff41}
-*{box-sizing:border-box}body{margin:0;background:#070a07;color:var(--text);font-family:Inter,sans-serif;font-size:13px}
-.top{max-width:1400px;margin:0 auto;padding:14px 18px;display:flex;justify-content:space-between;align-items:center}
-.top-left{font-size:10px;letter-spacing:2px;color:var(--matrix)}
-.badge-top{font-size:9px;background:#0f1f0f;border:1px solid var(--matrix);padding:4px 8px;border-radius:20px;color:var(--matrix)}
-.btn-top{background:var(--matrix);color:#000;border-radius:20px;padding:4px 12px;font-size:11px;font-weight:800;cursor:pointer;border:none}
-.app{max-width:1400px;margin:0 auto;padding:0 18px 30px}
-.section{margin-top:22px}
-.section-title{font-size:12px;font-weight:800;margin-bottom:10px;color:var(--matrix)}
-.grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
-.grid9{display:grid;grid-template-columns:repeat(5,1fr);gap:10px}
-.card{background:#0f1a0f;border:1px solid rgba(0,255,65,0.35);border-radius:12px;padding:12px}
-.kpi-val{font-size:22px;font-weight:800;margin-top:6px}
-.kpi-sub{font-size:10px;color:var(--muted)}
-.chart-card{background:#0f1a0f;border:1px solid rgba(0,255,65,0.35);border-radius:12px;padding:12px;margin-top:10px}
-.row{display:flex;justify-content:space-between;align-items:center;padding:10px 8px;border-bottom:1px solid #1a2e1a;font-size:12px}
-@media(max-width:900px){.grid4,.grid9{grid-template-columns:repeat(2,1fr)}}
+:root{--g:#00ff41;--bg:#020602;--card:#0a1a0a;--border:#134213;--dim:#6fae7a}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:#e0ffe0;font-family:'Courier New',monospace;padding:12px}
+header{border:1px solid var(--g);padding:12px 16px;margin-bottom:12px;background:#081208;display:flex;justify-content:space-between;align-items:center}
+header h1{color:var(--g);font-size:16px;letter-spacing:2px}
+header span{font-size:10px;color:var(--dim)}
+.card{border:1px solid var(--border);background:var(--card);border-left:3px solid var(--g);padding:12px;margin-bottom:10px}
+.card h2{color:var(--g);font-size:13px;margin-bottom:10px;letter-spacing:1px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+.kpi{font-size:20px;color:var(--g);font-weight:bold}
+.klab{font-size:9px;color:var(--dim);text-transform:uppercase}
+.bar{height:6px;background:#0a2a0a;margin:6px 0;border:1px solid var(--border)}
+.bar>div{height:100%;background:var(--g)}
+table{width:100%;font-size:11px;border-collapse:collapse}
+th{color:var(--dim);text-align:left;font-size:9px;padding:4px;border-bottom:1px solid var(--border)}
+td{padding:6px 4px;border-bottom:1px solid #0f2a0f}
+.badge{display:inline-block;padding:2px 6px;font-size:9px;border:1px solid var(--g);color:var(--g)}
+input,button{font-family:inherit}
+#chatLog{max-height:300px;overflow:auto;border:1px solid var(--border);padding:8px;background:#040a04;margin-bottom:8px}
+#chatInput{width:100%;background:#000;color:var(--g);border:1px solid var(--g);padding:10px}
+.btn{background:var(--g);color:#000;border:none;padding:8px 12px;font-weight:bold;cursor:pointer;width:100%;margin-top:6px}
+.small{font-size:10px;color:var(--dim)}
 </style>
 </head>
 <body>
-<div class="top"><div class="top-left" id="top-label">GARMIN DASHBOARD // OFFLINE V2</div><div><span class="badge-top" id="badge-date">CARICO...</span> <span class="btn-top" onclick="location.reload()">Aggiorna</span></div></div>
-<div class="app">
-<div class="section"><div class="section-title">Overview</div><div class="grid4">
-<div class="card"><div>Tot Attivita</div><div class="kpi-val" id="kpi-tot">--</div><div class="kpi-sub" id="kpi-tot-sub">--</div></div>
-<div class="card"><div>Distanza Totale</div><div class="kpi-val" id="kpi-dist">--</div></div>
-<div class="card"><div>Durata Totale</div><div class="kpi-val" id="kpi-dur">--</div></div>
-<div class="card"><div>VO2 Medio</div><div class="kpi-val" id="kpi-vo2">--</div></div>
-</div></div>
-<div class="section"><div class="section-title">Volume settimanale KM - ultime 12 sett</div><div class="chart-card"><canvas id="cVolume" height="160"></canvas></div></div>
-<div class="section"><div class="section-title">Record REALI</div><div class="grid9">
-<div class="card"><div>1 KM</div><div class="kpi-val" style="font-size:18px" id="r-1k-t">--</div><div class="kpi-sub" id="r-1k-i">--</div></div>
-<div class="card"><div>5 KM</div><div class="kpi-val" style="font-size:18px" id="r-5k-t">--</div><div class="kpi-sub" id="r-5k-i">--</div></div>
-<div class="card"><div>10 KM</div><div class="kpi-val" style="font-size:18px" id="r-10k-t">--</div><div class="kpi-sub" id="r-10k-i">--</div></div>
-<div class="card"><div>MEZZA</div><div class="kpi-val" style="font-size:18px" id="r-mezza-t">--</div><div class="kpi-sub" id="r-mezza-i">--</div></div>
-<div class="card"><div>MARATONA</div><div class="kpi-val" style="font-size:18px" id="r-mara-t">--</div><div class="kpi-sub" id="r-mara-i">--</div></div>
+<header>
+<h1>GARMIN // MATRIX COACH V3</h1>
+<span id="status">LOADING DATABASE...</span>
+</header>
+
+<div class="grid2">
+<div class="card">
+<h2>⚡ FITNESS & TRAINING STATUS</h2>
+<div class="grid2">
+<div><div class="klab">Acute Load</div><div class="kpi" id="acuteLoad">--</div><div class="small" id="acuteDesc">--</div></div>
+<div><div class="klab">Load Ratio</div><div class="kpi" id="loadRatio">--</div></div>
 </div>
-<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:10px">
-<div class="card"><div>Corsa piu lunga</div><div class="kpi-val" id="r-clunga-t">--</div><div class="kpi-sub" id="r-clunga-i">--</div></div>
-<div class="card"><div>Dislivello Corsa</div><div class="kpi-val" id="r-dcorsa-t">--</div><div class="kpi-sub" id="r-dcorsa-i">--</div></div>
-<div class="card"><div>Bici piu lunga</div><div class="kpi-val" id="r-blunga-t">--</div><div class="kpi-sub" id="r-blunga-i">--</div></div>
-<div class="card"><div>Dislivello Bici</div><div class="kpi-val" id="r-dbici-t">--</div><div class="kpi-sub" id="r-dbici-i">--</div></div>
-</div></div>
-<div class="section"><div class="section-title">Ultime 20 Attivita</div><div class="chart-card" id="attivita-box">carico...</div></div>
-<div id="chatBox" style="max-width:900px;margin:40px auto;background:#111;border-radius:16px;padding:20px;">
-<h3 style="color:#fff">Chat Coach AI - FIX Gemini 2.0</h3>
-<div><input id="apiKeyInput" placeholder="Incolla GEMINI API KEY" style="width:100%;padding:8px;border-radius:6px;background:#222;color:#fff;border:1px solid #333"><button onclick="saveKey()" style="margin-top:6px;padding:6px 12px;border-radius:6px;background:#00ff41;color:#000;border:none;font-weight:700">Salva KEY</button><span id="keyStatus" style="margin-left:10px;color:#00ff41"></span></div>
-<div id="chatLog" style="height:300px;overflow-y:auto;background:#000;padding:12px;border-radius:8px;color:#eee;font-size:14px;margin-bottom:12px;margin-top:10px"></div>
-<div style="display:flex;gap:8px;"><input id="chatInput" placeholder="Come sto andando?" style="flex:1;padding:10px;border-radius:8px;border:none;background:#222;color:#fff"><button onclick="sendChat()" style="padding:10px 18px;border-radius:8px;background:#4CAF50;color:#fff;border:none;cursor:pointer;">Invia</button></div>
-</div></div>
+<div style="margin-top:10px"><div class="klab">VO2MAX / FC RIPOSO / PESO</div><div style="font-size:12px" id="vitals">--</div></div>
+</div>
+
+<div class="card">
+<h2>⚖️ BILANCIO DEL CARICO</h2>
+<div id="bilancioBox">--</div>
+<div class="small" id="bilancioFeed" style="margin-top:6px;color:#ffaa00"></div>
+</div>
+</div>
+
+<div class="grid3">
+<div class="card"><div class="klab">HRV 7GG</div><div class="kpi" id="hrv">--</div><div class="bar"><div id="hrvBar" style="width:0%"></div></div><div class="small" id="hrvStat">--</div></div>
+<div class="card"><div class="klab">SONNO MEDIO</div><div class="kpi" id="sleep">--</div><div class="bar"><div id="sleepBar" style="width:0%"></div></div><div class="small">score</div></div>
+<div class="card"><div class="klab">BODY BATTERY / STRESS</div><div class="kpi" id="battery">--</div><div class="small" id="stress">--</div></div>
+</div>
+
+<div class="grid2">
+<div class="card">
+<h2>🧠 PRONTEZZA & RECUPERO</h2>
+<div class="grid2">
+<div><div class="klab">Readiness</div><div class="kpi" id="readiness">--</div></div>
+<div><div class="klab">Recupero</div><div class="kpi" id="recovery">--</div></div>
+</div>
+<div class="small" style="margin-top:8px" id="sleepDetails">--</div>
+</div>
+
+<div class="card">
+<h2>📊 VOLUME</h2>
+<div class="grid3">
+<div><div class="klab">Corsa</div><div class="kpi" id="runTot">--</div><div class="small">km</div></div>
+<div><div class="klab">Bici</div><div class="kpi" id="bikeTot">--</div></div>
+<div><div class="klab">Attività</div><div class="kpi" id="attCount">--</div></div>
+</div>
+<div class="small" id="lastAct" style="margin-top:8px"></div>
+</div>
+</div>
+
+<div class="card">
+<h2>🏃 ULTIME ATTIVITÀ</h2>
+<div style="overflow:auto">
+<table id="actTable"><thead><tr><th>DATA</th><th>NOME</th><th>DIST</th><th>TEMPO</th><th>DISLIVELLO</th></tr></thead><tbody></tbody></table>
+</div>
+</div>
+
+<div class="card">
+<h2>🤖 COACH GEMINI - FIX 2026</h2>
+<div class="small">Modello: gemini-2.0-flash (v1beta). Se non va, rigenera KEY su aistudio.google.com</div>
+<div id="chatLog"><div class="small">Carica API KEY poi chiedi: analizza il mio carico, come sto recuperando, cosa fare domani.</div></div>
+<input id="apiKey" placeholder="Incolla GEMINI API KEY qui" style="width:100%;background:#000;color:#6fae7a;border:1px solid #134213;padding:8px;margin-bottom:6px">
+<input id="chatInput" placeholder="Chiedi al coach...">
+<button class="btn" onclick="saveKey()">SALVA KEY</button>
+<button class="btn" style="background:#0a2a0a;color:var(--g);border:1px solid var(--g)" onclick="sendChat()">INVIA A GEMINI</button>
+<div class="small" id="modelInfo"></div>
+</div>
+
 <script>
-Chart.defaults.color='#6b8a6b';
 let DB=null;
-async function fetchDB(){
-  const urls=['./database.json','database.json','https://appassets.androidplatform.net/assets/database.json','/assets/database.json'];
-  for(let u of urls){ try{ let r=await fetch(u); if(r.ok) return await r.json(); }catch(e){} }
-  throw new Error('database.json non trovato');
-}
-function fmtTempo(sec){ if(!sec) return '--'; let m=Math.floor(sec/60); let s=Math.round(sec%60); if(m>=60){ let h=Math.floor(m/60); m=m%60; return h+'h '+m+'m'; } return m+':'+String(s).padStart(2,'0'); }
-function fmtDist(m){ return (m/1000).toFixed(2); }
-async function loadAll(){
+async function loadDB(){
+ const paths=['database.json','./database.json','app/src/main/assets/database.json','/android_asset/database.json'];
+ for(let p of paths){
   try{
-    DB=await fetchDB();
-    let attivita = DB.attivita || DB.activities || DB || [];
-    if(!Array.isArray(attivita)) attivita=[];
-    attivita.sort((a,b)=> new Date(b.inizio||0) - new Date(a.inizio||0));
-    let tot=attivita.length;
-    let dist=attivita.reduce((s,a)=>s+(a.distanza_m||0),0);
-    let dur=attivita.reduce((s,a)=>s+(a.durata_s||0),0);
-    let vo2list=attivita.filter(a=>a.vo2max_attivita); let vo2avg=vo2list.reduce((s,a)=>s+a.vo2max_attivita,0)/Math.max(1,vo2list.length);
-    document.getElementById('top-label').innerText='GARMIN // '+tot+' ATTIVITA - '+ (DB.periodo?DB.periodo.da+' > '+DB.periodo.a:'');
-    document.getElementById('badge-date').innerText=attivita[0]?.inizio?.slice(0,10)||'OFFLINE';
-    document.getElementById('kpi-tot').innerText=tot;
-    document.getElementById('kpi-tot-sub').innerText=DB.periodo?DB.periodo.da+' al '+DB.periodo.a:'';
-    document.getElementById('kpi-dist').innerText=(dist/1000).toFixed(0)+' km';
-    document.getElementById('kpi-dur').innerText=(dur/3600).toFixed(1)+' h';
-    document.getElementById('kpi-vo2').innerText=vo2avg.toFixed(1);
-    let best1k=null,best5k=null,best10k=null,bestMezza=null,bestMara=null,longestRun=null,maxElevRun=null,longestBike=null,maxElevBike=null;
-    attivita.forEach(a=>{
-      let raw=a.raw||{};
-      if(raw.fastestSplit_1000 && (!best1k||raw.fastestSplit_1000<best1k.sec)) best1k={sec:raw.fastestSplit_1000,nome:a.nome,data:a.inizio?.slice(0,10)};
-      if(raw.fastestSplit_5000 && (!best5k||raw.fastestSplit_5000<best5k.sec)) best5k={sec:raw.fastestSplit_5000,nome:a.nome,data:a.inizio?.slice(0,10)};
-      if(raw.fastestSplit_10000 && (!best10k||raw.fastestSplit_10000<best10k.sec)) best10k={sec:raw.fastestSplit_10000,nome:a.nome,data:a.inizio?.slice(0,10)};
-      if(raw.fastestSplit_21098 && (!bestMezza||raw.fastestSplit_21098<bestMezza.sec)) bestMezza={sec:raw.fastestSplit_21098,nome:a.nome,data:a.inizio?.slice(0,10)};
-      if(raw.fastestSplit_42195 && (!bestMara||raw.fastestSplit_42195<bestMara.sec)) bestMara={sec:raw.fastestSplit_42195,nome:a.nome,data:a.inizio?.slice(0,10)};
-      if((a.tipo||'').includes('running')){ if(!longestRun||a.distanza_m>longestRun.distanza_m) longestRun=a; if(!maxElevRun||(a.dislivello_positivo_m||0)>(maxElevRun.dislivello_positivo_m||0)) maxElevRun=a; }
-      if((a.tipo||'').includes('cycling')||a.tipo=='bici'){ if(!longestBike||a.distanza_m>longestBike.distanza_m) longestBike=a; if(!maxElevBike||(a.dislivello_positivo_m||0)>(maxElevBike.dislivello_positivo_m||0)) maxElevBike=a; }
-    });
-    document.getElementById('r-1k-t').innerText=best1k?fmtTempo(best1k.sec):'--'; document.getElementById('r-1k-i').innerText=best1k?best1k.nome+' - '+best1k.data:'--';
-    document.getElementById('r-5k-t').innerText=best5k?fmtTempo(best5k.sec):'--'; document.getElementById('r-5k-i').innerText=best5k?best5k.nome+' - '+best5k.data:'--';
-    document.getElementById('r-10k-t').innerText=best10k?fmtTempo(best10k.sec):'--'; document.getElementById('r-10k-i').innerText=best10k?best10k.nome+' - '+best10k.data:'--';
-    document.getElementById('r-mezza-t').innerText=bestMezza?fmtTempo(bestMezza.sec):'--'; document.getElementById('r-mezza-i').innerText=bestMezza?bestMezza.nome+' - '+bestMezza.data:'--';
-    document.getElementById('r-mara-t').innerText=bestMara?fmtTempo(bestMara.sec):'--'; document.getElementById('r-mara-i').innerText=bestMara?bestMara.nome+' - '+bestMara.data:'--';
-    document.getElementById('r-clunga-t').innerText=longestRun?fmtDist(longestRun.distanza_m)+' km':'--'; document.getElementById('r-clunga-i').innerText=longestRun?longestRun.nome+' - '+longestRun.inizio?.slice(0,10):'--';
-    document.getElementById('r-dcorsa-t').innerText=maxElevRun?(maxElevRun.dislivello_positivo_m+' m'):'--'; document.getElementById('r-dcorsa-i').innerText=maxElevRun?maxElevRun.nome+' - '+maxElevRun.inizio?.slice(0,10):'--';
-    document.getElementById('r-blunga-t').innerText=longestBike?fmtDist(longestBike.distanza_m)+' km':'--'; document.getElementById('r-blunga-i').innerText=longestBike?longestBike.nome+' - '+longestBike.inizio?.slice(0,10):'--';
-    document.getElementById('r-dbici-t').innerText=maxElevBike?(maxElevBike.dislivello_positivo_m+' m'):'--'; document.getElementById('r-dbici-i').innerText=maxElevBike?maxElevBike.nome+' - '+maxElevBike.inizio?.slice(0,10):'--';
-    document.getElementById('attivita-box').innerHTML=attivita.slice(0,20).map(a=>'<div class="row"><span>'+a.inizio?.slice(0,16)+' - '+a.tipo+' - '+a.nome+'</span><b>'+fmtDist(a.distanza_m)+'km - '+Math.round((a.durata_s||0)/60)+'min</b></div>').join('');
-    let weekly={}; attivita.forEach(a=>{ let d=new Date(a.inizio); if(isNaN(d)) return; let y=d.getFullYear(); let jan1=new Date(y,0,1); let week=Math.ceil((((d-jan1)/86400000)+jan1.getDay()+1)/7); let key=y+'-W'+String(week).padStart(2,'0'); weekly[key]=(weekly[key]||0)+(a.distanza_m||0)/1000; });
-    let wKeys=Object.keys(weekly).sort().slice(-12); let wVals=wKeys.map(k=>weekly[k].toFixed(1));
-    new Chart(document.getElementById('cVolume'),{type:'bar',data:{labels:wKeys,datasets:[{label:'KM',data:wVals,backgroundColor:'#00ff41'}]},options:{plugins:{legend:{display:false}},scales:{y:{beginAtZero:true}}}});
-  }catch(e){ document.getElementById('top-label').innerText='ERRORE: '+e.message; document.getElementById('attivita-box').innerText='Errore: '+e; console.error(e); }
+   let r=await fetch(p); if(!r.ok) continue;
+   let j=await r.json(); if(j.attivita||j.giorni){ DB=j; document.getElementById('status').innerText='DB OK // '+ (j.attivita?.length||0)+' ATT / '+ (j.giorni?.length||0)+' GIORNI'; render(); return; }
+  }catch(e){}
+ }
+ document.getElementById('status').innerText='DB NON TROVATO - Metti database.json in root';
 }
-loadAll();
-</script>
-<script>
-function saveKey(){ let k=document.getElementById('apiKeyInput').value.trim(); if(k){ localStorage.setItem('gemini_key',k); document.getElementById('keyStatus').innerText='KEY salvata!'; document.getElementById('apiKeyInput').value=''; } }
-(function(){ let k=localStorage.getItem('gemini_key'); if(k) document.getElementById('keyStatus').innerText='KEY presente ✓'; })();
+function avg(arr){ if(!arr||!arr.length) return 0; return arr.reduce((a,b)=>a+b,0)/arr.length; }
+function render(){
+ if(!DB) return;
+ // VITALS ultimi giorni
+ let giorni=[...(DB.giorni||[])].sort((a,b)=>new Date(b.data)-new Date(a.data));
+ let last14=giorni.slice(0,14);
+ let hrvAvg=Math.round(avg(last14.map(g=>g.hrv||g.hrv_medio||0).filter(v=>v>0)));
+ let sleepAvg=Math.round(avg(last14.map(g=>g.sonno_punteggio||g.sleep_score||0).filter(v=>v>0)));
+ let battAvg=Math.round(avg(last14.map(g=>g.body_battery_max||g.body_battery||0).filter(v=>v>0)));
+ let stressAvg=Math.round(avg(last14.map(g=>g.stress_medio||0).filter(v=>v>0)));
+ let readyAvg=Math.round(avg(last14.map(g=>g.readiness||0).filter(v=>v>0)));
+ let vo2=giorni.find(g=>g.vo2max)?.vo2max || DB.vo2max || '--';
+ let fcr=giorni.find(g=>g.fc_riposo)?.fc_riposo || '--';
+ let peso=giorni.find(g=>g.peso_kg)?.peso_kg || DB.peso_kg || '--';
+
+ document.getElementById('hrv').innerText=hrvAvg||'--';
+ document.getElementById('hrvBar').style.width=Math.min(100,hrvAvg)+'%';
+ document.getElementById('sleep').innerText=sleepAvg||'--';
+ document.getElementById('sleepBar').style.width=sleepAvg+'%';
+ document.getElementById('battery').innerText=battAvg||'--';
+ document.getElementById('stress').innerText='Stress avg: '+(stressAvg||'--')+' | Readiness: '+(readyAvg||'--');
+ document.getElementById('readiness').innerText=readyAvg||'--';
+ document.getElementById('vitals').innerText=`VO2: ${vo2} | FCR: ${fcr} | PESO: ${peso}kg`;
+ document.getElementById('acuteLoad').innerText=DB.bilancio_carico?.acute_load ?? DB.acute_load ?? '--';
+ document.getElementById('loadRatio').innerText=DB.bilancio_carico?.load_ratio ?? '--';
+ document.getElementById('bilancioFeed').innerText=DB.bilancio_carico?.feedback || DB.bilancio_carico?.descrizione || '';
+ // bilancio
+ let b=DB.bilancio_carico||{};
+ let box=document.getElementById('bilancioBox');
+ let low=b.low_aerobic ?? b.aerobic_low ?? 0;
+ let high=b.high_aerobic ?? b.aerobic_high ?? 0;
+ let an=b.anaerobic ?? 0;
+ box.innerHTML=`<div class="klab">Anaerobico ${an}</div><div class="bar"><div style="width:${Math.min(100,an*20)}%"></div></div><div class="klab">Aerobico Alto ${high}</div><div class="bar"><div style="width:${Math.min(100,high*5)}%"></div></div><div class="klab">Aerobico Basso ${low}</div><div class="bar"><div style="width:${Math.min(100,low*2)}%;background:${low<100?'#ff4444':'var(--g)'}"></div></div>`;
+ // volume
+ let runKm=(DB.attivita||[]).filter(a=>(a.tipo||'').toLowerCase().includes('corsa')||(a.sport||'').toLowerCase().includes('run')).reduce((s,a)=>s+(a.distanza_m||0),0)/1000;
+ let bikeKm=(DB.attivita||[]).filter(a=>(a.tipo||'').toLowerCase().includes('bici')||(a.sport||'').toLowerCase().includes('bike')||(a.sport||'').toLowerCase().includes('cycling')).reduce((s,a)=>s+(a.distanza_m||0),0)/1000;
+ document.getElementById('runTot').innerText=runKm.toFixed(0);
+ document.getElementById('bikeTot').innerText=bikeKm.toFixed(0);
+ document.getElementById('attCount').innerText=DB.attivita?.length||0;
+ // tabella
+ let tbody=document.querySelector('#actTable tbody'); tbody.innerHTML='';
+ (DB.attivita||[]).slice(0,20).forEach(a=>{
+   let data=(a.data||a.start_time||'').slice(0,10);
+   let nome=a.nome||a.name||a.tipo||'Attivita';
+   let dist=a.distanza_m? (a.distanza_m/1000).toFixed(1)+' km' : (a.distanza_km? a.distanza_km+' km':'--');
+   let tempo=a.durata||a.duration||'--';
+   if(typeof tempo==='number') tempo=Math.round(tempo/60)+' min';
+   let disl=a.dislivello_m??a.elevation_gain??a.ascesa??'--';
+   if(disl!=='--') disl=disl+' m'; else disl='--';
+   tbody.innerHTML+=`<tr><td>${data}</td><td>${nome}</td><td>${dist}</td><td>${tempo}</td><td>${disl}</td></tr>`;
+ });
+}
+function saveKey(){ let k=document.getElementById('apiKey').value.trim(); if(k){ localStorage.setItem('gemini_key',k); alert('KEY salvata'); document.getElementById('modelInfo').innerText='KEY OK'; } }
+function loadKey(){ let k=localStorage.getItem('gemini_key'); if(k) document.getElementById('apiKey').value=k; }
 async function sendChat(){
-  const input=document.getElementById('chatInput'); const log=document.getElementById('chatLog'); const key=localStorage.getItem('gemini_key');
-  if(!key){ alert('Metti API KEY'); return; }
-  const msg=input.value.trim(); if(!msg) return;
-  log.innerHTML+='<div style="margin:8px 0"><b>Tu:</b> '+msg+'</div>'; input.value=''; log.scrollTop=log.scrollHeight;
-  log.innerHTML+='<div id="tmp" style="color:#888">Coach...</div>';
-  try{
-    let ctx=''; if(DB && DB.attivita){ let ult=DB.attivita.slice(0,3).map(a=>({nome:a.nome,dist:(a.distanza_m/1000).toFixed(2)})); ctx='Ultime: '+JSON.stringify(ult); }
-    const models=['gemini-2.0-flash','gemini-2.0-flash-exp','gemini-1.5-flash-latest','gemini-1.5-flash-001'];
-    let last=''; for(let m of models){ try{ let r=await fetch('https://generativelanguage.googleapis.com/v1/models/'+m+':generateContent?key='+key,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({contents:[{parts:[{text:'Sei coach running. '+ctx+' Domanda: '+msg+' Rispondi in italiano breve.'}]}]})}); let j=await r.json(); if(j.error){ last=j.error.message; continue; } let reply=j.candidates?.[0]?.content?.parts?.[0]?.text; if(reply){ document.getElementById('tmp').remove(); log.innerHTML+='<div style="margin:8px 0;background:#1a1a1a;padding:8px;border-radius:6px"><b>Coach ('+m+'):</b> '+reply.replace(/\n/g,'<br>')+'</div>'; log.scrollTop=log.scrollHeight; return; } }catch(e){ last=e.message; } }
-    document.getElementById('tmp').innerHTML='Errore: '+last;
-  }catch(e){ document.getElementById('tmp').innerHTML='Errore: '+e; }
+ const input=document.getElementById('chatInput'); const log=document.getElementById('chatLog');
+ const key=localStorage.getItem('gemini_key'); if(!key){ alert('Incolla API KEY e salva'); return; }
+ const msg=input.value.trim(); if(!msg) return;
+ log.innerHTML+=`<div style="margin:8px 0"><span class="badge">TU</span> ${msg}</div>`; input.value=''; log.scrollTop=log.scrollHeight;
+ log.innerHTML+=`<div id="tmp" class="small">Coach sta pensando...</div>`;
+ try{
+  let ctx='';
+  if(DB){
+   let g=(DB.giorni||[]).slice(-7); ctx=`Giorni recenti HRV:${g.map(x=>x.hrv).join(',')} Sleep:${g.map(x=>x.sonno_punteggio).join(',')} BB:${g.map(x=>x.body_battery_max).join(',')} Bilancio:${JSON.stringify(DB.bilancio_carico)} Ultime attivita:${(DB.attivita||[]).slice(0,3).map(a=>a.nome+' '+(a.distanza_m/1000).toFixed(1)+'km').join(' | ')}`;
+  }
+  const models=['gemini-2.0-flash','gemini-2.5-flash','gemini-1.5-flash-latest'];
+  let lastErr='';
+  for(let m of models){
+   try{
+    document.getElementById('modelInfo').innerText='Provo modello: '+m;
+    let r=await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${m}:generateContent?key=${key}`,{
+     method:'POST',headers:{'Content-Type':'application/json'},
+     body:JSON.stringify({contents:[{parts:[{text:`Sei coach Garmin esperto. Dati utente: ${ctx}. Domanda: ${msg}. Rispondi in italiano, breve, pratico, con numeri.`}]}]})
+    });
+    let j=await r.json();
+    if(j.error){ lastErr=j.error.message; console.log(m,j.error); continue; }
+    let reply=j.candidates?.[0]?.content?.parts?.[0]?.text;
+    if(reply){
+     document.getElementById('tmp').remove();
+     log.innerHTML+=`<div style="margin:8px 0;background:#0f1f0f;padding:8px;border:1px solid #00ff41"><span class="badge">COACH ${m}</span><br>${reply.replace(/\n/g,'<br>')}</div>`;
+     log.scrollTop=log.scrollHeight; document.getElementById('modelInfo').innerText='OK con '+m; return;
+    }
+   }catch(e){ lastErr=e.message; }
+  }
+  document.getElementById('tmp').innerHTML='Errore Gemini: '+lastErr+'<br>Rigenera KEY su aistudio.google.com';
+ }catch(e){ document.getElementById('tmp').innerHTML='Errore: '+e; }
 }
-document.getElementById('chatInput').addEventListener('keydown',e=>{if(e.key==='Enter')sendChat()});
+loadKey(); loadDB();
 </script>
 </body>
 </html>
