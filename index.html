@@ -1,68 +1,47 @@
 <!DOCTYPE html>
-<html lang="it"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>MATRIX V10 AUTO</title><script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<style>
-body{background:#020802;color:#c8ffc8;font-family:monospace;padding:8px;font-size:11px}
-.top{border:1px solid #00ff41;background:#081408;padding:10px;margin-bottom:8px;display:flex;justify-content:space-between}
-.card{border:1px solid #144214;background:#0a1a0a;border-left:3px solid #00ff41;padding:10px;margin-bottom:8px}
-.grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}.grid2{display:grid;grid-template-columns:1fr 1fr;gap:6px}.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px}
-.k{font-size:20px;color:#00ff41;font-weight:bold}.l{font-size:9px;color:#6fa87a;text-transform:uppercase}
-.bar{height:10px;background:#051405;margin:4px 0;border:1px solid #143a15}.bar div{height:100%}
-canvas{width:100%!important;height:110px!important}
-table{width:100%;border-collapse:collapse}th{font-size:9px;color:#6fa87a;text-align:left;border-bottom:1px solid #143a15;padding:4px}td{padding:6px 4px;border-bottom:1px solid #0d2810;font-size:11px}
-#dbg{color:#ff5555;border:1px dashed #f00;padding:6px;margin-bottom:6px;white-space:pre-wrap}
-</style></head><body>
-<div class="top"><b>GARMIN // MATRIX V10 AUTO</b><span id="st">CARICAMENTO...</span></div>
-<div id="dbg"></div>
+<html lang="it"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>MATRIX V11 AUTO</title><script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>body{background:#020802;color:#c8ffc8;font-family:monospace;padding:8px;font-size:11px}.top{border:1px solid #00ff41;background:#081408;padding:10px;margin-bottom:8px;display:flex;justify-content:space-between}.card{border:1px solid #144214;background:#0a1a0a;border-left:3px solid #00ff41;padding:10px;margin-bottom:8px}.grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}.grid2{display:grid;grid-template-columns:1fr 1fr;gap:6px}.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px}.k{font-size:20px;color:#00ff41;font-weight:bold}.l{font-size:9px;color:#6fa87a;text-transform:uppercase}.bar{height:10px;background:#051405;margin:4px 0;border:1px solid #143a15}.bar div{height:100%}canvas{width:100%!important;height:110px!important}table{width:100%;border-collapse:collapse}th{font-size:9px;color:#6fa87a;text-align:left;border-bottom:1px solid #143a15;padding:4px}td{padding:6px 4px;border-bottom:1px solid #0d2810;font-size:11px}#dbg{background:#1a0a0a;border:1px solid #f00;color:#ffaaaa;padding:8px;margin-bottom:8px;white-space:pre-wrap}</style></head><body>
+<div class="top"><b>GARMIN // MATRIX V11 AUTO</b><span id="st">CARICAMENTO...</span></div>
+<div id="dbg">Avvio...</div>
 <div id="ui" style="display:none">
-<div class="grid4"><div class="card"><div class="l">⚡ ACUTE LOAD (carico_acuto)</div><div class="k" id="kAcute">--</div></div><div class="card"><div class="l">📊 STATUS</div><div class="k" id="kStatus" style="font-size:11px">--</div><div class="l" id="kFeed"></div></div><div class="card"><div class="l">💜 VO2MAX</div><div class="k" id="kVo2">--</div></div><div class="card"><div class="l">⚖️ PESO (peso_kg/1000)</div><div class="k" id="kPeso">--</div></div></div>
-<div class="card"><h3>⚖️ BILANCIO CARICO RAW</h3><div class="grid3"><div><div class="l">Anaerobico <b id="vAna">0</b></div><div class="bar"><div id="bAna" style="background:#d946ef;width:0%"></div></div><div class="l" id="tAna">--</div></div><div><div class="l">Aerobico Alto <b id="vAlto">0</b></div><div class="bar"><div id="bAlto" style="background:#f59e0b;width:0%"></div></div><div class="l" id="tAlto">--</div></div><div><div class="l">Aerobico Basso <b id="vBasso">0</b></div><div class="bar"><div id="bBasso" style="background:#00ff41;width:0%"></div></div><div class="l" id="tBasso">--</div></div></div></div>
-<div class="grid4"><div class="card"><div class="l">🧠 HRV</div><div class="k" id="kHrv">--</div><canvas id="chHrv"></canvas></div><div class="card"><div class="l">💤 SONNO SCORE</div><div class="k" id="kSleep">--</div><canvas id="chSleep"></canvas></div><div class="card"><div class="l">🔋 BODY BATTERY</div><div class="k" id="kBatt">--</div><canvas id="chBatt"></canvas></div><div class="card"><div class="l">😰 READINESS</div><div class="k" id="kRead">--</div><canvas id="chRead"></canvas></div></div>
-<div class="grid2"><div class="card"><h3>❤️ FC RIPOSO (fc_riposo)</h3><canvas id="chRhr"></canvas></div><div class="card"><h3>🌙 SONNO ORE (sonno_totale_s/3600)</h3><canvas id="chDur"></canvas></div></div>
-<div class="grid3"><div class="card"><div class="l">🏃 CORSA TOT (distanza_m)</div><div class="k" id="kRun">--</div></div><div class="card"><div class="l">🚴 BICI TOT</div><div class="k" id="kBike">--</div></div><div class="card"><div class="l">⛰️ DISLIVELLO (dislivello_positivo_m)</div><div class="k" id="kElev">--</div></div></div>
-<div class="card"><h3>🏃 ULTIME 20 - nome / distanza_m / durata_s / dislivello_positivo_m</h3><table><thead><tr><th>DATA</th><th>NOME</th><th>DIST</th><th>TEMPO</th><th>DISL</th></tr></thead><tbody id="tb"></tbody></table></div>
+<div class="grid4"><div class="card"><div class="l">ACUTE LOAD</div><div class="k" id="kAcute">--</div></div><div class="card"><div class="l">STATUS</div><div class="k" id="kStatus" style="font-size:11px">--</div><div class="l" id="kFeed"></div></div><div class="card"><div class="l">VO2MAX</div><div class="k" id="kVo2">--</div></div><div class="card"><div class="l">PESO</div><div class="k" id="kPeso">--</div></div></div>
+<div class="card"><h3>BILANCIO CARICO RAW</h3><div class="grid3"><div><div class="l">Ana <b id="vAna">0</b></div><div class="bar"><div id="bAna" style="background:#d946ef;width:0%"></div></div><div class="l" id="tAna">--</div></div><div><div class="l">Alto <b id="vAlto">0</b></div><div class="bar"><div id="bAlto" style="background:#f59e0b;width:0%"></div></div><div class="l" id="tAlto">--</div></div><div><div class="l">Basso <b id="vBasso">0</b></div><div class="bar"><div id="bBasso" style="background:#00ff41;width:0%"></div></div><div class="l" id="tBasso">--</div></div></div></div>
+<div class="grid4"><div class="card"><div class="l">HRV</div><div class="k" id="kHrv">--</div><canvas id="chHrv"></canvas></div><div class="card"><div class="l">SONNO</div><div class="k" id="kSleep">--</div><canvas id="chSleep"></canvas></div><div class="card"><div class="l">BATTERY</div><div class="k" id="kBatt">--</div><canvas id="chBatt"></canvas></div><div class="card"><div class="l">READINESS</div><div class="k" id="kRead">--</div><canvas id="chRead"></canvas></div></div>
+<div class="grid2"><div class="card"><h3>FC RIPOSO</h3><canvas id="chRhr"></canvas></div><div class="card"><h3>SONNO ORE</h3><canvas id="chDur"></canvas></div></div>
+<div class="grid3"><div class="card"><div class="l">CORSA</div><div class="k" id="kRun">--</div></div><div class="card"><div class="l">BICI</div><div class="k" id="kBike">--</div></div><div class="card"><div class="l">DISLIVELLO</div><div class="k" id="kElev">--</div></div></div>
+<div class="card"><h3>ULTIME 20</h3><table><thead><tr><th>DATA</th><th>NOME</th><th>DIST</th><th>TEMPO</th><th>DISL</th></tr></thead><tbody id="tb"></tbody></table></div>
 </div>
 <script>
-let DB=null;
-async function tryLoad(url, dbg){
- try{
-  dbg.textContent+='Provo '+url+'...\n';
-  let r=await fetch(url,{cache:'no-store'});
-  if(!r.ok){ dbg.textContent+=' -> HTTP '+r.status+'\n'; return null; }
-  let j=await r.json();
-  if(j.attivita && j.giorni){ dbg.textContent+=' -> OK '+j.attivita.length+' att\n'; return j; }
-  dbg.textContent+=' -> JSON senza dati\n'; return null;
- }catch(e){ dbg.textContent+=' -> ERR '+e.message+'\n'; return null; }
-}
 async function load(){
- let dbg=document.getElementById('dbg');
- let urls=['database.json','./database.json','file:///android_asset/database.json','/android_asset/database.json'];
- for(let u of urls){ let j=await tryLoad(u,dbg); if(j){DB=j; break;} }
- if(!DB){ document.getElementById('st').innerText='DB NON TROVATO - assicurati che database.json sia in app/src/main/assets/'; return; }
- dbg.style.display='none';
- document.getElementById('st').innerText=DB.attivita.length+' ATT / '+DB.giorni.length+' GG';
- document.getElementById('ui').style.display='block';
- render();
-}
-function fmtSec(s){if(!s)return'--';let h=Math.floor(s/3600),m=Math.floor((s%3600)/60);return (h?h+'h ':'')+m+'m';}
-function render(){
- let findLast=k=>{for(let i=DB.giorni.length-1;i>=0;i--) if(DB.giorni[i][k]!=null) return DB.giorni[i][k]; return null;};
- let last14=DB.giorni.filter(g=>g.hrv!=null).slice(-14);
- document.getElementById('kAcute').innerText=findLast('carico_acuto')||'--';
- document.getElementById('kStatus').innerText=findLast('training_status')||DB.bilancio_carico.feedback;
- document.getElementById('kFeed').innerText=DB.bilancio_carico.messaggio;
- document.getElementById('kVo2').innerText=findLast('vo2max')||'--';
- let p=findLast('peso_kg'); document.getElementById('kPeso').innerText=p? (p>200?(p/1000).toFixed(1)+' kg':p+' kg'):'--';
- let bc=DB.bilancio_carico;
- document.getElementById('vAna').innerText=bc.anaerobico; document.getElementById('vAlto').innerText=bc.aerobico_alto; document.getElementById('vBasso').innerText=bc.aerobico_basso;
- document.getElementById('tAna').innerText=bc.target_ana_min+'-'+bc.target_ana_max; document.getElementById('tAlto').innerText=bc.target_alto_min+'-'+bc.target_alto_max; document.getElementById('tBasso').innerText=bc.target_basso_min+'-'+bc.target_basso_max;
- document.getElementById('bAna').style.width=Math.min(100,bc.anaerobico/bc.target_ana_max*100)+'%'; document.getElementById('bAlto').style.width=Math.min(100,bc.aerobico_alto/bc.target_alto_max*100)+'%'; document.getElementById('bBasso').style.width=Math.min(100,bc.aerobico_basso/bc.target_basso_max*100)+'%';
- document.getElementById('kHrv').innerText=(last14[last14.length-1]?.hrv||'--')+' ms'; document.getElementById('kSleep').innerText=last14[last14.length-1]?.sonno_punteggio||'--'; document.getElementById('kBatt').innerText=last14[last14.length-1]?.body_battery_max||'--'; document.getElementById('kRead').innerText=last14[last14.length-1]?.readiness||'--';
- let labels=last14.map(g=>g.data.slice(5)); let mk=(id,data,col)=>{new Chart(document.getElementById(id),{type:'line',data:{labels,[STRIPPED]
- mk('chHrv',last14.map(g=>g.hrv),'#00ff41'); mk('chSleep',last14.map(g=>g.sonno_punteggio),'#facc15'); mk('chBatt',last14.map(g=>g.body_battery_max),'#22c55e'); mk('chRead',last14.map(g=>g.readiness),'#fb923c'); mk('chRhr',last14.map(g=>g.fc_riposo),'#f87171'); mk('chDur',last14.map(g=>g.sonno_totale_s? (g.sonno_totale_s/3600).toFixed(1):0),'#a78bfa');
- let runM=0,bikeM=0,elev=0; DB.attivita.forEach(a=>{if(a.tipo==='running')runM+=a.distanza_m||0; else if(a.tipo==='cycling')bikeM+=a.distanza_m||0; elev+=a.dislivello_positivo_m||0;});
- document.getElementById('kRun').innerText=(runM/1000).toFixed(0)+' km'; document.getElementById('kBike').innerText=(bikeM/1000).toFixed(0)+' km'; document.getElementById('kElev').innerText=Math.round(elev)+' m';
- let tb=document.getElementById('tb'); tb.innerHTML=''; DB.attivita.slice(0,20).forEach(a=>{tb.innerHTML+=`<tr><td>${a.inizio.slice(0,10)}</td><td>${a.nome}</td><td>${(a.distanza_m/1000).toFixed(2)} km</td><td>${fmtSec(a.durata_s)}</td><td>${a.dislivello_positivo_m||0} m</td></tr>`;});
+ let dbg=document.getElementById('dbg'); let st=document.getElementById('st');
+ try{
+  dbg.textContent='Fetch database.json...\n';
+  let r=await fetch('database.json',{cache:'no-store'});
+  dbg.textContent+='Status: '+r.status+' '+r.statusText+'\n';
+  if(!r.ok) throw new Error('HTTP '+r.status);
+  let DB=await r.json();
+  dbg.textContent+='JSON OK: '+DB.attivita.length+' att, '+DB.giorni.length+' giorni\n';
+  dbg.style.display='none';
+  st.textContent=DB.attivita.length+' ATT / '+DB.giorni.length+' GG';
+  document.getElementById('ui').style.display='block';
+  let findLast=k=>{for(let i=DB.giorni.length-1;i>=0;i--) if(DB.giorni[i][k]!=null) return DB.giorni[i][k]; return null;};
+  let last14=DB.giorni.filter(g=>g.hrv!=null).slice(-14);
+  document.getElementById('kAcute').innerText=findLast('carico_acuto')||'--';
+  document.getElementById('kStatus').innerText=findLast('training_status')||DB.bilancio_carico.feedback;
+  document.getElementById('kFeed').innerText=DB.bilancio_carico.messaggio;
+  document.getElementById('kVo2').innerText=findLast('vo2max')||'--';
+  let p=findLast('peso_kg'); document.getElementById('kPeso').innerText=p? (p>200?(p/1000).toFixed(1)+' kg':p+' kg'):'--';
+  let bc=DB.bilancio_carico;
+  document.getElementById('vAna').innerText=bc.anaerobico; document.getElementById('vAlto').innerText=bc.aerobico_alto; document.getElementById('vBasso').innerText=bc.aerobico_basso;
+  document.getElementById('tAna').innerText=bc.target_ana_min+'-'+bc.target_ana_max; document.getElementById('tAlto').innerText=bc.target_alto_min+'-'+bc.target_alto_max; document.getElementById('tBasso').innerText=bc.target_basso_min+'-'+bc.target_basso_max;
+  document.getElementById('bAna').style.width=Math.min(100,bc.anaerobico/bc.target_ana_max*100)+'%'; document.getElementById('bAlto').style.width=Math.min(100,bc.aerobico_alto/bc.target_alto_max*100)+'%'; document.getElementById('bBasso').style.width=Math.min(100,bc.aerobico_basso/bc.target_basso_max*100)+'%';
+  document.getElementById('kHrv').innerText=(last14[last14.length-1]?.hrv||'--')+' ms'; document.getElementById('kSleep').innerText=last14[last14.length-1]?.sonno_punteggio||'--'; document.getElementById('kBatt').innerText=last14[last14.length-1]?.body_battery_max||'--'; document.getElementById('kRead').innerText=last14[last14.length-1]?.readiness||'--';
+  let labels=last14.map(g=>g.data.slice(5)); let mk=(id,data,col)=>{new Chart(document.getElementById(id),{type:'line',data:{labels,datasets:[{data,borderColor:col,tension:0.3,pointRadius:0}]},options:{plugins:{legend:{display:false}},scales:{x:{display:false},y:{display:false}}}})};
+  mk('chHrv',last14.map(g=>g.hrv),'#00ff41'); mk('chSleep',last14.map(g=>g.sonno_punteggio),'#facc15'); mk('chBatt',last14.map(g=>g.body_battery_max),'#22c55e'); mk('chRead',last14.map(g=>g.readiness),'#fb923c'); mk('chRhr',last14.map(g=>g.fc_riposo),'#f87171'); mk('chDur',last14.map(g=>g.sonno_totale_s? (g.sonno_totale_s/3600).toFixed(1):0),'#a78bfa');
+  let runM=0,bikeM=0,elev=0; DB.attivita.forEach(a=>{if(a.tipo==='running')runM+=a.distanza_m||0; else if(a.tipo==='cycling')bikeM+=a.distanza_m||0; elev+=a.dislivello_positivo_m||0;});
+  document.getElementById('kRun').innerText=(runM/1000).toFixed(0)+' km'; document.getElementById('kBike').innerText=(bikeM/1000).toFixed(0)+' km'; document.getElementById('kElev').innerText=Math.round(elev)+' m';
+  let tb=document.getElementById('tb'); tb.innerHTML=''; DB.attivita.slice(0,20).forEach(a=>{tb.innerHTML+=`<tr><td>${a.inizio.slice(0,10)}</td><td>${a.nome}</td><td>${(a.distanza_m/1000).toFixed(2)} km</td><td>${Math.floor((a.durata_s||0)/60)}m</td><td>${a.dislivello_positivo_m||0} m</td></tr>`;});
+ }catch(e){ dbg.textContent+='ERRORE: '+e.message+'\n'+e.stack; st.textContent='ERRORE'; }
 }
 load();
 </script></body></html>
