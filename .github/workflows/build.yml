@@ -24,12 +24,10 @@ jobs:
           if [ -f index.html ]; then cp index.html app/src/main/assets/; else echo '<html><body>Garmin</body></html>' > app/src/main/assets/index.html; fi
           if [ -f database.json ]; then cp database.json app/src/main/assets/; fi
           if [ -n "$GEMINI_KEY" ]; then
-            echo "SECRET TROVATA len=${#GEMINI_KEY} primi 6 chars=${GEMINI_KEY:0:6}"
-            # sed con | per non rompere con caratteri della key
+            echo "SECRET TROVATA len=${#GEMINI_KEY}"
             sed -i "s|__GEMINI_KEY__|${GEMINI_KEY}|g" app/src/main/assets/index.html
-            if grep -q "__GEMINI_KEY__" app/src/main/assets/index.html; then echo "ERRORE: placeholder ancora presente"; else echo "OK INJECTION FATTA"; fi
           else
-            echo "SECRET NON TROVATA - controlla Settings > Secrets > GEMINI_API_KEY"
+            echo "SECRET NON TROVATA"
             sed -i "s|__GEMINI_KEY__||g" app/src/main/assets/index.html
           fi
           echo "include ':app'" > settings.gradle
@@ -47,7 +45,7 @@ jobs:
           android {
             namespace 'com.garminmatrix'
             compileSdk 34
-            defaultConfig { applicationId "com.garminmatrix"; minSdk 24; targetSdk 34; versionCode 31; versionName "1.9-V31-fix" }
+            defaultConfig { applicationId "com.garminmatrix"; minSdk 24; targetSdk 34; versionCode 32; versionName "1.9-V32-fix" }
           }
           dependencies { 
             implementation 'androidx.appcompat:appcompat:1.6.1'
@@ -111,5 +109,5 @@ jobs:
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: GarminMatrix-V31-APK
+          name: GarminMatrix-V32-APK
           path: app/build/outputs/apk/debug/*.apk
