@@ -1,158 +1,47 @@
-<!DOCTYPE html><html lang="it"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>RAZIEL V33 FIX</title><style>:root{--g:#00ff41;--b:rgba(0,255,65,0.55)}*{box-sizing:border-box}body{margin:0;background:#030a03;color:#c8f0c8;font-family:monospace;font-size:10px}.top{padding:8px 12px;display:flex;justify-content:space-between;background:#081208;border-bottom:1px solid var(--b);color:var(--g);font-size:9px}.sec{margin:12px 8px}.t{color:var(--g);font-size:9px;letter-spacing:1px;margin-bottom:6px;font-weight:800}.grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}.grid5{display:grid;grid-template-columns:repeat(5,1fr);gap:6px}.grid6{display:grid;grid-template-columns:repeat(6,1fr);gap:6px}.grid2{display:grid;grid-template-columns:1fr 1fr;gap:6px;align-items:start}.card{background:linear-gradient(180deg,#0e1e0e,#081208);border:1px solid var(--b);border-radius:8px;padding:8px;overflow:hidden}.card.chart{padding:6px 6px 2px 6px;display:flex;flex-direction:column}.lb{font-size:7px;color:#6b8a6b;text-transform:uppercase;flex-shrink:0}.v{font-size:18px;font-weight:800;color:#fff;margin-top:2px}.sub{font-size:7px;color:#6b8a6b;word-break:break-all}.barH{height:8px;background:#051405;border:1px solid #143a15;border-radius:4px;overflow:hidden;margin-top:4px}.barH div{height:100%}canvas{width:100%;height:100%;display:block}.ch{height:135px;flex-shrink:0}.chBig{height:155px;flex-shrink:0}.volWrap{height:265px;flex-shrink:0}.row{display:flex;justify-content:space-between;padding:6px;border-bottom:1px solid #102410;font-size:10px}.bTop{font-size:7px;background:#0f1f0f;border:1px solid var(--g);padding:2px 6px;border-radius:10px;color:var(--g)}#dbg{border:1px solid red;color:#ffaaaa;padding:6px;margin:6px;white-space:pre-wrap;border-radius:6px}.legend{display:flex;gap:10px;flex-wrap:wrap;margin-top:4px;justify-content:center;flex-shrink:0}.legend span{display:flex;align-items:center;gap:4px;font-size:8px}.dot{width:14px;height:8px;display:inline-block}</style></head><body>
-<div class="top"><div id="top">CARICAMENTO...</div><div><span class="bTop" id="dBadge">--</span> <span class="bTop">Raziel V33</span></div></div>
-<div id="dbg">Avvio V33...</div><div id="ui" style="display:none">
-<div class="sec"><div class="t">● Forma & Training</div><div class="grid4"><div class="card"><div class="lb">⚙️ Sovraccarico</div><div class="v" id="sov">--</div><div class="sub">Acuto/Cronico</div></div><div class="card"><div class="lb">⚡ Prontezza</div><div class="v" id="pron">--</div><div class="sub">Readiness</div></div><div class="card"><div class="lb">📊 Bilancio</div><div class="v" style="font-size:14px" id="bilF">--</div><div class="sub" id="bilSub">--</div></div><div class="card"><div class="lb">💜 VO2 Max</div><div class="v" id="vo2">--</div><div class="sub">Stimato 7gg</div></div></div><div class="grid2" style="margin-top:6px"><div class="card chart"><div class="lb">VO2 MAX - BASE 0</div><div class="ch chBig"><canvas id="cvVo2"></canvas></div></div><div class="card chart"><div class="lb">BILANCIO CARICO - BASE 0</div><div class="ch chBig"><canvas id="cvBil"></canvas></div></div></div></div>
-<div class="sec"><div class="card"><div style="display:flex;justify-content:space-between"><div class="lb" style="color:var(--g);font-weight:800">BILANCIO DEL CARICO - Ultimi 28gg al <span id="per">--</span></div><div class="lb">Garmin API</div></div><div style="margin-top:8px"><div style="display:flex;justify-content:space-between"><span style="font-size:9px">💜 Anaerobico</span><span id="vAna" style="color:#b084ff">--</span></div><div class="barH"><div id="barAna" style="background:#b084ff;width:7%"></div></div></div><div style="margin-top:6px"><div style="display:flex;justify-content:space-between"><span style="font-size:9px">🔥 Aerobico alto</span><span id="vAlto" style="color:#ffb84d">--</span></div><div class="barH"><div id="barAlto" style="background:#ffb84d;width:92%"></div></div></div><div style="margin-top:6px"><div style="display:flex;justify-content:space-between"><span style="font-size:9px">💧 Aerobico basso</span><span id="vBasso" style="color:#7be8e8">--</span></div><div class="barH"><div id="barBasso" style="background:#7be8e8;width:6%"></div></div></div><div style="margin-top:8px;color:var(--g);font-size:8px" id="msgC">◆ --</div></div></div>
-<div class="sec"><div class="t">● Salute & Recovery - BASE 0</div><div class="grid5"><div class="card"><div class="lb">😴 Sleep Score</div><div class="v" id="sSleep">--</div><div class="sub" id="sSleepSub">--</div></div><div class="card"><div class="lb">💚 HRV</div><div class="v" id="sHrv">--</div><div class="sub">ms</div></div><div class="card"><div class="lb">❤️ FC riposo</div><div class="v" id="sRhr">--</div><div class="sub">bpm</div></div><div class="card"><div class="lb">🔋 Battery</div><div class="v" id="sBatt">--</div><div class="sub">Max/Min</div></div><div class="card"><div class="lb">😰 Stress</div><div class="v" id="sStress">--</div><div class="sub">--</div></div></div><div class="grid2" style="margin-top:6px"><div class="card chart"><div class="lb">😴 Sleep Score - BASE 0</div><div class="ch"><canvas id="cSleep"></canvas></div></div><div class="card chart"><div class="lb">💚 HRV - BASE 0</div><div class="ch"><canvas id="cHrv"></canvas></div></div><div class="card chart"><div class="lb">❤️ FC riposo - BASE 0</div><div class="ch"><canvas id="cRhr"></canvas></div></div><div class="card chart"><div class="lb">😰 Stress - BASE 0</div><div class="ch"><canvas id="cStress"></canvas></div></div><div class="card chart"><div class="lb">🔋 Battery Max - BASE 0</div><div class="ch"><canvas id="cBatt"></canvas></div></div><div class="card chart"><div class="lb">🌙 Ore sonno - BASE 0</div><div class="ch"><canvas id="cSonno"></canvas></div></div></div></div>
-<div class="sec"><div class="t">● Overview - Volume settimanale</div><div class="grid6" id="ovGrid"></div><div class="card chart" style="margin-top:6px"><div class="lb" style="text-align:center">VOLUME SETTIMANALE - PER DISCIPLINA (KM) - MAX 50 - BASE 0</div><div class="legend"><span><i class="dot" style="background:#ff2a2a"></i>Corsa</span><span><i class="dot" style="background:#00ff41"></i>Trail</span><span><i class="dot" style="background:#00e5ff"></i>Bici</span><span><i class="dot" style="background:#7be8a0"></i>Escurs</span><span><i class="dot" style="background:#6366f1"></i>Kayak</span><span><i class="dot" style="background:#38bdf8"></i>Nuoto</span></div><div class="volWrap"><canvas id="cVol"></canvas></div></div></div>
-<div class="sec"><div class="t">● Distanza & Record</div><div class="grid4"><div class="card"><div class="lb">⚡ 1 KM</div><div class="v" style="font-size:14px" id="r1k">--</div><div class="sub" id="r1kSub">--</div></div><div class="card"><div class="lb">🔥 5 KM</div><div class="v" style="font-size:14px" id="r5k">--</div><div class="sub" id="r5kSub">--</div></div><div class="card"><div class="lb">🏃 10 KM</div><div class="v" style="font-size:14px" id="r10k">--</div><div class="sub" id="r10kSub">--</div></div><div class="card"><div class="lb">🏅 Mezza</div><div class="v" style="font-size:14px" id="r21">--</div><div class="sub" id="r21Sub"></div></div></div><div class="grid4" style="margin-top:6px"><div class="card"><div class="lb">🏃 Corsa più lunga</div><div class="v" style="font-size:14px" id="cLunga">--</div><div class="sub" id="cLungaSub">--</div></div><div class="card"><div class="lb">⛰️ Dislivello corsa</div><div class="v" style="font-size:14px" id="dCorsa">--</div><div class="sub" id="dCorsaSub">--</div></div><div class="card"><div class="lb">🚴 Bici più lunga</div><div class="v" style="font-size:14px" id="bLunga">--</div><div class="sub" id="bLungaSub">--</div></div><div class="card"><div class="lb">⛰️ Dislivello bici</div><div class="v" style="font-size:14px" id="dBici">--</div><div class="sub" id="dBiciSub">--</div></div></div></div>
+<!DOCTYPE html><html lang="it"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>BRAZIL V34</title><style>:root{--g:#00ff41;--b:rgba(0,255,65,0.55)}*{box-sizing:border-box}body{margin:0;background:#030a03;color:#c8f0c8;font-family:monospace;font-size:10px}.top{padding:8px 12px;display:flex;justify-content:space-between;background:#081208;border-bottom:1px solid var(--b);color:var(--g);font-size:9px}.sec{margin:12px 8px}.t{color:var(--g);font-size:9px;letter-spacing:1px;margin-bottom:6px;font-weight:800}.grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}.grid5{display:grid;grid-template-columns:repeat(5,1fr);gap:6px}.grid6{display:grid;grid-template-columns:repeat(6,1fr);gap:6px}.grid2{display:grid;grid-template-columns:1fr 1fr;gap:6px;align-items:start}.card{background:linear-gradient(180deg,#0e1e0e,#081208);border:1px solid var(--b);border-radius:8px;padding:8px;overflow:hidden}.card.chart{padding:6px 6px 2px 6px;display:flex;flex-direction:column}.lb{font-size:7px;color:#6b8a6b;text-transform:uppercase;flex-shrink:0}.v{font-size:18px;font-weight:800;color:#fff;margin-top:2px}.sub{font-size:7px;color:#6b8a6b;word-break:break-all}.barH{height:8px;background:#051405;border:1px solid #143a15;border-radius:4px;overflow:hidden;margin-top:4px}.barH div{height:100%}canvas{width:100%;height:100%;display:block}.ch{height:135px;flex-shrink:0}.chBig{height:155px;flex-shrink:0}.volWrap{height:265px;flex-shrink:0}.row{display:flex;justify-content:space-between;padding:6px;border-bottom:1px solid #102410;font-size:10px}.bTop{font-size:7px;background:#0f1f0f;border:1px solid var(--g);padding:2px 6px;border-radius:10px;color:var(--g)}#dbg{border:1px solid red;color:#ffaaaa;padding:6px;margin:6px;white-space:pre-wrap;border-radius:6px}</style></head><body>
+<div class="top"><div id="top">CARICAMENTO V34</div><div><span class="bTop" id="dBadge">--</span> <span class="bTop">Brazil V34</span></div></div>
+<div id="dbg">Avvio V34...</div><div id="ui" style="display:none">
 <div class="sec"><div class="t">● Ultime 10 Attività</div><div class="card" id="boxAtt">carico...</div></div>
-
-<div id="chatBox" style="margin:20px 8px;background:linear-gradient(180deg,#0f1e0f,#081208);border:1px solid rgba(0,255,65,0.55);border-radius:12px;padding:12px;box-shadow:0 0 10px rgba(0,255,65,0.25);">
-  <div style="display:flex;justify-content:space-between;align-items:center"><h3 style="color:#00ff41;margin:0;font-size:12px;letter-spacing:1px">💬 RAZIEL COACH - Chat Gemini V33</h3><span onclick="localStorage.removeItem('GEMINI_API_KEY');document.getElementById('keyArea').style.display='block';document.getElementById('keyStatus').innerHTML='Key cancellata - incolla nuova';document.getElementById('keyStatus').style.color='#ff2a2a'" style="font-size:8px;color:#6b8a6b;cursor:pointer;border:1px solid #143a15;padding:2px 6px;border-radius:10px">Reset Key</span></div>
-
-  <div id="keyArea" style="display:none;margin:10px 0;padding:10px;background:#1a1a00;border:1px solid #ffcc00;border-radius:8px;">
-    <div style="color:#ffcc00;font-size:10px;margin-bottom:6px;font-weight:800">🔑 Nessuna key - incolla qui la tua GEMINI_API_KEY (una volta sola):</div>
-    <div style="display:flex;gap:6px">
-      <input id="keyInput" placeholder="AIzaSy..." style="flex:1;padding:10px;border-radius:8px;background:#000;color:#ff0;font-family:monospace;font-size:12px;border:1px solid #ffcc00">
-      <button onclick="saveKey()" style="padding:10px 14px;background:#ffcc00;color:#000;border:none;border-radius:8px;font-weight:800;cursor:pointer">Salva Key</button>
-    </div>
-    <div style="color:#8a8a6b;font-size:8px;margin-top:4px">La key resta solo sul tuo telefono, non va su GitHub.</div>
-  </div>
-
-  <div id="chatLog" style="height:360px;overflow-y:auto;background:#020802;padding:10px;border-radius:8px;color:#c8f0c8;font-size:11px;margin:10px 0;border:1px solid #143a15;line-height:1.5;white-space:pre-wrap"></div>
-  <div style="display:flex;gap:6px;">
-    <input id="chatInput" placeholder="Es: Ci sei? Come sto?" style="flex:1;padding:10px;border-radius:8px;border:1px solid rgba(0,255,65,0.35);background:#081208;color:#e0ffe0;font-family:monospace;font-size:11px">
-    <button onclick="sendChat()" style="padding:10px 16px;border-radius:8px;background:#00ff41;color:#000;border:none;cursor:pointer;font-weight:800">Invia</button>
-  </div>
-  <div id="keyStatus" style="font-size:8px;color:#ffb84d;margin-top:6px"></div>
+<div id="chatBox" style="margin:20px 8px;background:#0f1e0f;border:1px solid var(--b);border-radius:12px;padding:12px">
+<h3 style="color:#00ff41;margin:0;font-size:12px">💬 RAZIEL COACH - Chat Gemini V34 FIX</h3>
+<div id="keyArea" style="display:none;margin:10px 0;padding:10px;background:#1a1a00;border:1px solid #ffcc00;border-radius:8px">
+<div style="color:#ffcc00;font-size:10px;font-weight:800">🔑 Incolla key:</div>
+<div style="display:flex;gap:6px;margin-top:6px"><input id="keyInput" placeholder="AIza..." style="flex:1;padding:10px;background:#000;color:#ff0;border:1px solid #ffcc00;border-radius:8px"><button onclick="saveKey()" style="padding:10px;background:#ffcc00;color:#000;border:none;border-radius:8px;font-weight:800">Salva</button></div>
 </div>
-
-</div>
+<div id="chatLog" style="height:360px;overflow-y:auto;background:#020802;padding:10px;border-radius:8px;font-size:11px;margin:10px 0;border:1px solid #143a15;white-space:pre-wrap"></div>
+<div style="display:flex;gap:6px"><input id="chatInput" placeholder="Ci sei?" style="flex:1;padding:10px;border-radius:8px;background:#081208;color:#e0ffe0;border:1px solid var(--b)"><button onclick="sendChat()" style="padding:10px 16px;background:#00ff41;color:#000;border:none;border-radius:8px;font-weight:800">Invia</button></div>
+<div id="keyStatus" style="font-size:8px;margin-top:6px;color:#ffb84d"></div>
+</div></div>
 <script>
-const INJECTED_GEMINI_KEY = "__GEMINI_KEY__";
-
-function getKey(){
-  if(typeof INJECTED_GEMINI_KEY!=='undefined' && INJECTED_GEMINI_KEY && INJECTED_GEMINI_KEY!=="__GEMINI_KEY__" && INJECTED_GEMINI_KEY.length>20) return INJECTED_GEMINI_KEY;
-  let k=localStorage.getItem('GEMINI_API_KEY');
-  if(k && k.length>20) return k;
-  return "";
-}
-function saveKey(){
-  let k=document.getElementById('keyInput').value.trim();
-  if(k.length<20){ alert("Key troppo corta - deve iniziare con AIza"); return; }
-  localStorage.setItem('GEMINI_API_KEY',k);
-  document.getElementById('keyArea').style.display='none';
-  document.getElementById('keyStatus').textContent="✅ Key salvata localmente len="+k.length+" - ora scrivi Ci sei";
-  document.getElementById('keyStatus').style.color="#00ff41";
-  document.getElementById('chatLog').innerHTML+="<div style='color:#ffcc00'>Key salvata. Ora scrivi un messaggio.</div>";
-}
-function checkKeyUI(){
-  let k=getKey();
-  let ks=document.getElementById('keyStatus');
-  let ka=document.getElementById('keyArea');
-  if(!k){
-    ka.style.display='block';
-    ks.textContent="⚠️ Nessuna key - incolla sopra e premi Salva Key";
-    ks.style.color="#ff2a2a";
-  } else {
-    ka.style.display='none';
-    if(k===INJECTED_GEMINI_KEY) { ks.textContent="✅ Key iniettata dal Secret APK - len "+k.length; ks.style.color="#00ff41"; }
-    else { ks.textContent="✅ Key locale salvata - len "+k.length; ks.style.color="#00ff41"; }
-  }
-}
-
-(async function(){
-var dbg=document.getElementById('dbg');
-function fmt(s){if(!s)return'--';var m=Math.floor(s/60);var sec=Math.round(s%60);if(sec<10)sec='0'+sec;return m+':'+sec}
-function oS(g){if(!g)return 0;if(g.sonno_ore)return parseFloat(g.sonno_ore);if(g.sonno_totale_s)return g.sonno_totale_s/3600;return 0}
-function getDisc(a){var t=(a.tipo||'').toLowerCase();var n=(a.nome||'').toLowerCase();var s=(a.sport_type||'').toLowerCase()+' '+(a.sottotipo||'').toLowerCase();var all=t+' '+n+' '+s;if(all.indexOf('trail')>=0)return 'trail';if(t.indexOf('cycl')>=0||t.indexOf('bici')>=0||n.indexOf('bici')>=0||n.indexOf('cycling')>=0||s.indexOf('bik')>=0)return 'bici';if(t.indexOf('hik')>=0||t.indexOf('escurs')>=0||n.indexOf('escurs')>=0)return 'escurs';if(t.indexOf('kayak')>=0||n.indexOf('kayak')>=0||all.indexOf('kayak')>=0||all.indexOf('paddl')>=0)return 'kayak';if(t.indexOf('swim')>=0||t.indexOf('nuoto')>=0||n.indexOf('nuoto')>=0||n.indexOf('swim')>=0||s.indexOf('swim')>=0)return 'nuoto';if(t.indexOf('run')>=0||t.indexOf('corsa')>=0)return 'corsa';return 'corsa';}
-function drawBASE0(c,data,labels,color,fill){if(!c)return;var ctx=c.getContext('2d');var W=c.width=c.offsetWidth*2;var H=c.height=c.offsetHeight*2;ctx.clearRect(0,0,W,H);if(!data.length)return;var max=Math.max.apply(null,data);if(max===0)max=1;max=max*1.15;var padL=38,padR=4,padT=6,padB=8;ctx.strokeStyle='rgba(0,255,65,0.12)';for(var j=0;j<=4;j++){var y=padT+j*(H-padT-padB)/4;ctx.beginPath();ctx.moveTo(padL,y);ctx.lineTo(W-padR,y);ctx.stroke();var val=max-j*max/4;ctx.fillStyle='#6b8a6b';ctx.font='12px monospace';ctx.fillText(Math.round(val),2,y+3)}ctx.fillStyle='#00ff41';ctx.fillRect(padL,H-padB,W-padL-padR,2);ctx.strokeStyle=color;ctx.lineWidth=2.5;ctx.beginPath();for(var i=0;i<data.length;i++){var x=padL+i*(W-padL-padR)/(data.length-1);var y=padT+(max-data[i])/max*(H-padT-padB);if(i===0)ctx.moveTo(x,y);else ctx.lineTo(x,y)}ctx.stroke();if(fill){ctx.lineTo(padL+(data.length-1)*(W-padL-padR)/(data.length-1),H-padB);ctx.lineTo(padL,H-padB);ctx.closePath();ctx.fillStyle=color+'44';ctx.fill()}ctx.fillStyle='#8aaa8a';ctx.font='10px monospace';for(var i=0;i<labels.length;i++){var x=padL+i*(W-padL-padR)/(labels.length-1);ctx.fillText(labels[i],x-6,H-1)}}
-function drawBarsBASE0(c,data,labels,color){if(!c)return;var ctx=c.getContext('2d');var W=c.width=c.offsetWidth*2;var H=c.height=c.offsetHeight*2;ctx.clearRect(0,0,W,H);var max=Math.max.apply(null,data);if(max===0)max=1;max=max*1.15;var padL=38,padR=4,padT=6,padB=8;ctx.strokeStyle='rgba(0,255,65,0.12)';for(var j=0;j<=4;j++){var y=padT+j*(H-padT-padB)/4;ctx.beginPath();ctx.moveTo(padL,y);ctx.lineTo(W-padR,y);ctx.stroke();var val=max-j*max/4;ctx.fillStyle='#6b8a6b';ctx.font='12px monospace';ctx.fillText(Math.round(val),2,y+3)}ctx.fillStyle='#00ff41';ctx.fillRect(padL,H-padB,W-padL-padR,2);var gap=4;var bw=(W-padL-padR)/data.length-gap;for(var i=0;i<data.length;i++){var h=data[i]/max*(H-padT-padB);var x=padL+i*(bw+gap);var y=H-padB-h;ctx.fillStyle=color;ctx.fillRect(x,y,bw,h);if(data[i]>0){ctx.fillStyle='#fff';ctx.font='10px monospace';ctx.fillText(Math.round(data[i]),x+1,y-2)}}ctx.fillStyle='#8aaa8a';ctx.font='10px monospace';for(var i=0;i<labels.length;i++){var x=padL+i*(bw+gap)+bw/2;ctx.fillText(labels[i],x-6,H-1)}}
-function drawBilBASE0(c,acute,chronic){if(!c)return;var ctx=c.getContext('2d');var W=c.width=c.offsetWidth*2;var H=c.height=c.offsetHeight*2;ctx.clearRect(0,0,W,H);var max=Math.max(acute,chronic,1)*1.15;var bw=70;var gap=30;var x1=W/2-bw-gap/2;var x2=W/2+gap/2;var padB=8;var padT=6;var h1=acute/max*(H-padT-padB);var h2=chronic/max*(H-padT-padB);ctx.strokeStyle='rgba(0,255,65,0.12)';for(var j=0;j<=4;j++){var y=padT+j*(H-padT-padB)/4;ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(W,y);ctx.stroke();var v=max-j*max/4;ctx.fillStyle='#6b8a6b';ctx.font='11px monospace';ctx.fillText(Math.round(v),2,y)}ctx.fillStyle='#00ff41';ctx.fillRect(0,H-padB,W,2);ctx.fillStyle='#00ff41';ctx.fillRect(x1,H-padB-h1,bw,h1);ctx.fillStyle='#00e5ff';ctx.fillRect(x2,H-padB-h2,bw,h2);ctx.fillStyle='#fff';ctx.font='bold 14px monospace';ctx.fillText(Math.round(acute),x1+bw/2-10,H-padB-h1-4);ctx.fillText(Math.round(chronic),x2+bw/2-10,H-padB-h2-4);ctx.fillStyle='#6b8a6b';ctx.font='11px monospace';ctx.fillText('Acuto '+acute,x1,H-1);ctx.fillText('Cronico '+chronic,x2,H-1);}
-function drawVol(c,weeks){if(!c)return;var ctx=c.getContext('2d');var W=c.width=c.offsetWidth*2;var H=c.height=c.offsetHeight*2;ctx.clearRect(0,0,W,H);if(!weeks.length)return;var max=50;var padL=38,padR=4,padT=6,padB=8;ctx.strokeStyle='rgba(0,255,65,0.15)';for(var j=0;j<=5;j++){var y=padT+j*(H-padT-padB)/5;ctx.beginPath();ctx.moveTo(padL,y);ctx.lineTo(W-padR,y);ctx.stroke();ctx.fillStyle='#6b8a6b';ctx.font='12px monospace';ctx.fillText(50-j*10,2,y+3)}ctx.fillStyle='#00ff41';ctx.fillRect(padL,H-padB,W-padL-padR,2);var groupW=(W-padL-padR)/weeks.length;var barGap=1;var order=['corsa','trail','bici','escurs','kayak','nuoto'];var barW=(groupW-5)/order.length-barGap;var colors={corsa:'#ff2a2a',trail:'#00ff41',bici:'#00e5ff',escurs:'#7be8a0',kayak:'#6366f1',nuoto:'#38bdf8'};for(var i=0;i<weeks.length;i++){var gx=padL+i*groupW+2;for(var j=0;j<order.length;j++){var k=order[j];var v=weeks[i][k]||0;if(v<=0)continue;var h=v/max*(H-padT-padB);if(h<3)h=3;var x=gx+j*(barW+barGap);var y=H-padB-h;ctx.fillStyle=colors[k];ctx.fillRect(x,y,barW,h);}ctx.fillStyle='#9ab89a';ctx.font='10px monospace';ctx.fillText(weeks[i].label,gx+groupW/2-10,H-1)}}
-try{
-dbg.textContent='JS OK fetch...';var r=await fetch('database.json',{cache:'no-store'});dbg.textContent+=' '+r.status;var DB=await r.json();var G=DB.giorni||[];var A=DB.attivita||[];var B=DB.bilancio_carico||{};dbg.style.display='none';document.getElementById('ui').style.display='block';
-var lastDate=G.length?G[G.length-1].data.slice(0,10):'2026-10-12';document.getElementById('top').textContent='GARMIN DASHBOARD // RAZIEL - '+lastDate+' - FC '+(G[G.length-1].fc_riposo||50)+' BPM - 7 giorni';document.getElementById('dBadge').textContent=lastDate;document.getElementById('per').textContent=lastDate;
-function last(k){for(var i=G.length-1;i>=0;i--)if(G[i][k]!=null)return G[i][k];return null}
-var ultimi7=G.slice(-7);var labels7=[];for(var i=0;i<ultimi7.length;i++)labels7.push(ultimi7[i].data.slice(5,10));
-document.getElementById('sov').textContent=last('acwr')||'1.13';document.getElementById('pron').textContent=last('readiness')||25;document.getElementById('bilF').textContent=B.feedback && B.feedback.indexOf('LOW')>=0?'Ottimale':(B.feedback||'Ottimale');document.getElementById('bilSub').textContent=(B.anaerobico||0)+'/'+(B.aerobico_alto||0)+'/'+(B.aerobico_basso||0);document.getElementById('vo2').textContent=last('vo2max')||48;
-document.getElementById('vAna').textContent=B.anaerobico||135;document.getElementById('vAlto').textContent=B.aerobico_alto||1758;document.getElementById('vBasso').textContent=B.aerobico_basso||124;var maxB=Math.max(B.anaerobico||1,B.aerobico_alto||1,B.aerobico_basso||1);document.getElementById('barAna').style.width=Math.round((B.anaerobico||0)/maxB*100)+'%';document.getElementById('barAlto').style.width=Math.round((B.aerobico_alto||0)/maxB*100)+'%';document.getElementById('barBasso').style.width=Math.round((B.aerobico_basso||0)/maxB*100)+'%';document.getElementById('msgC').textContent='◆ '+(B.messaggio||'AEROBIC_LOW_SHORTAGE');
-var u=G[G.length-1]||{};document.getElementById('sSleep').textContent=u.sonno_punteggio||57;document.getElementById('sSleepSub').textContent=oS(u).toFixed(1)+'h';document.getElementById('sHrv').textContent=(u.hrv||45)+' ms';document.getElementById('sRhr').textContent=(u.fc_riposo||50)+' bpm';document.getElementById('sBatt').textContent=(u.body_battery_max||53)+' / '+(u.body_battery_min||10);document.getElementById('sStress').textContent=u.stress_medio!=null?u.stress_medio:28;
-var dVo2=[],dSleep=[],dHrv=[],dRhr=[],dStress=[],dBatt=[],dSonno=[];for(var i=0;i<ultimi7.length;i++){dVo2.push(ultimi7[i].vo2max||48);dSleep.push(ultimi7[i].sonno_punteggio||0);dHrv.push(ultimi7[i].hrv||0);dRhr.push(ultimi7[i].fc_riposo||0);dStress.push(ultimi7[i].stress_medio||0);dBatt.push(ultimi7[i].body_battery_max||0);dSonno.push(oS(ultimi7[i]))}
-drawBASE0(document.getElementById('cvVo2'),dVo2,labels7,'#00ff41',true);drawBilBASE0(document.getElementById('cvBil'),B.aerobico_basso||28,B.aerobico_alto||66);drawBarsBASE0(document.getElementById('cSleep'),dSleep,labels7,'#facc15');drawBASE0(document.getElementById('cHrv'),dHrv,labels7,'#00ff41',true);drawBASE0(document.getElementById('cRhr'),dRhr,labels7,'#ef4444',true);drawBASE0(document.getElementById('cStress'),dStress,labels7,'#ff6a00',true);drawBASE0(document.getElementById('cBatt'),dBatt,labels7,'#00ff41',true);drawBarsBASE0(document.getElementById('cSonno'),dSonno,labels7,'#a78bfa');
-var weeksMap={};function getMonday(d){var dd=new Date(d);var day=dd.getDay();var diff=dd.getDate()-day+(day===0?-6:1);var mon=new Date(dd.setDate(diff));return mon.toISOString().slice(0,10)}
-for(var i=0;i<A.length;i++){var a=A[i];if(!a.inizio)continue;var mon=getMonday(a.inizio);if(!weeksMap[mon])weeksMap[mon]={corsa:0,trail:0,bici:0,escurs:0,kayak:0,nuoto:0,label:mon.slice(5,10)};var km=(a.distanza_m||0)/1000;var d=getDisc(a);weeksMap[mon][d]+=km;}
-var wKeys=Object.keys(weeksMap).sort().slice(-12);var wData=[];for(var i=0;i<wKeys.length;i++) wData.push(weeksMap[wKeys[i]]);drawVol(document.getElementById('cVol'),wData);
-var weekHours={corsa:0,trail:0,escurs:0,bici:0,kayak:0,nuoto:0};var today=new Date(lastDate);var weekAgo=new Date(today);weekAgo.setDate(today.getDate()-7);for(var i=0;i<A.length;i++){var a=A[i];var ad=new Date(a.inizio);if(ad>=weekAgo){var h=(a.durata_s||0)/3600;var d=getDisc(a);weekHours[d]+=h}}
-document.getElementById('ovGrid').innerHTML='<div class="card"><div class="lb">🏃 Corsa</div><div class="v">'+weekHours.corsa.toFixed(1)+'h</div></div><div class="card"><div class="lb">🌲 Trail</div><div class="v">'+weekHours.trail.toFixed(1)+'h</div></div><div class="card"><div class="lb">🥾 Escurs</div><div class="v">'+weekHours.escurs.toFixed(1)+'h</div></div><div class="card"><div class="lb">🚴 Bici</div><div class="v">'+weekHours.bici.toFixed(1)+'h</div></div><div class="card"><div class="lb">🛶 Kayak</div><div class="v">'+weekHours.kayak.toFixed(1)+'h</div></div><div class="card"><div class="lb">🏊 Nuoto</div><div class="v">'+weekHours.nuoto.toFixed(1)+'h</div></div>';
-function best(dist,tol){var b=null;for(var i=0;i<A.length;i++){var a=A[i];if(a.tipo!=='running')continue;if(Math.abs((a.distanza_m||0)-dist)>=tol)continue;if(!b||a.durata_s<b.durata_s)b=a}return b}
-var r1=best(1000,150),r5=best(5000,400),r10=best(10000,800),r21=best(21097,1000);
-document.getElementById('r1k').textContent=r1?fmt(r1.durata_s):'4:05';document.getElementById('r1kSub').innerHTML=(r1?r1.inizio.slice(0,10):'2024-07-10')+'<br>'+(r1?r1.nome.slice(0,24):'Isola Capo Rizzuto');
-document.getElementById('r5k').textContent=r5?fmt(r5.durata_s):'31:21';document.getElementById('r5kSub').innerHTML=(r5?r5.inizio.slice(0,10):'--')+'<br>'+(r5?r5.nome.slice(0,24):'');
-document.getElementById('r10k').textContent=r10?fmt(r10.durata_s):'57:29';document.getElementById('r10kSub').innerHTML=(r10?r10.inizio.slice(0,10):'--')+'<br>'+(r10?r10.nome.slice(0,24):'');
-document.getElementById('r21').textContent=r21?fmt(r21.durata_s):'--';document.getElementById('r21Sub').innerHTML=(r21?r21.inizio.slice(0,10):'Mai fatto')+'<br>'+(r21?r21.nome.slice(0,24):'');
-var longest=null,maxElev=null,longestB=null,maxElevB=null;for(var i=0;i<A.length;i++){var a=A[i];if(a.tipo==='running'){if(!longest||a.distanza_m>longest.distanza_m)longest=a;if(!maxElev||(a.dislivello_positivo_m||0)>(maxElev.dislivello_positivo_m||0))maxElev=a}if(a.tipo==='cycling'||getDisc(a)==='bici'){if(!longestB||a.distanza_m>longestB.distanza_m)longestB=a;if(!maxElevB||(a.dislivello_positivo_m||0)>(maxElevB.dislivello_positivo_m||0))maxElevB=a}}
-document.getElementById('cLunga').textContent=longest?(longest.distanza_m/1000).toFixed(2)+' km':'15.03 km';document.getElementById('cLungaSub').innerHTML=(longest?longest.inizio.slice(0,10):'2025-09-28')+'<br>'+(longest?longest.nome.slice(0,24):'Trabia Lungo');
-document.getElementById('dCorsa').textContent=maxElev?Math.round(maxElev.dislivello_positivo_m)+' m':'571 m';document.getElementById('dCorsaSub').innerHTML=(maxElev?maxElev.inizio.slice(0,10):'2024-07-17')+'<br>'+(maxElev?maxElev.nome.slice(0,24):'Caccamo Trail');
-document.getElementById('bLunga').textContent=longestB?(longestB.distanza_m/1000).toFixed(2)+' km':'57.48 km';document.getElementById('bLungaSub').innerHTML=(longestB?longestB.inizio.slice(0,10):'2023-09-10')+'<br>'+(longestB?longestB.nome.slice(0,24):'Gimma');
-document.getElementById('dBici').textContent=maxElevB?Math.round(maxElevB.dislivello_positivo_m)+' m':'1379 m';document.getElementById('dBiciSub').innerHTML=(maxElevB?maxElevB.inizio.slice(0,10):'2023-10-22')+'<br>'+(maxElevB?maxElevB.nome.slice(0,24):'Taormina');
-var box=document.getElementById('boxAtt');var html='';for(var i=0;i<Math.min(10,A.length);i++){var a=A[i];html+='<div class="row"><span>● '+(a.inizio||'').slice(5,10)+' - '+a.tipo+' - '+a.nome.slice(0,30)+'</span><b>'+(a.distanza_m/1000).toFixed(2)+'km - '+Math.floor((a.durata_s||0)/60)+'min</b></div>'}box.innerHTML=html;
-checkKeyUI();
-}catch(e){dbg.textContent='ERRORE: '+e.message+'\n'+e.stack;dbg.style.display='block';}
-})();
+const INJECTED_GEMINI_KEY="__GEMINI_KEY__";
+function getKey(){if(typeof INJECTED_GEMINI_KEY!=='undefined'&&INJECTED_GEMINI_KEY&&INJECTED_GEMINI_KEY!=="__GEMINI_KEY__"&&INJECTED_GEMINI_KEY.length>20)return INJECTED_GEMINI_KEY;let k=localStorage.getItem('GEMINI_API_KEY');if(k&&k.length>20)return k;return""}
+function saveKey(){let k=document.getElementById('keyInput').value.trim();if(k.length<20){alert("Key corta");return}localStorage.setItem('GEMINI_API_KEY',k);document.getElementById('keyArea').style.display='none';document.getElementById('keyStatus').textContent="✅ Salvata len="+k.length;document.getElementById('keyStatus').style.color="#00ff41";document.getElementById('chatLog').innerHTML+="<div style='color:#ffcc00'>Key salvata. Scrivi.</div>";}
+function checkKeyUI(){let k=getKey();let ks=document.getElementById('keyStatus');let ka=document.getElementById('keyArea');if(!k){ka.style.display='block';ks.textContent="⚠️ Nessuna key";ks.style.color="#ff2a2a"}else{ka.style.display='none';ks.textContent="✅ Key len "+k.length;ks.style.color="#00ff41"}}
+(async function(){try{let r=await fetch('database.json',{cache:'no-store'});let DB=await r.json();let G=DB.giorni||[];let A=DB.attivita||[];document.getElementById('dbg').style.display='none';document.getElementById('ui').style.display='block';document.getElementById('top').textContent='GARMIN // '+(G[G.length-1]?.data||'').slice(0,10);document.getElementById('dBadge').textContent=(G[G.length-1]?.data||'').slice(0,10);let box=document.getElementById('boxAtt');let html='';for(let i=0;i<Math.min(10,A.length);i++){let a=A[i];html+=`<div class="row"><span>● ${(a.inizio||'').slice(5,10)} - ${a.tipo} - ${a.nome.slice(0,28)}</span><b>${(a.distanza_m/1000).toFixed(2)}km</b></div>`}box.innerHTML=html;checkKeyUI()}catch(e){document.getElementById('dbg').textContent='ERR: '+e.message}})();
 
 async function sendChat(){
-  const input=document.getElementById('chatInput');
-  const log=document.getElementById('chatLog');
-  const msg=input.value.trim(); if(!msg) return;
-  let key=getKey();
-  if(!key){
-    document.getElementById('keyArea').style.display='block';
-    document.getElementById('keyStatus').textContent="⚠️ Incolla la key gialla sopra e premi Salva Key";
-    document.getElementById('keyStatus').style.color="#ff2a2a";
-    return;
-  }
-  log.innerHTML+=`<div style="margin:8px 0"><b style="color:#00ff41">Tu:</b> ${msg}</div>`;
-  input.value=''; log.scrollTop=log.scrollHeight;
-  log.innerHTML+=`<div id="tmp" style="color:#888">Coach cerca modello disponibile...</div>`;
+  const input=document.getElementById('chatInput'); const log=document.getElementById('chatLog'); const msg=input.value.trim(); if(!msg) return;
+  let key=getKey(); if(!key){document.getElementById('keyArea').style.display='block'; return;}
+  log.innerHTML+=`<div style="margin:8px 0"><b style="color:#00ff41">Tu:</b> ${msg}</div>`; input.value=''; log.scrollTop=log.scrollHeight;
+  log.innerHTML+=`<div id="tmp" style="color:#888">Invio a Gemini 2.0 Flash...</div>`;
   try{
     const dbRes=await fetch('database.json'); const DB=await dbRes.json();
-    const atti=(DB.attivita||[]).slice(0,30).map(a=>`${(a.inizio||'').slice(0,10)} ${a.nome?.slice(0,22)} ${(a.distanza_m/1000).toFixed(1)}km`).join('\n');
-    const giorni=(DB.giorni||[]).slice(-7).map(g=>`${(g.data||'').slice(5,10)} FC${g.fc_riposo} HRV${g.hrv} Sleep${g.sonno_punteggio}`).join('\n');
-    const prompt=`Sei Coach Garmin RAZIEL, italiano, dati REALI:\nAttivita:\n${atti}\nUltimi 7gg:\n${giorni}\nDOMANDA: ${msg}\nRispondi in italiano, breve, usa SOLO questi dati.`;
+    const atti=(DB.attivita||[]).slice(0,15).map(a=>`${(a.inizio||'').slice(0,10)} ${a.nome?.slice(0,18)} ${(a.distanza_m/1000).toFixed(1)}km`).join('\n');
+    const giorni=(DB.giorni||[]).slice(-5).map(g=>`${(g.data||'').slice(5,10)} FC${g.fc_riposo} HRV${g.hrv}`).join('\n');
+    const prompt=`Sei Coach Garmin, rispondi in italiano breve. Dati:\n${atti}\nGiorni:\n${giorni}\nDomanda: ${msg}`;
 
-    let models=[];
-    try{
-      const listResp=await fetch(`https://generativelanguage.googleapis.com/v1beta/models?key=${key}`);
-      const listJs=await listResp.json();
-      if(listJs.models){
-        models=listJs.models.filter(m=> (m.supportedGenerationMethods||[]).includes('generateContent')).map(m=>m.name.replace('models/',''));
-        models=models.filter(m=> m.indexOf('embedding')<0 && m.indexOf('imagen')<0).slice(0,12);
-      }
-    }catch(e){}
-
-    if(models.length===0) models=["gemini-2.0-flash","gemini-flash-latest","gemini-flash-lite-latest","gemini-2.0-flash-lite"];
-
-    let js=null; let lastModel="";
-    for(let m of models){
-      try{
-        lastModel=m;
-        const tmpEl=document.getElementById('tmp');
-        if(tmpEl) tmpEl.innerText=`Provo ${m}...`;
-        const resp=await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${m}:generateContent?key=${key}`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({contents:[{parts:[{text:prompt}]}]})});
-        js=await resp.json();
-        if(js.candidates && js.candidates.length>0) break;
-      }catch(e){ js={error:{message:e.message}}; }
-    }
+    const controller=new AbortController(); const timeout=setTimeout(()=>controller.abort(),15000);
+    const resp=await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${key}`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({contents:[{parts:[{text:prompt}]}]}),signal:controller.signal});
+    clearTimeout(timeout);
+    const js=await resp.json();
     const tmp=document.getElementById('tmp');
-    if(!js ||!js.candidates){ if(tmp) tmp.innerHTML=`Errore Gemini (${lastModel}): ${js? (js.error?.message||JSON.stringify(js).slice(0,300)):'nessuna risposta'}`; return; }
-    const txt=js.candidates[0].content.parts[0].text||JSON.stringify(js);
+    if(!resp.ok){ if(tmp) tmp.innerHTML=`<span style='color:#ff5555'>Errore ${resp.status}: ${js.error?.message||JSON.stringify(js).slice(0,300)}</span>`; return; }
+    if(!js.candidates){ if(tmp) tmp.innerHTML=`<span style='color:#ff5555'>Nessuna risposta: ${JSON.stringify(js).slice(0,400)}</span>`; return; }
+    const txt=js.candidates[0].content.parts[0].text;
     tmp.remove();
-    log.innerHTML+=`<div style="margin:8px 0;background:#0a1a0a;padding:8px;border-radius:6px;border-left:2px solid #00ff41"><b>Coach [${lastModel}]:</b> ${txt.replace(/\n/g,'<br>')}</div>`;
-  }catch(e2){ var t=document.getElementById('tmp'); if(t) t.innerHTML='Errore rete: '+e2; }
+    log.innerHTML+=`<div style="margin:8px 0;background:#0a1a0a;padding:8px;border-radius:6px;border-left:2px solid #00ff41"><b>Coach:</b> ${txt.replace(/\n/g,'<br>')}</div>`;
+  }catch(e){ let t=document.getElementById('tmp'); if(t) t.innerHTML=`<span style='color:#ff5555'>Errore rete/timeout: ${e.message} - prova a rifare Reset Key</span>`; }
   log.scrollTop=log.scrollHeight;
 }
 document.getElementById('chatInput').addEventListener('keydown',e=>{if(e.key==='Enter')sendChat()});
-document.getElementById('keyInput')?.addEventListener('keydown',e=>{if(e.key==='Enter')saveKey()});
 </script></body></html>
