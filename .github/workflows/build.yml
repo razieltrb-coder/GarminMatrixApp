@@ -42,59 +42,88 @@ jobs:
           android {
             namespace 'com.garminmatrix'
             compileSdk 34
-            defaultConfig { applicationId "com.garminmatrix"; minSdk 24; targetSdk 34; versionCode 35; versionName "1.9-V35-FIX" }
+            defaultConfig { applicationId "com.garminmatrix"; minSdk 24; targetSdk 34; versionCode 36; versionName "1.9-V36-NEON" }
           }
           dependencies {
             implementation 'androidx.appcompat:appcompat:1.6.1'
             implementation 'androidx.webkit:webkit:1.6.1'
           }
           ENDOFF
+          # BG
           cat > app/src/main/res/drawable/bg_main.xml << 'ENDOFF'
-          <?xml version="1.0"?><shape xmlns:android="http://schemas.android.com/apk/res/android"><corners android:radius="20dp"/><solid android:color="#0f1a0f"/><stroke android:width="2dp" android:color="#5afc7a"/></shape>
+          <?xml version="1.0"?><shape xmlns:android="http://schemas.android.com/apk/res/android"><corners android:radius="20dp"/><solid android:color="#0d1a0d"/><stroke android:width="2dp" android:color="#5afc7a"/></shape>
           ENDOFF
           cat > app/src/main/res/drawable/bg_card.xml << 'ENDOFF'
-          <?xml version="1.0"?><shape xmlns:android="http://schemas.android.com/apk/res/android"><corners android:radius="12dp"/><solid android:color="#111f11"/><stroke android:width="1dp" android:color="#2a5a2a"/></shape>
+          <?xml version="1.0"?><shape xmlns:android="http://schemas.android.com/apk/res/android"><corners android:radius="10dp"/><solid android:color="#142414"/><stroke android:width="1dp" android:color="#2a5a2a"/></shape>
           ENDOFF
           cat > app/src/main/res/drawable/p_orange.xml << 'ENDOFF'
-          <?xml version="1.0"?><layer-list xmlns:android="http://schemas.android.com/apk/res/android"><item android:id="@android:id/background"><shape><corners android:radius="6dp"/><solid android:color="#2a1f0f"/></shape></item><item android:id="@android:id/progress"><clip><shape><corners android:radius="6dp"/><solid android:color="#ff7a18"/></shape></clip></item></layer-list>
+          <?xml version="1.0"?><layer-list xmlns:android="http://schemas.android.com/apk/res/android"><item android:id="@android:id/background"><shape><corners android:radius="6dp"/><solid android:color="#261a0a"/></shape></item><item android:id="@android:id/progress"><clip><shape><corners android:radius="6dp"/><solid android:color="#ff7a18"/></shape></clip></item></layer-list>
           ENDOFF
           cat > app/src/main/res/drawable/p_cyan.xml << 'ENDOFF'
-          <?xml version="1.0"?><layer-list xmlns:android="http://schemas.android.com/apk/res/android"><item android:id="@android:id/background"><shape><corners android:radius="6dp"/><solid android:color="#102a2a"/></shape></item><item android:id="@android:id/progress"><clip><shape><corners android:radius="6dp"/><solid android:color="#00e5ff"/></shape></clip></item></layer-list>
+          <?xml version="1.0"?><layer-list xmlns:android="http://schemas.android.com/apk/res/android"><item android:id="@android:id/background"><shape><corners android:radius="6dp"/><solid android:color="#0a2222"/></shape></item><item android:id="@android:id/progress"><clip><shape><corners android:radius="6dp"/><solid android:color="#00e5ff"/></shape></clip></item></layer-list>
           ENDOFF
           cat > app/src/main/res/drawable/p_purple.xml << 'ENDOFF'
-          <?xml version="1.0"?><layer-list xmlns:android="http://schemas.android.com/apk/res/android"><item android:id="@android:id/background"><shape><corners android:radius="6dp"/><solid android:color="#201a30"/></shape></item><item android:id="@android:id/progress"><clip><shape><corners android:radius="6dp"/><solid android:color="#a855f7"/></shape></clip></item></layer-list>
+          <?xml version="1.0"?><layer-list xmlns:android="http://schemas.android.com/apk/res/android"><item android:id="@android:id/background"><shape><corners android:radius="6dp"/><solid android:color="#1e1430"/></shape></item><item android:id="@android:id/progress"><clip><shape><corners android:radius="6dp"/><solid android:color="#a855f7"/></shape></clip></item></layer-list>
           ENDOFF
+          # ICONE VETTORIALI - COMPATIBILI WIDGET
+          cat > app/src/main/res/drawable/ic_fire.xml << 'ENDOFF'
+          <vector xmlns:android="http://schemas.android.com/apk/res/android" android:width="24dp" android:height="24dp" android:viewportWidth="24" android:viewportHeight="24"><path android:fillColor="#ff7a18" android:pathData="M12,2 C12,2 7,8 7,13 C7,16.5 9.5,19 12,19 C14.5,19 17,16.5 17,13 C17,8 12,2 12,2 Z M12,17 C10.5,17 9,15.5 9,13.5 C9,11 11,7.5 12,5.5 C13,7.5 15,11 15,13.5 C15,15.5 13.5,17 12,17 Z"/></vector>
+          ENDOFF
+          cat > app/src/main/res/drawable/ic_drop.xml << 'ENDOFF'
+          <vector xmlns:android="http://schemas.android.com/apk/res/android" android:width="24dp" android:height="24dp" android:viewportWidth="24" android:viewportHeight="24"><path android:fillColor="#00e5ff" android:pathData="M12,2 L4,14 C4,18 7.5,22 12,22 C16.5,22 20,18 20,14 L12,2 Z"/></vector>
+          ENDOFF
+          cat > app/src/main/res/drawable/ic_diamond.xml << 'ENDOFF'
+          <vector xmlns:android="http://schemas.android.com/apk/res/android" android:width="24dp" android:height="24dp" android:viewportWidth="24" android:viewportHeight="24"><path android:fillColor="#a855f7" android:pathData="M12,2 L22,12 L12,22 L2,12 Z M12,6 L18,12 L12,18 L6,12 Z"/></vector>
+          ENDOFF
+          cat > app/src/main/res/drawable/ic_hrv.xml << 'ENDOFF'
+          <vector xmlns:android="http://schemas.android.com/apk/res/android" android:width="24dp" android:height="24dp" android:viewportWidth="24" android:viewportHeight="24"><path android:fillColor="#5afc7a" android:pathData="M2,12 L5,12 L7,6 L10,18 L12,10 L15,14 L17,12 L22,12" android:strokeColor="#5afc7a" android:strokeWidth="2" android:strokeLineCap="round"/></vector>
+          ENDOFF
+
           cat > app/src/main/res/xml/widget_raziel_info.xml << 'ENDOFF'
           <?xml version="1.0" encoding="utf-8"?>
           <appwidget-provider xmlns:android="http://schemas.android.com/apk/res/android"
-              android:minWidth="280dp" android:minHeight="320dp"
+              android:minWidth="300dp" android:minHeight="360dp"
               android:updatePeriodMillis="1800000"
               android:initialLayout="@layout/widget_raziel"
               android:resizeMode="horizontal|vertical"
               android:widgetCategory="home_screen"/>
           ENDOFF
+
           cat > app/src/main/res/layout/widget_raziel.xml << 'ENDOFF'
           <?xml version="1.0" encoding="utf-8"?>
           <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
               android:layout_width="match_parent" android:layout_height="wrap_content"
               android:orientation="vertical" android:background="@drawable/bg_main" android:padding="12dp">
-              <TextView android:id="@+id/w_title" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="RAZIEL // 2026-10-13" android:textColor="#7dff8a" android:textSize="14sp" android:textStyle="bold"/>
-              <TextView android:id="@+id/w_updated" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="UPDATED 18:04" android:textColor="#6b8a6b" android:textSize="9sp" android:layout_marginTop="2dp" android:layout_marginBottom="8dp"/>
-              <TextView android:id="@+id/w_ana_label" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="ANAEROBICO 135 - 7%" android:textColor="#a855f7" android:textSize="12sp" android:textStyle="bold"/>
-              <ProgressBar android:id="@+id/bar_ana" style="?android:attr/progressBarStyleHorizontal" android:layout_width="match_parent" android:layout_height="10dp" android:max="100" android:progress="7" android:progressDrawable="@drawable/p_purple" android:layout_marginTop="2dp" android:layout_marginBottom="10dp"/>
-              <TextView android:id="@+id/w_alto_label" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="ALTO 1758 - 92%" android:textColor="#ff8c32" android:textSize="12sp" android:textStyle="bold"/>
-              <ProgressBar android:id="@+id/bar_alto" style="?android:attr/progressBarStyleHorizontal" android:layout_width="match_parent" android:layout_height="10dp" android:max="100" android:progress="92" android:progressDrawable="@drawable/p_orange" android:layout_marginTop="2dp" android:layout_marginBottom="10dp"/>
-              <TextView android:id="@+id/w_basso_label" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="BASSO 124 - 10%" android:textColor="#22e5ff" android:textSize="12sp" android:textStyle="bold"/>
-              <ProgressBar android:id="@+id/bar_basso" style="?android:attr/progressBarStyleHorizontal" android:layout_width="match_parent" android:layout_height="10dp" android:max="100" android:progress="10" android:progressDrawable="@drawable/p_cyan" android:layout_marginTop="2dp"/>
-              <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:layout_marginTop="14dp">
-                  <LinearLayout android:layout_width="0dp" android:layout_weight="1" android:layout_height="wrap_content" android:orientation="vertical" android:background="@drawable/bg_card" android:padding="6dp"><TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="HRV" android:textColor="#6b8a6b" android:textSize="9sp"/><TextView android:id="@+id/w_hrv" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="45 ms" android:textColor="#ffffff" android:textSize="14sp" android:textStyle="bold"/></LinearLayout>
-                  <LinearLayout android:layout_width="0dp" android:layout_weight="1" android:layout_height="wrap_content" android:orientation="vertical" android:background="@drawable/bg_card" android:padding="6dp" android:layout_marginStart="6dp"><TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="RHR" android:textColor="#6b8a6b" android:textSize="9sp"/><TextView android:id="@+id/w_rhr" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="50 bpm" android:textColor="#ffffff" android:textSize="14sp" android:textStyle="bold"/></LinearLayout>
-                  <LinearLayout android:layout_width="0dp" android:layout_weight="1" android:layout_height="wrap_content" android:orientation="vertical" android:background="@drawable/bg_card" android:padding="6dp" android:layout_marginStart="6dp"><TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="RECUPERO" android:textColor="#6b8a6b" android:textSize="9sp"/><TextView android:id="@+id/w_rec" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="12h" android:textColor="#ffffff" android:textSize="14sp" android:textStyle="bold"/></LinearLayout>
+              <TextView android:id="@+id/w_title" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="RAZIEL // 2026-10-12" android:textColor="#7dff8a" android:textSize="13sp" android:textStyle="bold"/>
+              <TextView android:id="@+id/w_updated" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="UPDATED 19:38" android:textColor="#6b9a6b" android:textSize="9sp" android:layout_marginTop="2dp" android:layout_marginBottom="10dp"/>
+              <!-- ANAEROBICO VIOLA -->
+              <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:gravity="center_vertical">
+                  <ImageView android:layout_width="16dp" android:layout_height="16dp" android:src="@drawable/ic_diamond"/>
+                  <TextView android:id="@+id/w_ana_label" android:layout_width="0dp" android:layout_weight="1" android:layout_height="wrap_content" android:text="ANAEROBICO 135 - 6%" android:textColor="#a855f7" android:textSize="11sp" android:textStyle="bold" android:layout_marginStart="6dp"/>
               </LinearLayout>
-              <ImageView android:id="@+id/w_chart" android:layout_width="match_parent" android:layout_height="80dp" android:layout_marginTop="10dp"/>
-              <TextView android:id="@+id/w_km_row" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="LUN MAR MER GIO VEN SAB DOM" android:textColor="#6b8a6b" android:textSize="8sp" android:layout_marginTop="4dp"/>
+              <ProgressBar android:id="@+id/bar_ana" style="?android:attr/progressBarStyleHorizontal" android:layout_width="match_parent" android:layout_height="8dp" android:max="100" android:progress="6" android:progressDrawable="@drawable/p_purple" android:layout_marginTop="3dp" android:layout_marginBottom="10dp"/>
+              <!-- ALTO ARANCIONE -->
+              <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:gravity="center_vertical">
+                  <ImageView android:layout_width="16dp" android:layout_height="16dp" android:src="@drawable/ic_fire"/>
+                  <TextView android:id="@+id/w_alto_label" android:layout_width="0dp" android:layout_weight="1" android:layout_height="wrap_content" android:text="ALTO 1758 - 88%" android:textColor="#ff8c32" android:textSize="11sp" android:textStyle="bold" android:layout_marginStart="6dp"/>
+              </LinearLayout>
+              <ProgressBar android:id="@+id/bar_alto" style="?android:attr/progressBarStyleHorizontal" android:layout_width="match_parent" android:layout_height="8dp" android:max="100" android:progress="88" android:progressDrawable="@drawable/p_orange" android:layout_marginTop="3dp" android:layout_marginBottom="10dp"/>
+              <!-- BASSO CELESTE -->
+              <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:gravity="center_vertical">
+                  <ImageView android:layout_width="16dp" android:layout_height="16dp" android:src="@drawable/ic_drop"/>
+                  <TextView android:id="@+id/w_basso_label" android:layout_width="0dp" android:layout_weight="1" android:layout_height="wrap_content" android:text="BASSO 124 - 6%" android:textColor="#22e5ff" android:textSize="11sp" android:textStyle="bold" android:layout_marginStart="6dp"/>
+              </LinearLayout>
+              <ProgressBar android:id="@+id/bar_basso" style="?android:attr/progressBarStyleHorizontal" android:layout_width="match_parent" android:layout_height="8dp" android:max="100" android:progress="6" android:progressDrawable="@drawable/p_cyan" android:layout_marginTop="3dp"/>
+              <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:layout_marginTop="12dp">
+                  <LinearLayout android:layout_width="0dp" android:layout_weight="1" android:layout_height="wrap_content" android:orientation="vertical" android:background="@drawable/bg_card" android:padding="6dp"><TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="HRV" android:textColor="#6b9a6b" android:textSize="8sp"/><TextView android:id="@+id/w_hrv" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="45 ms" android:textColor="#ffffff" android:textSize="13sp" android:textStyle="bold"/></LinearLayout>
+                  <LinearLayout android:layout_width="0dp" android:layout_weight="1" android:layout_height="wrap_content" android:orientation="vertical" android:background="@drawable/bg_card" android:padding="6dp" android:layout_marginStart="6dp"><TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="RHR" android:textColor="#6b9a6b" android:textSize="8sp"/><TextView android:id="@+id/w_rhr" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="50 bpm" android:textColor="#ffffff" android:textSize="13sp" android:textStyle="bold"/></LinearLayout>
+                  <LinearLayout android:layout_width="0dp" android:layout_weight="1" android:layout_height="wrap_content" android:orientation="vertical" android:background="@drawable/bg_card" android:padding="6dp" android:layout_marginStart="6dp"><TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="RECUPERO" android:textColor="#6b9a6b" android:textSize="8sp"/><TextView android:id="@+id/w_rec" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="12h" android:textColor="#ffffff" android:textSize="13sp" android:textStyle="bold"/></LinearLayout>
+              </LinearLayout>
+              <ImageView android:id="@+id/w_chart" android:layout_width="match_parent" android:layout_height="90dp" android:layout_marginTop="12dp"/>
+              <TextView android:id="@+id/w_km_row" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="LUN MAR MER GIO VEN SAB DOM" android:textColor="#4a7a4a" android:textSize="8sp" android:layout_marginTop="4dp" android:gravity="center"/>
           </LinearLayout>
           ENDOFF
+
           cat > app/src/main/AndroidManifest.xml << 'ENDOFF'
           <?xml version="1.0" encoding="utf-8"?>
           <manifest xmlns:android="http://schemas.android.com/apk/res/android">
@@ -106,6 +135,7 @@ jobs:
             </application>
           </manifest>
           ENDOFF
+
           cat > app/src/main/java/com/garminmatrix/MainActivity.java << 'ENDOFF'
           package com.garminmatrix;
           import android.os.Bundle; import android.webkit.*; import android.widget.EditText; import android.app.AlertDialog; import androidx.appcompat.app.AppCompatActivity; import androidx.webkit.WebViewAssetLoader;
@@ -113,30 +143,49 @@ jobs:
             @Override protected void onCreate(Bundle b){super.onCreate(b); WebView wv=new WebView(this); setContentView(wv); WebSettings s=wv.getSettings(); s.setJavaScriptEnabled(true); s.setDomStorageEnabled(true); s.setAllowFileAccess(true); s.setAllowContentAccess(true); s.setAllowFileAccessFromFileURLs(true); s.setAllowUniversalAccessFromFileURLs(true); s.setMixedContentMode(WebSettings.MIXED_CONTENT_ALWAYS_ALLOW); final WebViewAssetLoader loader=new WebViewAssetLoader.Builder().addPathHandler("/assets/", new WebViewAssetLoader.AssetsPathHandler(this)).build(); wv.setWebViewClient(new androidx.webkit.WebViewClientCompat(){@Override public android.webkit.WebResourceResponse shouldInterceptRequest(WebView view, android.webkit.WebResourceRequest req){return loader.shouldInterceptRequest(req.getUrl());}}); wv.setWebChromeClient(new WebChromeClient(){@Override public boolean onJsPrompt(WebView view, String url, String message, String defaultValue, final JsPromptResult result){final EditText input=new EditText(MainActivity.this); input.setText(defaultValue!=null?defaultValue:""); new AlertDialog.Builder(MainActivity.this).setTitle("Gemini Key").setMessage(message).setView(input).setPositiveButton("OK",(d,w)->result.confirm(input.getText().toString())).setNegativeButton("Annulla",(d,w)->result.cancel()).setCancelable(false).show(); return true;}}); wv.loadUrl("https://appassets.androidplatform.net/assets/index.html");}
           }
           ENDOFF
+
           cat > app/src/main/java/com/garminmatrix/RazielWidgetProvider.java << 'ENDOFF'
           package com.garminmatrix;
           import android.appwidget.AppWidgetManager; import android.appwidget.AppWidgetProvider; import android.content.Context; import android.graphics.*; import android.widget.RemoteViews; import org.json.*; import java.text.SimpleDateFormat; import java.util.*; import java.io.*;
           public class RazielWidgetProvider extends AppWidgetProvider {
-            @Override public void onUpdate(Context c, AppWidgetManager m, int[] ids){for(int id:ids) doUpdate(c,m,id);}
-            private void doUpdate(Context ctx, AppWidgetManager mgr, int wid){
+            @Override public void onUpdate(Context c, AppWidgetManager m, int[] ids){for(int id:ids) update(c,m,id);}
+            void update(Context ctx, AppWidgetManager mgr, int wid){
               RemoteViews v=new RemoteViews(ctx.getPackageName(), R.layout.widget_raziel);
               try{
-                StringBuilder sb=new StringBuilder(); BufferedReader r=new BufferedReader(new InputStreamReader(ctx.getAssets().open("database.json"))); String l; while((l=r.readLine())!=null) sb.append(l); r.close();
+                BufferedReader r=new BufferedReader(new InputStreamReader(ctx.getAssets().open("database.json"))); StringBuilder sb=new StringBuilder(); String l; while((l=r.readLine())!=null) sb.append(l); r.close();
                 JSONObject db=new JSONObject(sb.toString()); JSONObject bil=db.optJSONObject("bilancio_carico"); if(bil==null) bil=new JSONObject();
                 int alto=bil.optInt("aerobico_alto",1758); int basso=bil.optInt("aerobico_basso",124); int ana=bil.optInt("anaerobico",135);
-                int tot=alto+basso+ana; if(tot==0) tot=1;
-                int pa=(ana*100)/tot; int pb=(basso*100)/tot; int ph=100-pa-pb;
-                if(ph<0) ph=92; if(ph>100) ph=92; if(pa<0) pa=7; if(pb<0) pb=10;
-                v.setTextViewText(R.id.w_ana_label,"ANAEROBICO "+ana+" - "+pa+"%"); v.setProgressBar(R.id.bar_ana,100,pa,false);
-                v.setTextViewText(R.id.w_alto_label,"ALTO "+alto+" - "+ph+"%"); v.setProgressBar(R.id.bar_alto,100,ph,false);
-                v.setTextViewText(R.id.w_basso_label,"BASSO "+basso+" - "+pb+"%"); v.setProgressBar(R.id.bar_basso,100,pb,false);
-                JSONArray giorni=db.optJSONArray("giorni");
-                if(giorni!=null && giorni.length()>0){JSONObject last=giorni.getJSONObject(giorni.length()-1); v.setTextViewText(R.id.w_hrv,last.optInt("hrv",45)+" ms"); v.setTextViewText(R.id.w_rhr,last.optInt("fc_riposo",50)+" bpm"); v.setTextViewText(R.id.w_rec,last.optInt("recovery_time_h",12)+"h"); String d=last.optString("data","2026-10-13"); if(d.length()>=10) v.setTextViewText(R.id.w_title,"RAZIEL // "+d.substring(0,10));}
+                int tot=alto+basso+ana; if(tot==0) tot=2017;
+                int pAna=(ana*100)/tot; int pBasso=(basso*100)/tot; int pAlto=100-pAna-pBasso;
+                v.setTextViewText(R.id.w_ana_label,"ANAEROBICO "+ana+" - "+pAna+"%"); v.setProgressBar(R.id.bar_ana,100,pAna,false);
+                v.setTextViewText(R.id.w_alto_label,"ALTO "+alto+" - "+pAlto+"%"); v.setProgressBar(R.id.bar_alto,100,pAlto,false);
+                v.setTextViewText(R.id.w_basso_label,"BASSO "+basso+" - "+pBasso+"%"); v.setProgressBar(R.id.bar_basso,100,pBasso,false);
+                JSONArray giorni=db.optJSONArray("giorni"); if(giorni!=null && giorni.length()>0){JSONObject last=giorni.getJSONObject(giorni.length()-1); v.setTextViewText(R.id.w_hrv,last.optInt("hrv",45)+" ms"); v.setTextViewText(R.id.w_rhr,last.optInt("fc_riposo",50)+" bpm"); v.setTextViewText(R.id.w_rec,last.optInt("recovery_time_h",12)+"h"); String d=last.optString("data","2026-10-12"); if(d.length()>=10) v.setTextViewText(R.id.w_title,"RAZIEL // "+d.substring(0,10));}
                 SimpleDateFormat tf=new SimpleDateFormat("HH:mm",Locale.US); v.setTextViewText(R.id.w_updated,"UPDATED "+tf.format(new Date()));
-                Bitmap bmp=Bitmap.createBitmap(400,80,Bitmap.Config.ARGB_8888); Canvas c2=new Canvas(bmp); Paint p=new Paint(); p.setColor(Color.parseColor("#1a3d1a")); p.setTextSize(16f); c2.drawText("LUN  MAR  MER  GIO  VEN  SAB  DOM",10,50,p); v.setImageViewBitmap(R.id.w_chart,bmp);
-                v.setTextViewText(R.id.w_km_row,"WEEK KM/DAY");
-              }catch(Exception e){v.setTextViewText(R.id.w_title,"RAZIEL // "+e.getMessage());}
+                v.setImageViewBitmap(R.id.w_chart, drawChart(db.optJSONArray("attivita")));
+              }catch(Exception e){v.setTextViewText(R.id.w_title,"RAZIEL // ERR"); v.setTextViewText(R.id.w_updated,e.getMessage());}
               mgr.updateAppWidget(wid,v);
+            }
+            Bitmap drawChart(JSONArray att){
+              int W=700, H=90; Bitmap bmp=Bitmap.createBitmap(W,H,Bitmap.Config.ARGB_8888); Canvas c=new Canvas(bmp); c.drawColor(Color.TRANSPARENT);
+              if(att==null || att.length()==0){Paint p=new Paint(); p.setColor(Color.parseColor("#2a5a2a")); p.setTextSize(20f); c.drawText("No data",20,50,p); return bmp;}
+              try{
+                Calendar cal=Calendar.getInstance(); cal.setFirstDayOfWeek(Calendar.MONDAY); cal.set(Calendar.DAY_OF_WEEK,Calendar.MONDAY); cal.set(Calendar.HOUR_OF_DAY,0); cal.set(Calendar.MINUTE,0); cal.set(Calendar.SECOND,0); long mon=cal.getTimeInMillis();
+                float[] km=new float[7]; SimpleDateFormat sdf=new SimpleDateFormat("yyyy-MM-dd",Locale.US);
+                for(int i=0;i<att.length();i++){JSONObject a=att.getJSONObject(i); String iso=a.optString("inizio",""); if(iso.length()<10) continue; try{Date d=sdf.parse(iso.substring(0,10)); if(d==null) continue; int diff=(int)((d.getTime()-mon)/(86400000L)); if(diff>=0 && diff<7) km[diff]+=a.optDouble("distanza_m",0)/1000f;}catch(Exception ignored){}}
+                float max=1f; for(float k:km) if(k>max) max=k; if(max<5f) max=5f;
+                Paint barPaint=new Paint(Paint.ANTI_ALIAS_FLAG); Paint textPaint=new Paint(Paint.ANTI_ALIAS_FLAG); textPaint.setColor(Color.parseColor("#7dff8a")); textPaint.setTextSize(18f); textPaint.setTextAlign(Paint.Align.CENTER);
+                Paint valPaint=new Paint(Paint.ANTI_ALIAS_FLAG); valPaint.setColor(Color.WHITE); valPaint.setTextSize(16f); valPaint.setTextAlign(Paint.Align.CENTER);
+                String[] labs={"LUN","MAR","MER","GIO","VEN","SAB","DOM"};
+                for(int i=0;i<7;i++){
+                  float x = i*(W/7f)+8; float bw = (W/7f)-16; float bh = (km[i]/max)*(H-28); if(bh<4) bh=km[i]>0?10:2;
+                  barPaint.setColor(km[i]>0? Color.parseColor("#5afc7a") : Color.parseColor("#1a3d1a"));
+                  c.drawRoundRect(x, H-20-bh, x+bw, H-20, 6f,6f, barPaint);
+                  c.drawText(labs[i], x+bw/2, H-2, textPaint);
+                  if(km[i]>0) c.drawText(String.format(Locale.US,"%.1f",km[i]), x+bw/2, H-24-bh, valPaint);
+                }
+              }catch(Exception e){Paint p=new Paint(); p.setColor(Color.RED); p.setTextSize(20f); c.drawText("ERR",10,40,p);}
+              return bmp;
             }
           }
           ENDOFF
@@ -144,5 +193,5 @@ jobs:
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: RAZIEL-V35-APK
+          name: RAZIEL-V36-APK
           path: app/build/outputs/apk/debug/*.apk
