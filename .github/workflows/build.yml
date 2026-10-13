@@ -30,7 +30,7 @@ jobs:
           android {
               namespace 'com.garminmatrix'
               compileSdk 34
-              defaultConfig { applicationId "com.garminmatrix"; minSdk 24; targetSdk 34; versionCode 48; versionName "V39.1-DIRECT" }
+              defaultConfig { applicationId "com.garminmatrix"; minSdk 24; targetSdk 34; versionCode 49; versionName "V39.2-DIRECT-FIX" }
               compileOptions { sourceCompatibility JavaVersion.VERSION_17; targetCompatibility JavaVersion.VERSION_17 }
           }
           dependencies { implementation 'androidx.appcompat:appcompat:1.6.1'; implementation 'androidx.webkit:webkit:1.6.1' }
@@ -40,9 +40,6 @@ jobs:
           echo '<?xml version="1.0"?><layer-list xmlns:android="http://schemas.android.com/apk/res/android"><item android:id="@android:id/background"><shape><corners android:radius="6dp"/><solid android:color="#261a0a"/></shape></item><item android:id="@android:id/progress"><clip><shape><corners android:radius="6dp"/><solid android:color="#ff7a18"/></shape></clip></item></layer-list>' > app/src/main/res/drawable/p_orange.xml
           echo '<?xml version="1.0"?><layer-list xmlns:android="http://schemas.android.com/apk/res/android"><item android:id="@android:id/background"><shape><corners android:radius="6dp"/><solid android:color="#0a2222"/></shape></item><item android:id="@android:id/progress"><clip><shape><corners android:radius="6dp"/><solid android:color="#00e5ff"/></shape></clip></item></layer-list>' > app/src/main/res/drawable/p_cyan.xml
           echo '<?xml version="1.0"?><layer-list xmlns:android="http://schemas.android.com/apk/res/android"><item android:id="@android:id/background"><shape><corners android:radius="6dp"/><solid android:color="#1e1430"/></shape></item><item android:id="@android:id/progress"><clip><shape><corners android:radius="6dp"/><solid android:color="#a855f7"/></shape></clip></item></layer-list>' > app/src/main/res/drawable/p_purple.xml
-          echo '<?xml version="1.0"?><shape xmlns:android="http://schemas.android.com/apk/res/android"><solid android:color="#ff7a18"/></shape>' > app/src/main/res/drawable/ic_fire.xml
-          echo '<?xml version="1.0"?><shape xmlns:android="http://schemas.android.com/apk/res/android"><solid android:color="#00e5ff"/></shape>' > app/src/main/res/drawable/ic_drop.xml
-          echo '<?xml version="1.0"?><shape xmlns:android="http://schemas.android.com/apk/res/android"><solid android:color="#a855f7"/></shape>' > app/src/main/res/drawable/ic_diamond.xml
           cat > app/src/main/res/xml/widget_raziel_info.xml <<'ENDOFF'
           <?xml version="1.0"?><appwidget-provider xmlns:android="http://schemas.android.com/apk/res/android" android:minWidth="300dp" android:minHeight="360dp" android:updatePeriodMillis="1800000" android:initialLayout="@layout/widget_raziel" android:resizeMode="horizontal|vertical" android:widgetCategory="home_screen"/>
           ENDOFF
@@ -50,7 +47,7 @@ jobs:
           <?xml version="1.0" encoding="utf-8"?><LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:background="@drawable/bg_main" android:padding="12dp"><TextView android:id="@+id/w_title" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="RAZIEL" android:textColor="#7dff8a" android:textSize="13sp" android:textStyle="bold"/><TextView android:id="@+id/w_updated" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="--:--" android:textColor="#6b9a6b" android:textSize="9sp"/><ProgressBar android:id="@+id/bar_ana" style="?android:attr/progressBarStyleHorizontal" android:layout_width="match_parent" android:layout_height="8dp" android:max="100" android:progress="6" android:progressDrawable="@drawable/p_purple" android:layout_marginTop="8dp"/><ProgressBar android:id="@+id/bar_alto" style="?android:attr/progressBarStyleHorizontal" android:layout_width="match_parent" android:layout_height="8dp" android:max="100" android:progress="88" android:progressDrawable="@drawable/p_orange" android:layout_marginTop="4dp"/><ProgressBar android:id="@+id/bar_basso" style="?android:attr/progressBarStyleHorizontal" android:layout_width="match_parent" android:layout_height="8dp" android:max="100" android:progress="6" android:progressDrawable="@drawable/p_cyan" android:layout_marginTop="4dp"/><ImageView android:id="@+id/w_chart" android:layout_width="match_parent" android:layout_height="90dp" android:layout_marginTop="10dp"/></LinearLayout>
           ENDOFF
           cat > app/src/main/res/layout/activity_main.xml <<'ENDOFF'
-          <?xml version="1.0" encoding="utf-8"?><LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent" android:layout_height="match_parent" android:orientation="vertical" android:background="#0d1a0d"><LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:padding="12dp" android:background="#111f11"><TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="RAZIEL V39.1 DIRECT LOAD" android:textColor="#5afc7a" android:textSize="13sp" android:textStyle="bold"/><TextView android:id="@+id/txt_status" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Metodo diretto - carica JSON come pagina" android:textColor="#8acf8a" android:textSize="11sp" android:layout_marginTop="4dp"/><LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:layout_marginTop="8dp"><Button android:id="@+id/btn_login" android:layout_width="0dp" android:layout_weight="1" android:layout_height="46dp" android:text="LOGIN" android:backgroundTint="#5afc7a"/><Button android:id="@+id/btn_sync" android:layout_width="0dp" android:layout_weight="1" android:layout_height="46dp" android:text="SYNC ORA" android:backgroundTint="#ff7a18" android:layout_marginStart="5dp"/><Button android:id="@+id/btn_dash" android:layout_width="0dp" android:layout_weight="1" android:layout_height="46dp" android:text="DASH" android:backgroundTint="#222" android:textColor="#5afc7a" android:layout_marginStart="5dp"/></LinearLayout></LinearLayout><WebView android:id="@+id/webview" android:layout_width="match_parent" android:layout_height="match_parent"/></LinearLayout>
+          <?xml version="1.0" encoding="utf-8"?><LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent" android:layout_height="match_parent" android:orientation="vertical" android:background="#0d1a0d"><LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:padding="12dp" android:background="#111f11"><TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="RAZIEL V39.2 DIRECT" android:textColor="#5afc7a" android:textSize="13sp" android:textStyle="bold"/><TextView android:id="@+id/txt_status" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Carica JSON come pagina" android:textColor="#8acf8a" android:textSize="11sp"/><LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:layout_marginTop="8dp"><Button android:id="@+id/btn_login" android:layout_width="0dp" android:layout_weight="1" android:layout_height="46dp" android:text="LOGIN" android:backgroundTint="#5afc7a"/><Button android:id="@+id/btn_sync" android:layout_width="0dp" android:layout_weight="1" android:layout_height="46dp" android:text="SYNC ORA" android:backgroundTint="#ff7a18" android:layout_marginStart="5dp"/><Button android:id="@+id/btn_dash" android:layout_width="0dp" android:layout_weight="1" android:layout_height="46dp" android:text="DASH" android:backgroundTint="#222" android:textColor="#5afc7a" android:layout_marginStart="5dp"/></LinearLayout></LinearLayout><WebView android:id="@+id/webview" android:layout_width="match_parent" android:layout_height="match_parent"/></LinearLayout>
           ENDOFF
           cat > app/src/main/AndroidManifest.xml <<'ENDOFF'
           <?xml version="1.0" encoding="utf-8"?><manifest xmlns:android="http://schemas.android.com/apk/res/android"><uses-permission android:name="android.permission.INTERNET"/><uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/><application android:allowBackup="true" android:label="RAZIEL" android:usesCleartextTraffic="true" android:theme="@style/Theme.AppCompat.Light.NoActionBar"><activity android:name=".MainActivity" android:exported="true"><intent-filter><action android:name="android.intent.action.MAIN"/><category android:name="android.intent.category.LAUNCHER"/></intent-filter></activity><receiver android:name=".RazielWidgetProvider" android:exported="true"><intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE"/></intent-filter><meta-data android:name="android.appwidget.provider" android:resource="@xml/widget_raziel_info"/></receiver></application></manifest>
@@ -84,20 +81,18 @@ jobs:
                               st.setText("JSON caricato, leggo...");
                               view.evaluateJavascript("document.documentElement.innerText", value->{
                                   try{
-                                      String json=android.util.JsonReader.class!=null? value : value;
-                                      // value arriva con quotes e \u
-                                      String unescaped=org.json.JSONObject.quote("").getClass()!=null? decode(value) : value;
+                                      String unescaped=decode(value);
                                       if(unescaped.contains("activityId")){
                                           save(unescaped);
-                                          view.post(()->{ isSyncMode=false; st.setText("✓ JSON OK "+unescaped.length()/1024+"KB - vado a DASH"); wv.loadUrl("https://appassets.androidplatform.net/assets/index.html"); });
+                                          view.post(()->{ isSyncMode=false; st.setText("JSON OK "+unescaped.length()/1024+"KB - vado a DASH"); wv.loadUrl("https://appassets.androidplatform.net/assets/index.html"); });
                                       } else {
                                           st.setText("Risposta non JSON: "+unescaped.substring(0,Math.min(200,unescaped.length())));
-                                          if(unescaped.contains("<!DOCTYPE")){ st.setText("Garmin torna login - fai LOGIN di nuovo e poi SYNC"); isSyncMode=false; }
+                                          if(unescaped.contains("<!DOCTYPE")){ st.setText("Garmin torna login - rifai LOGIN"); isSyncMode=false; }
                                       }
                                   }catch(Exception e){ st.setText("Parse err "+e.getMessage()); }
                               });
                           } else if(url.contains("connect.garmin.com") &&!url.contains("signin") &&!isSyncMode){
-                              st.setText("Garmin OK - ora premi SYNC ORA");
+                              st.setText("Garmin OK - premi SYNC ORA");
                           }
                       }
                   });
@@ -108,18 +103,13 @@ jobs:
                   try{
                       if(v.length()>=2 && v.startsWith("\"") && v.endsWith("\"")){
                           v=v.substring(1,v.length()-1);
-                          v=v.replace("\\n","\n").replace("\\r","").replace("\\\"","\"").replace("\\u003c","<").replace("\\u003e",">").replace("\\/","/").replace("\\t"," ");
-                          v=v.replace("\\u0026","&");
+                          v=v.replace("\\n","\n").replace("\\r","").replace("\\\"","\"").replace("\\/","/").replace("\\t"," ");
                       }
                       return v;
                   }catch(Exception e){ return v; }
               }
               void login(){ isSyncMode=false; wv.loadUrl("https://connect.garmin.com/signin/?service=https://connect.garmin.com/modern/"); }
-              void syncDirect(){
-                  isSyncMode=true;
-                  st.setText("Carico API direttamente...");
-                  wv.loadUrl(API_URL);
-              }
+              void syncDirect(){ isSyncMode=true; st.setText("Carico API direttamente..."); wv.loadUrl(API_URL); }
               public class Bridge{
                   @android.webkit.JavascriptInterface public String getDb(){
                       try{
@@ -131,9 +121,7 @@ jobs:
               }
               void save(String actJ){
                   try{
-                      // pulisci eventuali escape iniziali
                       actJ=actJ.trim();
-                      if(actJ.startsWith("\"")) actJ=decode("\""+actJ+"\"");
                       JSONArray arr=new JSONArray(actJ); File f=new File(getFilesDir(),"database.json"); JSONObject db;
                       if(f.exists()){ BufferedReader r=new BufferedReader(new InputStreamReader(new FileInputStream(f))); StringBuilder sb=new StringBuilder(); String l; while((l=r.readLine())!=null) sb.append(l); r.close(); db=new JSONObject(sb.toString()); }
                       else { BufferedReader ar=new BufferedReader(new InputStreamReader(getAssets().open("database.json"))); StringBuilder sb=new StringBuilder(); String l; while((l=ar.readLine())!=null) sb.append(l); ar.close(); db=new JSONObject(sb.toString()); }
