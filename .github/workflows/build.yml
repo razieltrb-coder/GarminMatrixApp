@@ -30,7 +30,7 @@ jobs:
           android {
               namespace 'com.garminmatrix'
               compileSdk 34
-              defaultConfig { applicationId "com.garminmatrix"; minSdk 24; targetSdk 34; versionCode 49; versionName "V39.2-DIRECT-FIX" }
+              defaultConfig { applicationId "com.garminmatrix"; minSdk 24; targetSdk 34; versionCode 50; versionName "V39.3-DIRECT-FIX2" }
               compileOptions { sourceCompatibility JavaVersion.VERSION_17; targetCompatibility JavaVersion.VERSION_17 }
           }
           dependencies { implementation 'androidx.appcompat:appcompat:1.6.1'; implementation 'androidx.webkit:webkit:1.6.1' }
@@ -44,10 +44,21 @@ jobs:
           <?xml version="1.0"?><appwidget-provider xmlns:android="http://schemas.android.com/apk/res/android" android:minWidth="300dp" android:minHeight="360dp" android:updatePeriodMillis="1800000" android:initialLayout="@layout/widget_raziel" android:resizeMode="horizontal|vertical" android:widgetCategory="home_screen"/>
           ENDOFF
           cat > app/src/main/res/layout/widget_raziel.xml <<'ENDOFF'
-          <?xml version="1.0" encoding="utf-8"?><LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:background="@drawable/bg_main" android:padding="12dp"><TextView android:id="@+id/w_title" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="RAZIEL" android:textColor="#7dff8a" android:textSize="13sp" android:textStyle="bold"/><TextView android:id="@+id/w_updated" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="--:--" android:textColor="#6b9a6b" android:textSize="9sp"/><ProgressBar android:id="@+id/bar_ana" style="?android:attr/progressBarStyleHorizontal" android:layout_width="match_parent" android:layout_height="8dp" android:max="100" android:progress="6" android:progressDrawable="@drawable/p_purple" android:layout_marginTop="8dp"/><ProgressBar android:id="@+id/bar_alto" style="?android:attr/progressBarStyleHorizontal" android:layout_width="match_parent" android:layout_height="8dp" android:max="100" android:progress="88" android:progressDrawable="@drawable/p_orange" android:layout_marginTop="4dp"/><ProgressBar android:id="@+id/bar_basso" style="?android:attr/progressBarStyleHorizontal" android:layout_width="match_parent" android:layout_height="8dp" android:max="100" android:progress="6" android:progressDrawable="@drawable/p_cyan" android:layout_marginTop="4dp"/><ImageView android:id="@+id/w_chart" android:layout_width="match_parent" android:layout_height="90dp" android:layout_marginTop="10dp"/></LinearLayout>
+          <?xml version="1.0" encoding="utf-8"?>
+          <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:background="@drawable/bg_main" android:padding="12dp">
+          <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal">
+          <TextView android:id="@+id/w_title" android:layout_width="0dp" android:layout_weight="1" android:layout_height="wrap_content" android:text="RAZIEL" android:textColor="#7dff8a" android:textSize="13sp" android:textStyle="bold"/>
+          <TextView android:id="@+id/w_btn_update" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="[AGGIORNA]" android:textColor="#5afc7a" android:textSize="10sp" android:textStyle="bold"/>
+          </LinearLayout>
+          <TextView android:id="@+id/w_updated" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="--:--" android:textColor="#6b9a6b" android:textSize="9sp"/>
+          <ProgressBar android:id="@+id/bar_ana" style="?android:attr/progressBarStyleHorizontal" android:layout_width="match_parent" android:layout_height="8dp" android:max="100" android:progress="6" android:progressDrawable="@drawable/p_purple" android:layout_marginTop="8dp"/>
+          <ProgressBar android:id="@+id/bar_alto" style="?android:attr/progressBarStyleHorizontal" android:layout_width="match_parent" android:layout_height="8dp" android:max="100" android:progress="88" android:progressDrawable="@drawable/p_orange" android:layout_marginTop="4dp"/>
+          <ProgressBar android:id="@+id/bar_basso" style="?android:attr/progressBarStyleHorizontal" android:layout_width="match_parent" android:layout_height="8dp" android:max="100" android:progress="6" android:progressDrawable="@drawable/p_cyan" android:layout_marginTop="4dp"/>
+          <ImageView android:id="@+id/w_chart" android:layout_width="match_parent" android:layout_height="90dp" android:layout_marginTop="10dp"/>
+          </LinearLayout>
           ENDOFF
           cat > app/src/main/res/layout/activity_main.xml <<'ENDOFF'
-          <?xml version="1.0" encoding="utf-8"?><LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent" android:layout_height="match_parent" android:orientation="vertical" android:background="#0d1a0d"><LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:padding="12dp" android:background="#111f11"><TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="RAZIEL V39.2 DIRECT" android:textColor="#5afc7a" android:textSize="13sp" android:textStyle="bold"/><TextView android:id="@+id/txt_status" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Carica JSON come pagina" android:textColor="#8acf8a" android:textSize="11sp"/><LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:layout_marginTop="8dp"><Button android:id="@+id/btn_login" android:layout_width="0dp" android:layout_weight="1" android:layout_height="46dp" android:text="LOGIN" android:backgroundTint="#5afc7a"/><Button android:id="@+id/btn_sync" android:layout_width="0dp" android:layout_weight="1" android:layout_height="46dp" android:text="SYNC ORA" android:backgroundTint="#ff7a18" android:layout_marginStart="5dp"/><Button android:id="@+id/btn_dash" android:layout_width="0dp" android:layout_weight="1" android:layout_height="46dp" android:text="DASH" android:backgroundTint="#222" android:textColor="#5afc7a" android:layout_marginStart="5dp"/></LinearLayout></LinearLayout><WebView android:id="@+id/webview" android:layout_width="match_parent" android:layout_height="match_parent"/></LinearLayout>
+          <?xml version="1.0" encoding="utf-8"?><LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent" android:layout_height="match_parent" android:orientation="vertical" android:background="#0d1a0d"><LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:padding="12dp" android:background="#111f11"><TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="RAZIEL V39.3 DIRECT" android:textColor="#5afc7a" android:textSize="13sp" android:textStyle="bold"/><TextView android:id="@+id/txt_status" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Carica JSON come pagina" android:textColor="#8acf8a" android:textSize="11sp"/><LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:layout_marginTop="8dp"><Button android:id="@+id/btn_login" android:layout_width="0dp" android:layout_weight="1" android:layout_height="46dp" android:text="LOGIN" android:backgroundTint="#5afc7a"/><Button android:id="@+id/btn_sync" android:layout_width="0dp" android:layout_weight="1" android:layout_height="46dp" android:text="SYNC ORA" android:backgroundTint="#ff7a18" android:layout_marginStart="5dp"/><Button android:id="@+id/btn_dash" android:layout_width="0dp" android:layout_weight="1" android:layout_height="46dp" android:text="DASH" android:backgroundTint="#222" android:textColor="#5afc7a" android:layout_marginStart="5dp"/></LinearLayout></LinearLayout><WebView android:id="@+id/webview" android:layout_width="match_parent" android:layout_height="match_parent"/></LinearLayout>
           ENDOFF
           cat > app/src/main/AndroidManifest.xml <<'ENDOFF'
           <?xml version="1.0" encoding="utf-8"?><manifest xmlns:android="http://schemas.android.com/apk/res/android"><uses-permission android:name="android.permission.INTERNET"/><uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/><application android:allowBackup="true" android:label="RAZIEL" android:usesCleartextTraffic="true" android:theme="@style/Theme.AppCompat.Light.NoActionBar"><activity android:name=".MainActivity" android:exported="true"><intent-filter><action android:name="android.intent.action.MAIN"/><category android:name="android.intent.category.LAUNCHER"/></intent-filter></activity><receiver android:name=".RazielWidgetProvider" android:exported="true"><intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE"/></intent-filter><meta-data android:name="android.appwidget.provider" android:resource="@xml/widget_raziel_info"/></receiver></application></manifest>
@@ -84,10 +95,10 @@ jobs:
                                       String unescaped=decode(value);
                                       if(unescaped.contains("activityId")){
                                           save(unescaped);
-                                          view.post(()->{ isSyncMode=false; st.setText("JSON OK "+unescaped.length()/1024+"KB - vado a DASH"); wv.loadUrl("https://appassets.androidplatform.net/assets/index.html"); });
+                                          view.post(()->{ isSyncMode=false; st.setText("JSON OK "+unescaped.length()/1024+"KB"); wv.loadUrl("https://appassets.androidplatform.net/assets/index.html"); });
                                       } else {
-                                          st.setText("Risposta non JSON: "+unescaped.substring(0,Math.min(200,unescaped.length())));
-                                          if(unescaped.contains("<!DOCTYPE")){ st.setText("Garmin torna login - rifai LOGIN"); isSyncMode=false; }
+                                          st.setText("Non JSON: "+unescaped.substring(0,Math.min(150,unescaped.length())));
+                                          if(unescaped.contains("<!DOCTYPE")){ st.setText("Garmin login - rifai LOGIN"); isSyncMode=false; }
                                       }
                                   }catch(Exception e){ st.setText("Parse err "+e.getMessage()); }
                               });
@@ -100,36 +111,22 @@ jobs:
                   wv.loadUrl("https://appassets.androidplatform.net/assets/index.html");
               }
               String decode(String v){
-                  try{
-                      if(v.length()>=2 && v.startsWith("\"") && v.endsWith("\"")){
-                          v=v.substring(1,v.length()-1);
-                          v=v.replace("\\n","\n").replace("\\r","").replace("\\\"","\"").replace("\\/","/").replace("\\t"," ");
-                      }
-                      return v;
-                  }catch(Exception e){ return v; }
+                  try{ if(v.length()>=2 && v.startsWith("\"") && v.endsWith("\"")){ v=v.substring(1,v.length()-1); v=v.replace("\\n","\n").replace("\\r","").replace("\\\"","\"").replace("\\/","/").replace("\\t"," "); } return v; }catch(Exception e){ return v; }
               }
               void login(){ isSyncMode=false; wv.loadUrl("https://connect.garmin.com/signin/?service=https://connect.garmin.com/modern/"); }
-              void syncDirect(){ isSyncMode=true; st.setText("Carico API direttamente..."); wv.loadUrl(API_URL); }
+              void syncDirect(){ isSyncMode=true; st.setText("Carico API..."); wv.loadUrl(API_URL); }
               public class Bridge{
                   @android.webkit.JavascriptInterface public String getDb(){
-                      try{
-                          File f=new File(getFilesDir(),"database.json");
-                          if(!f.exists()){ BufferedReader ar=new BufferedReader(new InputStreamReader(getAssets().open("database.json"))); StringBuilder sb=new StringBuilder(); String l; while((l=ar.readLine())!=null) sb.append(l); ar.close(); return sb.toString(); }
-                          BufferedReader r=new BufferedReader(new InputStreamReader(new FileInputStream(f))); StringBuilder sb=new StringBuilder(); String l; while((l=r.readLine())!=null) sb.append(l); r.close(); return sb.toString();
-                      }catch(Exception e){ return "{}"; }
+                      try{ File f=new File(getFilesDir(),"database.json"); if(!f.exists()){ BufferedReader ar=new BufferedReader(new InputStreamReader(getAssets().open("database.json"))); StringBuilder sb=new StringBuilder(); String l; while((l=ar.readLine())!=null) sb.append(l); ar.close(); return sb.toString(); } BufferedReader r=new BufferedReader(new InputStreamReader(new FileInputStream(f))); StringBuilder sb=new StringBuilder(); String l; while((l=r.readLine())!=null) sb.append(l); r.close(); return sb.toString(); }catch(Exception e){ return "{}"; }
                   }
               }
               void save(String actJ){
                   try{
-                      actJ=actJ.trim();
-                      JSONArray arr=new JSONArray(actJ); File f=new File(getFilesDir(),"database.json"); JSONObject db;
+                      actJ=actJ.trim(); JSONArray arr=new JSONArray(actJ); File f=new File(getFilesDir(),"database.json"); JSONObject db;
                       if(f.exists()){ BufferedReader r=new BufferedReader(new InputStreamReader(new FileInputStream(f))); StringBuilder sb=new StringBuilder(); String l; while((l=r.readLine())!=null) sb.append(l); r.close(); db=new JSONObject(sb.toString()); }
                       else { BufferedReader ar=new BufferedReader(new InputStreamReader(getAssets().open("database.json"))); StringBuilder sb=new StringBuilder(); String l; while((l=ar.readLine())!=null) sb.append(l); ar.close(); db=new JSONObject(sb.toString()); }
-                      JSONArray out=new JSONArray();
-                      for(int i=0;i<arr.length();i++){JSONObject a=arr.getJSONObject(i); JSONObject o=new JSONObject(); o.put("inizio",a.optString("startTimeLocal")); o.put("distanza_m",a.optDouble("distance",0)); o.put("durata_s",a.optDouble("duration",0)); o.put("nome",a.optString("activityName","")); out.put(o);}
-                      db.put("attivita",out);
-                      File outf=new File(getFilesDir(),"database.json"); FileWriter fw=new FileWriter(outf); fw.write(db.toString(2)); fw.close();
-                      st.setText("Salvato "+out.length()+" att");
+                      JSONArray out=new JSONArray(); for(int i=0;i<arr.length();i++){JSONObject a=arr.getJSONObject(i); JSONObject o=new JSONObject(); o.put("inizio",a.optString("startTimeLocal")); o.put("distanza_m",a.optDouble("distance",0)); o.put("durata_s",a.optDouble("duration",0)); o.put("nome",a.optString("activityName","")); out.put(o);} db.put("attivita",out);
+                      File outf=new File(getFilesDir(),"database.json"); FileWriter fw=new FileWriter(outf); fw.write(db.toString(2)); fw.close(); st.setText("Salvato "+out.length()+" att");
                       Intent it=new Intent(this,RazielWidgetProvider.class); it.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE); int[] ids=AppWidgetManager.getInstance(this).getAppWidgetIds(new ComponentName(this,RazielWidgetProvider.class)); it.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS,ids); sendBroadcast(it);
                   }catch(Exception e){st.setText("Save err "+e.getMessage());}
               }
@@ -140,7 +137,13 @@ jobs:
           import android.appwidget.*; import android.content.*; import android.app.PendingIntent; import android.graphics.*; import android.widget.RemoteViews; import org.json.*; import java.text.SimpleDateFormat; import java.util.*; import java.io.*;
           public class RazielWidgetProvider extends AppWidgetProvider {
               @Override public void onUpdate(Context c, AppWidgetManager m, int[] ids){for(int id:ids) upd(c,m,id);}
-              void upd(Context ctx, AppWidgetManager mgr, int wid){RemoteViews v=new RemoteViews(ctx.getPackageName(), R.layout.widget_raziel); try{Intent open=new Intent(ctx, MainActivity.class); PendingIntent pi=PendingIntent.getActivity(ctx,0,open,PendingIntent.FLAG_IMMUTABLE|PendingIntent.FLAG_UPDATE_CURRENT); v.setOnClickPendingIntent(R.id.w_btn_update,pi); JSONObject db=load(ctx); SimpleDateFormat tf=new SimpleDateFormat("HH:mm",Locale.US); v.setTextViewText(R.id.w_updated,"UPDATED "+tf.format(new Date())); v.setImageViewBitmap(R.id.w_chart, chart(db.optJSONArray("attivita")));}catch(Exception e){} mgr.updateAppWidget(wid,v);}
+              void upd(Context ctx, AppWidgetManager mgr, int wid){
+                  RemoteViews v=new RemoteViews(ctx.getPackageName(), R.layout.widget_raziel);
+                  try{
+                      Intent open=new Intent(ctx, MainActivity.class); PendingIntent pi=PendingIntent.getActivity(ctx,0,open,PendingIntent.FLAG_IMMUTABLE|PendingIntent.FLAG_UPDATE_CURRENT); v.setOnClickPendingIntent(R.id.w_btn_update,pi);
+                      JSONObject db=load(ctx); SimpleDateFormat tf=new SimpleDateFormat("HH:mm",Locale.US); v.setTextViewText(R.id.w_updated,"UPDATED "+tf.format(new Date())); v.setImageViewBitmap(R.id.w_chart, chart(db.optJSONArray("attivita")));
+                  }catch(Exception e){} mgr.updateAppWidget(wid,v);
+              }
               JSONObject load(Context ctx) throws Exception{File f=new File(ctx.getFilesDir(),"database.json"); StringBuilder sb=new StringBuilder(); if(f.exists()){BufferedReader r=new BufferedReader(new InputStreamReader(new FileInputStream(f))); String l; while((l=r.readLine())!=null) sb.append(l); r.close(); return new JSONObject(sb.toString());} else{BufferedReader r=new BufferedReader(new InputStreamReader(ctx.getAssets().open("database.json"))); String l; while((l=r.readLine())!=null) sb.append(l); r.close(); return new JSONObject(sb.toString());}}
               Bitmap chart(JSONArray att){int W=700,H=90; Bitmap bmp=Bitmap.createBitmap(W,H,Bitmap.Config.ARGB_8888); Canvas c=new Canvas(bmp); c.drawColor(0); try{Calendar cal=Calendar.getInstance(); cal.setFirstDayOfWeek(Calendar.MONDAY); cal.set(Calendar.DAY_OF_WEEK,Calendar.MONDAY); cal.set(Calendar.HOUR_OF_DAY,0); cal.set(Calendar.MINUTE,0); cal.set(Calendar.SECOND,0); cal.set(Calendar.MILLISECOND,0); long mon=cal.getTimeInMillis(); float[] km=new float[7]; if(att!=null){SimpleDateFormat sdf=new SimpleDateFormat("yyyy-MM-dd",Locale.US); for(int i=0;i<att.length();i++){JSONObject a=att.getJSONObject(i); String iso=a.optString("inizio",""); if(iso.length()<10) continue; try{Date d=sdf.parse(iso.substring(0,10)); if(d==null) continue; int diff=(int)((d.getTime()-mon)/86400000L); if(diff>=0 && diff<7) km[diff]+=a.optDouble("distanza_m",0)/1000f;}catch(Exception ignored){}}} float max=1f; for(float k:km) if(k>max) max=k; if(max<5f) max=5f; Paint bar=new Paint(Paint.ANTI_ALIAS_FLAG); Paint txt=new Paint(Paint.ANTI_ALIAS_FLAG); txt.setColor(Color.parseColor("#7dff8a")); txt.setTextSize(18f); txt.setTextAlign(Paint.Align.CENTER); Paint val=new Paint(Paint.ANTI_ALIAS_FLAG); val.setColor(Color.WHITE); val.setTextSize(15f); val.setTextAlign(Paint.Align.CENTER); String[] labs={"LUN","MAR","MER","GIO","VEN","SAB","DOM"}; for(int i=0;i<7;i++){float x=i*(W/7f)+8; float bw=(W/7f)-16; float bh=(km[i]/max)*(H-28); if(bh<3) bh=km[i]>0?10:2; bar.setColor(km[i]>0?Color.parseColor("#5afc7a"):Color.parseColor("#1a3d1a")); c.drawRoundRect(x,H-20-bh,x+bw,H-20,6f,6f,bar); c.drawText(labs[i],x+bw/2,H-2,txt); if(km[i]>0) c.drawText(String.format(Locale.US,"%.1f",km[i]),x+bw/2,H-24-bh,val);}}catch(Exception e){} return bmp;}
           }
@@ -149,3 +152,4 @@ jobs:
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with: { name: RAZIEL-V39-APK, path: app/build/outputs/apk/debug/*.apk }
+        
