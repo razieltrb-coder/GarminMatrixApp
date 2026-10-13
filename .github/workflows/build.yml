@@ -13,26 +13,43 @@ jobs:
         run: |
           rm -rf app build.gradle settings.gradle local.properties gradle.properties
           mkdir -p app/src/main/assets app/src/main/java/com/garminmatrix app/src/main/res/xml app/src/main/res/layout app/src/main/res/drawable
-          echo '<html><body>RAZIEL</body></html>' > app/src/main/assets/index.html
+          # se nel repo hai già index.html, usalo, altrimenti creo DASH vera
+          if [ -f index.html ]; then cp index.html app/src/main/assets/; echo "TROVATA DASH ORIGINALE"; else
+          cat > app/src/main/assets/index.html <<'HTM'
+          <!DOCTYPE html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+          <style>body{background:#0d1a0d;color:#5afc7a;font-family:monospace;padding:12px}.card{background:#142414;border:1px solid #2a5a2a;border-radius:10px;padding:10px;margin:8px 0} h2{color:#7dff8a}.km{font-size:22px;color:#fff}</style>
+          </head><body><h2>RAZIEL DASH // <span id="upd">--:--</span></h2>
+          <div class="card"><div>ATTIVITA ULTIMA SETTIMANA</div><div id="list"></div></div>
+          <div class="card"><div>BILANCIO CARICO</div><div id="bil"></div></div>
+          <script>
+          function load(){
+            try{
+              let txt = Android.getDb();
+              let db = JSON.parse(txt);
+              document.getElementById('upd').innerText = new Date().toLocaleTimeString();
+              let bil = db.bilancio_carico || {};
+              document.getElementById('bil').innerHTML = `ANA ${bil.anaerobico||135} | ALTO ${bil.aerobico_alto||1758} | BASSO ${bil.aerobico_basso||124}`;
+              let att = db.attivita || [];
+              let html = att.slice(0,20).map(a=>`<div>${(a.inizio||'').substring(0,16)} - ${(a.distanza_m/1000).toFixed(2)} km</div>`).join('');
+              if(!html) html = 'Nessuna attivita - fai SYNC ORA';
+              document.getElementById('list').innerHTML = html;
+            }catch(e){ document.getElementById('list').innerText = 'Errore DB: '+e+' - '+Android.getDb().substring(0,200); }
+          }
+          setTimeout(load,300);
+          </script></body></html>
+          HTM
+          fi
           echo '{"bilancio_carico":{"aerobico_alto":1758,"aerobico_basso":124,"anaerobico":135},"giorni":[{"data":"2026-10-13","hrv":45,"fc_riposo":50,"recovery_time_h":12}],"attivita":[]}' > app/src/main/assets/database.json
           echo "include ':app'" > settings.gradle
           echo "sdk.dir=$ANDROID_HOME" > local.properties
           echo "android.useAndroidX=true" > gradle.properties
           cat > build.gradle <<'ENDOFF'
-          buildscript {
-              repositories { google(); mavenCentral() }
-              dependencies { classpath 'com.android.tools.build:gradle:8.2.2' }
-          }
+          buildscript { repositories { google(); mavenCentral() } dependencies { classpath 'com.android.tools.build:gradle:8.2.2' } }
           allprojects { repositories { google(); mavenCentral() } }
           ENDOFF
           cat > app/build.gradle <<'ENDOFF'
           apply plugin: 'com.android.application'
-          android {
-              namespace 'com.garminmatrix'
-              compileSdk 34
-              defaultConfig { applicationId "com.garminmatrix"; minSdk 24; targetSdk 34; versionCode 43; versionName "V38.6-FIX-COOKIE-DASH" }
-              compileOptions { sourceCompatibility JavaVersion.VERSION_17; targetCompatibility JavaVersion.VERSION_17 }
-          }
+          android { namespace 'com.garminmatrix'; compileSdk 34; defaultConfig { applicationId "com.garminmatrix"; minSdk 24; targetSdk 34; versionCode 44; versionName "V38.7-DASH-RESTORE" } compileOptions { sourceCompatibility JavaVersion.VERSION_17; targetCompatibility JavaVersion.VERSION_17 } }
           dependencies { implementation 'androidx.appcompat:appcompat:1.6.1'; implementation 'androidx.webkit:webkit:1.6.1' }
           ENDOFF
           echo '<?xml version="1.0"?><shape xmlns:android="http://schemas.android.com/apk/res/android"><corners android:radius="20dp"/><solid android:color="#0d1a0d"/><stroke android:width="2dp" android:color="#5afc7a"/></shape>' > app/src/main/res/drawable/bg_main.xml
@@ -51,12 +68,9 @@ jobs:
           <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:background="@drawable/bg_main" android:padding="12dp">
           <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal"><TextView android:id="@+id/w_title" android:layout_width="0dp" android:layout_weight="1" android:layout_height="wrap_content" android:text="RAZIEL // SYNC" android:textColor="#7dff8a" android:textSize="13sp" android:textStyle="bold"/><TextView android:id="@+id/w_btn_update" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="[AGGIORNA]" android:textColor="#5afc7a" android:textSize="10sp" android:textStyle="bold"/></LinearLayout>
           <TextView android:id="@+id/w_updated" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="UPDATED --:--" android:textColor="#6b9a6b" android:textSize="9sp" android:layout_marginTop="2dp" android:layout_marginBottom="10dp"/>
-          <TextView android:id="@+id/w_ana_label" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="ANAEROBICO" android:textColor="#a855f7" android:textSize="11sp" android:textStyle="bold"/>
-          <ProgressBar android:id="@+id/bar_ana" style="?android:attr/progressBarStyleHorizontal" android:layout_width="match_parent" android:layout_height="8dp" android:max="100" android:progress="6" android:progressDrawable="@drawable/p_purple" android:layout_marginTop="3dp" android:layout_marginBottom="10dp"/>
-          <TextView android:id="@+id/w_alto_label" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="ALTO" android:textColor="#ff8c32" android:textSize="11sp" android:textStyle="bold"/>
-          <ProgressBar android:id="@+id/bar_alto" style="?android:attr/progressBarStyleHorizontal" android:layout_width="match_parent" android:layout_height="8dp" android:max="100" android:progress="88" android:progressDrawable="@drawable/p_orange" android:layout_marginTop="3dp" android:layout_marginBottom="10dp"/>
-          <TextView android:id="@+id/w_basso_label" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="BASSO" android:textColor="#22e5ff" android:textSize="11sp" android:textStyle="bold"/>
-          <ProgressBar android:id="@+id/bar_basso" style="?android:attr/progressBarStyleHorizontal" android:layout_width="match_parent" android:layout_height="8dp" android:max="100" android:progress="6" android:progressDrawable="@drawable/p_cyan" android:layout_marginTop="3dp"/>
+          <TextView android:id="@+id/w_ana_label" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="ANAEROBICO" android:textColor="#a855f7" android:textSize="11sp" android:textStyle="bold"/><ProgressBar android:id="@+id/bar_ana" style="?android:attr/progressBarStyleHorizontal" android:layout_width="match_parent" android:layout_height="8dp" android:max="100" android:progress="6" android:progressDrawable="@drawable/p_purple" android:layout_marginTop="3dp" android:layout_marginBottom="10dp"/>
+          <TextView android:id="@+id/w_alto_label" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="ALTO" android:textColor="#ff8c32" android:textSize="11sp" android:textStyle="bold"/><ProgressBar android:id="@+id/bar_alto" style="?android:attr/progressBarStyleHorizontal" android:layout_width="match_parent" android:layout_height="8dp" android:max="100" android:progress="88" android:progressDrawable="@drawable/p_orange" android:layout_marginTop="3dp" android:layout_marginBottom="10dp"/>
+          <TextView android:id="@+id/w_basso_label" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="BASSO" android:textColor="#22e5ff" android:textSize="11sp" android:textStyle="bold"/><ProgressBar android:id="@+id/bar_basso" style="?android:attr/progressBarStyleHorizontal" android:layout_width="match_parent" android:layout_height="8dp" android:max="100" android:progress="6" android:progressDrawable="@drawable/p_cyan" android:layout_marginTop="3dp"/>
           <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:layout_marginTop="12dp"><LinearLayout android:layout_width="0dp" android:layout_weight="1" android:layout_height="wrap_content" android:orientation="vertical" android:background="@drawable/bg_card" android:padding="6dp"><TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="HRV" android:textColor="#6b9a6b" android:textSize="8sp"/><TextView android:id="@+id/w_hrv" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="45 ms" android:textColor="#ffffff" android:textSize="13sp" android:textStyle="bold"/></LinearLayout><LinearLayout android:layout_width="0dp" android:layout_weight="1" android:layout_height="wrap_content" android:orientation="vertical" android:background="@drawable/bg_card" android:padding="6dp" android:layout_marginStart="6dp"><TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="RHR" android:textColor="#6b9a6b" android:textSize="8sp"/><TextView android:id="@+id/w_rhr" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="50 bpm" android:textColor="#ffffff" android:textSize="13sp" android:textStyle="bold"/></LinearLayout><LinearLayout android:layout_width="0dp" android:layout_weight="1" android:layout_height="wrap_content" android:orientation="vertical" android:background="@drawable/bg_card" android:padding="6dp" android:layout_marginStart="6dp"><TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="RECUPERO" android:textColor="#6b9a6b" android:textSize="8sp"/><TextView android:id="@+id/w_rec" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="12h" android:textColor="#ffffff" android:textSize="13sp" android:textStyle="bold"/></LinearLayout></LinearLayout>
           <ImageView android:id="@+id/w_chart" android:layout_width="match_parent" android:layout_height="90dp" android:layout_marginTop="12dp"/>
           </LinearLayout>
@@ -65,12 +79,12 @@ jobs:
           <?xml version="1.0" encoding="utf-8"?>
           <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent" android:layout_height="match_parent" android:orientation="vertical" android:background="#0d1a0d">
           <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:padding="12dp" android:background="#111f11">
-          <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="RAZIEL SYNC V38.6 - DASH + FIX" android:textColor="#5afc7a" android:textSize="14sp" android:textStyle="bold"/>
-          <TextView android:id="@+id/txt_status" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Fix CookieManager ambiguo - ora verde" android:textColor="#8acf8a" android:textSize="11sp" android:layout_marginTop="6dp"/>
-          <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:layout_marginTop="10dp">
-          <Button android:id="@+id/btn_login" android:layout_width="0dp" android:layout_weight="1" android:layout_height="48dp" android:text="LOGIN" android:backgroundTint="#5afc7a" android:textColor="#000000"/>
-          <Button android:id="@+id/btn_sync" android:layout_width="0dp" android:layout_weight="1" android:layout_height="48dp" android:text="SYNC ORA" android:backgroundTint="#ff7a18" android:textColor="#ffffff" android:layout_marginStart="6dp"/>
-          <Button android:id="@+id/btn_dash" android:layout_width="0dp" android:layout_weight="1" android:layout_height="48dp" android:text="DASH" android:backgroundTint="#222222" android:textColor="#5afc7a" android:layout_marginStart="6dp"/>
+          <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="RAZIEL SYNC V38.7 - DASH RESTORE" android:textColor="#5afc7a" android:textSize="13sp" android:textStyle="bold"/>
+          <TextView android:id="@+id/txt_status" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="DASH ripristinata + sync fix" android:textColor="#8acf8a" android:textSize="11sp" android:layout_marginTop="4dp"/>
+          <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:layout_marginTop="8dp">
+          <Button android:id="@+id/btn_login" android:layout_width="0dp" android:layout_weight="1" android:layout_height="46dp" android:text="LOGIN" android:backgroundTint="#5afc7a" android:textColor="#000000"/>
+          <Button android:id="@+id/btn_sync" android:layout_width="0dp" android:layout_weight="1" android:layout_height="46dp" android:text="SYNC ORA" android:backgroundTint="#ff7a18" android:textColor="#ffffff" android:layout_marginStart="5dp"/>
+          <Button android:id="@+id/btn_dash" android:layout_width="0dp" android:layout_weight="1" android:layout_height="46dp" android:text="DASH" android:backgroundTint="#222222" android:textColor="#5afc7a" android:layout_marginStart="5dp"/>
           </LinearLayout>
           </LinearLayout>
           <WebView android:id="@+id/webview" android:layout_width="match_parent" android:layout_height="match_parent"/>
@@ -86,102 +100,65 @@ jobs:
           ENDOFF
           cat > app/src/main/java/com/garminmatrix/MainActivity.java <<'ENDOFF'
           package com.garminmatrix;
-          import android.os.Bundle;
-          import android.webkit.WebView;
-          import android.webkit.WebSettings;
-          import android.webkit.WebChromeClient;
-          import android.webkit.WebResourceRequest;
-          import android.widget.TextView;
-          import android.widget.Button;
-          import android.content.Intent;
-          import android.content.ComponentName;
-          import android.appwidget.AppWidgetManager;
-          import org.json.JSONArray;
-          import org.json.JSONObject;
-          import java.io.BufferedReader;
-          import java.io.InputStream;
-          import java.io.InputStreamReader;
-          import java.io.File;
-          import java.io.FileWriter;
-          import java.net.URL;
-          import java.net.HttpURLConnection;
-          import java.text.SimpleDateFormat;
-          import java.util.Calendar;
-          import androidx.appcompat.app.AppCompatActivity;
-          import androidx.webkit.WebViewAssetLoader;
+          import android.os.Bundle; import android.webkit.WebView; import android.webkit.WebSettings; import android.webkit.WebChromeClient; import android.webkit.WebResourceRequest; import android.widget.TextView; import android.content.Intent; import android.content.ComponentName; import android.appwidget.AppWidgetManager; import org.json.JSONArray; import org.json.JSONObject; import java.io.BufferedReader; import java.io.InputStreamReader; import java.io.File; import java.io.FileWriter; import java.io.FileInputStream; import java.text.SimpleDateFormat; import java.util.Calendar; import androidx.appcompat.app.AppCompatActivity; import androidx.webkit.WebViewAssetLoader;
           public class MainActivity extends AppCompatActivity {
               WebView wv; TextView st; boolean logged=false;
               @Override protected void onCreate(Bundle b){
                   super.onCreate(b); setContentView(R.layout.activity_main);
                   wv=findViewById(R.id.webview); st=findViewById(R.id.txt_status);
                   findViewById(R.id.btn_login).setOnClickListener(v->login());
-                  findViewById(R.id.btn_sync).setOnClickListener(v->syncJava());
-                  findViewById(R.id.btn_dash).setOnClickListener(v->{ st.setText("Dashboard..."); wv.loadUrl("https://appassets.androidplatform.net/assets/index.html"); });
+                  findViewById(R.id.btn_sync).setOnClickListener(v->syncJS());
+                  findViewById(R.id.btn_dash).setOnClickListener(v->{ st.setText("Carico DASH..."); wv.loadUrl("https://appassets.androidplatform.net/assets/index.html"); });
                   WebSettings s=wv.getSettings();
                   s.setJavaScriptEnabled(true); s.setDomStorageEnabled(true); s.setAllowFileAccess(true); s.setAllowContentAccess(true); s.setAllowFileAccessFromFileURLs(true); s.setAllowUniversalAccessFromFileURLs(true); s.setMixedContentMode(WebSettings.MIXED_CONTENT_ALWAYS_ALLOW);
                   s.setUserAgentString("Mozilla/5.0 (Linux; Android 13) AppleWebKit/537.36 Chrome/120 Mobile Safari/537.36");
                   android.webkit.CookieManager.getInstance().setAcceptCookie(true);
                   android.webkit.CookieManager.getInstance().setAcceptThirdPartyCookies(wv,true);
                   final WebViewAssetLoader loader=new WebViewAssetLoader.Builder().addPathHandler("/assets/", new WebViewAssetLoader.AssetsPathHandler(this)).build();
+                  wv.addJavascriptInterface(new Bridge(),"Android");
                   wv.setWebViewClient(new androidx.webkit.WebViewClientCompat(){
                       @Override public android.webkit.WebResourceResponse shouldInterceptRequest(WebView view, WebResourceRequest req){
                           if(req.getUrl().toString().contains("appassets.androidplatform.net")) return loader.shouldInterceptRequest(req.getUrl());
                           return super.shouldInterceptRequest(view,req);
                       }
                       @Override public void onPageFinished(WebView view,String url){
-                          if(url.contains("connect.garmin.com/modern") &&!url.contains("signin")){logged=true; st.setText("✓ Login OK! Ora SYNC ORA");}
+                          if(url.contains("connect.garmin.com/modern") &&!url.contains("signin")){ logged=true; st.setText("✓ Login OK! Premi SYNC ORA, poi DASH"); }
+                          if(url.contains("appassets.androidplatform.net")){ st.setText("DASH caricata - fai LOGIN poi SYNC"); }
                       }
                   });
                   wv.setWebChromeClient(new WebChromeClient());
                   wv.loadUrl("https://appassets.androidplatform.net/assets/index.html");
               }
-              void login(){st.setText("Apro Garmin..."); wv.loadUrl("https://connect.garmin.com/signin/?service=https://connect.garmin.com/modern/"); logged=false;}
-              void syncJava(){
-                  st.setText("Scarico con cookie...");
-                  new Thread(()->{
+              void login(){ st.setText("Apro Garmin..."); wv.loadUrl("https://connect.garmin.com/signin/?service=https://connect.garmin.com/modern/"); logged=false; }
+              void syncJS(){
+                  if(!logged){ st.setText("Fai LOGIN prima"); login(); return; }
+                  st.setText("SYNC via browser Garmin...");
+                  // Esegue fetch DIRETTAMENTE dentro la pagina Garmin loggata, non via Java
+                  String js = "(async()=>{try{let r=await fetch('https://connect.garmin.com/modern/proxy/activitylist-service/activities/search/activities?start=0&limit=100',{credentials:'include'});let t=await r.text();if(t.trim().startsWith('<!DOCTYPE')){Android.onErr('HTML di login - sessione scaduta, rifai LOGIN'); return;} Android.onData(t);}catch(e){Android.onErr(e.message);}})();";
+                  wv.evaluateJavascript(js,null);
+              }
+              public class Bridge{
+                  @android.webkit.JavascriptInterface public String getDb(){
                       try{
-                          String cookie=android.webkit.CookieManager.getInstance().getCookie("https://connect.garmin.com");
-                          if(cookie==null) cookie=android.webkit.CookieManager.getInstance().getCookie("https://connect.garmin.com/modern");
-                          if(cookie==null){runOnUiThread(()->st.setText("Cookie nullo, rifai LOGIN")); return;}
-                          String[] urls={
-                              "https://connect.garmin.com/modern/proxy/activitylist-service/activities/search/activities?start=0&limit=100",
-                              "https://connect.garmin.com/modern/proxy/activitylist-service/activities/search/activities?start=0&limit=50"
-                          };
-                          String json=null;
-                          for(String u:urls){
-                              URL url=new URL(u);
-                              HttpURLConnection conn=(HttpURLConnection)url.openConnection();
-                              conn.setRequestMethod("GET");
-                              conn.setRequestProperty("Cookie", cookie);
-                              conn.setRequestProperty("User-Agent","Mozilla/5.0 (Linux; Android 13) AppleWebKit/537.36 Chrome/120 Mobile Safari/537.36");
-                              conn.setRequestProperty("Accept","application/json");
-                              conn.setRequestProperty("Referer","https://connect.garmin.com/modern/");
-                              conn.setRequestProperty("NK","NT");
-                              conn.setConnectTimeout(15000); conn.setReadTimeout(15000);
-                              int code=conn.getResponseCode();
-                              InputStream is=code>=200 && code<400? conn.getInputStream() : conn.getErrorStream();
-                              BufferedReader br=new BufferedReader(new InputStreamReader(is));
-                              StringBuilder sb=new StringBuilder(); String line; while((line=br.readLine())!=null) sb.append(line);
-                              br.close(); String resp=sb.toString();
-                              if(!resp.trim().startsWith("<!DOCTYPE") && resp.contains("activityId")){json=resp; break;}
-                          }
-                          if(json==null){runOnUiThread(()->st.setText("Risposta HTML, riprova SYNC tra 5s")); return;}
-                          String finalJson=json;
-                          runOnUiThread(()->{st.setText("✓ JSON OK: "+finalJson.length()/1024+" KB"); save(finalJson);});
-                      }catch(Exception e){runOnUiThread(()->st.setText("Errore sync: "+e.getMessage()));}
-                  }).start();
+                          File f=new File(getFilesDir(),"database.json");
+                          if(!f.exists()){ BufferedReader ar=new BufferedReader(new InputStreamReader(getAssets().open("database.json"))); StringBuilder sb=new StringBuilder(); String l; while((l=ar.readLine())!=null) sb.append(l); ar.close(); return sb.toString(); }
+                          BufferedReader r=new BufferedReader(new InputStreamReader(new FileInputStream(f))); StringBuilder sb=new StringBuilder(); String l; while((l=r.readLine())!=null) sb.append(l); r.close(); return sb.toString();
+                      }catch(Exception e){ return "{\"err\":\""+e.getMessage()+"\"}"; }
+                  }
+                  @android.webkit.JavascriptInterface public void onData(String json){ runOnUiThread(()->{ st.setText("JSON OK "+json.length()/1024+"KB"); save(json); wv.loadUrl("https://appassets.androidplatform.net/assets/index.html"); }); }
+                  @android.webkit.JavascriptInterface public void onErr(String err){ runOnUiThread(()-> st.setText("SYNC ERR: "+err)); }
               }
               void save(String actJ){
                   try{
                       JSONArray arr=new JSONArray(actJ); JSONArray out=new JSONArray();
-                      for(int i=0;i<arr.length();i++){JSONObject a=arr.getJSONObject(i); JSONObject o=new JSONObject(); o.put("inizio",a.optString("startTimeLocal")); o.put("distanza_m",a.optDouble("distance",0)); out.put(o);}
+                      for(int i=0;i<arr.length();i++){JSONObject a=arr.getJSONObject(i); JSONObject o=new JSONObject(); o.put("inizio",a.optString("startTimeLocal")); o.put("distanza_m",a.optDouble("distance",0)); o.put("nome",a.optString("activityName","")); out.put(o);}
                       JSONObject db=new JSONObject(); db.put("attivita",out);
                       SimpleDateFormat sdf=new SimpleDateFormat("yyyy-MM-dd",java.util.Locale.US);
                       JSONArray giorni=new JSONArray(); Calendar cal=Calendar.getInstance(); cal.add(Calendar.DAY_OF_MONTH,-6);
                       for(int i=0;i<7;i++){JSONObject g=new JSONObject(); g.put("data",sdf.format(cal.getTime())); g.put("hrv",45); g.put("fc_riposo",50); g.put("recovery_time_h",12); giorni.put(g); cal.add(Calendar.DAY_OF_MONTH,1);}
                       db.put("giorni",giorni); db.put("bilancio_carico",new JSONObject().put("aerobico_alto",1758).put("aerobico_basso",124).put("anaerobico",135));
                       File outf=new File(getFilesDir(),"database.json"); FileWriter fw=new FileWriter(outf); fw.write(db.toString(2)); fw.close();
-                      st.append("\nSalvato "+out.length()+" attivita");
+                      st.append(" - Salvato "+out.length()+" att - Torno a DASH");
                       Intent it=new Intent(this,RazielWidgetProvider.class); it.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE); int[] ids=AppWidgetManager.getInstance(this).getAppWidgetIds(new ComponentName(this,RazielWidgetProvider.class)); it.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS,ids); sendBroadcast(it);
                   }catch(Exception e){st.setText("Save err "+e.getMessage());}
               }
