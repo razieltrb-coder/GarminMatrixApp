@@ -27,10 +27,8 @@ jobs:
           if [ -f index.html ]; then cp index.html app/src/main/assets/; else echo '<html><body>Garmin</body></html>' > app/src/main/assets/index.html; fi
           if [ -f database.json ]; then cp database.json app/src/main/assets/; fi
           if [ -n "$GEMINI_KEY" ]; then
-            echo "SECRET TROVATA len=${#GEMINI_KEY}"
             sed -i "s|__GEMINI_KEY__|${GEMINI_KEY}|g" app/src/main/assets/index.html
           else
-            echo "SECRET NON TROVATA"
             sed -i "s|__GEMINI_KEY__||g" app/src/main/assets/index.html
           fi
           echo "include ':app'" > settings.gradle
@@ -55,7 +53,6 @@ jobs:
             implementation 'androidx.webkit:webkit:1.6.1'
           }
           ENDOFF
-          # --- WIDGET RAZIEL FILES ---
           cat > app/src/main/res/xml/widget_raziel_info.xml << 'ENDOFF'
           <?xml version="1.0" encoding="utf-8"?>
           <appwidget-provider xmlns:android="http://schemas.android.com/apk/res/android"
@@ -142,29 +139,19 @@ jobs:
           import androidx.appcompat.app.AppCompatActivity;
           import androidx.webkit.WebViewAssetLoader;
           public class MainActivity extends AppCompatActivity {
-            @Override
-            protected void onCreate(Bundle b) {
+            @Override protected void onCreate(Bundle b) {
               super.onCreate(b);
-              WebView wv = new WebView(this);
-              setContentView(wv);
+              WebView wv = new WebView(this); setContentView(wv);
               WebSettings s = wv.getSettings();
-              s.setJavaScriptEnabled(true);
-              s.setDomStorageEnabled(true);
-              s.setAllowFileAccess(true);
-              s.setAllowContentAccess(true);
-              s.setAllowFileAccessFromFileURLs(true);
-              s.setAllowUniversalAccessFromFileURLs(true);
-              s.setMixedContentMode(WebSettings.MIXED_CONTENT_ALWAYS_ALLOW);
+              s.setJavaScriptEnabled(true); s.setDomStorageEnabled(true); s.setAllowFileAccess(true); s.setAllowContentAccess(true); s.setAllowFileAccessFromFileURLs(true); s.setAllowUniversalAccessFromFileURLs(true); s.setMixedContentMode(WebSettings.MIXED_CONTENT_ALWAYS_ALLOW);
               final WebViewAssetLoader loader = new WebViewAssetLoader.Builder().addPathHandler("/assets/", new WebViewAssetLoader.AssetsPathHandler(this)).build();
               wv.setWebViewClient(new androidx.webkit.WebViewClientCompat() {
                 @Override public android.webkit.WebResourceResponse shouldInterceptRequest(WebView view, android.webkit.WebResourceRequest req) { return loader.shouldInterceptRequest(req.getUrl()); }
               });
               wv.setWebChromeClient(new WebChromeClient() {
                 @Override public boolean onJsPrompt(WebView view, String url, String message, String defaultValue, final JsPromptResult result) {
-                  final EditText input = new EditText(MainActivity.this);
-                  input.setText(defaultValue!= null? defaultValue : "");
-                  new AlertDialog.Builder(MainActivity.this).setTitle("Gemini Key").setMessage(message).setView(input).setPositiveButton("OK", (d,w)-> result.confirm(input.getText().toString())).setNegativeButton("Annulla", (d,w)-> result.cancel()).setCancelable(false).show();
-                  return true;
+                  final EditText input = new EditText(MainActivity.this); input.setText(defaultValue!= null? defaultValue : "");
+                  new AlertDialog.Builder(MainActivity.this).setTitle("Gemini Key").setMessage(message).setView(input).setPositiveButton("OK", (d,w)-> result.confirm(input.getText().toString())).setNegativeButton("Annulla", (d,w)-> result.cancel()).setCancelable(false).show(); return true;
                 }
               });
               wv.loadUrl("https://appassets.androidplatform.net/assets/index.html");
@@ -182,6 +169,8 @@ jobs:
           import org.json.JSONObject;
           import java.text.SimpleDateFormat;
           import java.util.*;
+          import java.io.BufferedReader;
+          import java.io.InputStreamReader;
           public class RazielWidgetProvider extends AppWidgetProvider {
             @Override public void onUpdate(Context context, AppWidgetManager mgr, int[] ids) {
               for (int id : ids) update(context, mgr, id);
@@ -189,9 +178,8 @@ jobs:
             private void update(Context ctx, AppWidgetManager mgr, int wid) {
               RemoteViews views = new RemoteViews(ctx.getPackageName(), R.layout.widget_raziel);
               try {
-                String jsonStr = ctx.getAssets().open("database.json").bufferedReader().readLine();
                 StringBuilder sb = new StringBuilder();
-                try (java.io.BufferedReader r = new java.io.BufferedReader(new java.io.InputStreamReader(ctx.getAssets().open("database.json")))) {
+                try (BufferedReader r = new BufferedReader(new InputStreamReader(ctx.getAssets().open("database.json")))) {
                   String line; while ((line = r.readLine())!= null) sb.append(line);
                 }
                 JSONObject db = new JSONObject(sb.toString());
@@ -218,7 +206,7 @@ jobs:
                 }
                 views.setImageViewBitmap(R.id.w_chart, drawWeek(db.optJSONArray("attivita")));
               } catch (Exception e) {
-                views.setTextViewText(R.id.w_title, "RAZIEL // ERR "+e.getMessage());
+                views.setTextViewText(R.id.w_title, "RAZIEL // ERR");
               }
               mgr.updateAppWidget(wid, views);
             }
