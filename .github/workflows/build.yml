@@ -18,9 +18,12 @@ jobs:
         env:
           GEMINI_KEY: ${{ secrets.GEMINI_API_KEY }}
         run: |
-          rm -rf app build .gradle
+          rm -rf app build.gradle
           mkdir -p app/src/main/assets
           mkdir -p app/src/main/java/com/garminmatrix
+          mkdir -p app/src/main/res/xml
+          mkdir -p app/src/main/res/layout
+          mkdir -p app/src/main/res/drawable
           if [ -f index.html ]; then cp index.html app/src/main/assets/; else echo '<html><body>Garmin</body></html>' > app/src/main/assets/index.html; fi
           if [ -f database.json ]; then cp database.json app/src/main/assets/; fi
           if [ -n "$GEMINI_KEY" ]; then
@@ -45,22 +48,85 @@ jobs:
           android {
             namespace 'com.garminmatrix'
             compileSdk 34
-            defaultConfig { applicationId "com.garminmatrix"; minSdk 24; targetSdk 34; versionCode 32; versionName "1.9-V32-fix" }
+            defaultConfig { applicationId "com.garminmatrix"; minSdk 24; targetSdk 34; versionCode 33; versionName "1.9-V33-RAZIEL" }
           }
-          dependencies { 
+          dependencies {
             implementation 'androidx.appcompat:appcompat:1.6.1'
             implementation 'androidx.webkit:webkit:1.6.1'
           }
+          ENDOFF
+          # --- WIDGET RAZIEL FILES ---
+          cat > app/src/main/res/xml/widget_raziel_info.xml << 'ENDOFF'
+          <?xml version="1.0" encoding="utf-8"?>
+          <appwidget-provider xmlns:android="http://schemas.android.com/apk/res/android"
+              android:minWidth="280dp" android:minHeight="180dp"
+              android:updatePeriodMillis="1800000"
+              android:initialLayout="@layout/widget_raziel"
+              android:resizeMode="horizontal|vertical"
+              android:widgetCategory="home_screen"/>
+          ENDOFF
+          cat > app/src/main/res/layout/widget_raziel.xml << 'ENDOFF'
+          <?xml version="1.0" encoding="utf-8"?>
+          <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="match_parent" android:layout_height="match_parent"
+              android:orientation="vertical" android:background="#0a1a0a" android:padding="10dp">
+              <TextView android:id="@+id/w_title" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="RAZIEL // 2026-10-13" android:textColor="#00ff41" android:textSize="9sp" android:fontFamily="monospace"/>
+              <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:layout_marginTop="6dp">
+                  <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal">
+                      <TextView android:layout_width="0dp" android:layout_weight="1" android:layout_height="wrap_content" android:text="ALTO" android:textColor="#ffb84d" android:textSize="7sp"/>
+                      <TextView android:id="@+id/w_alto" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="1758" android:textColor="#ffb84d" android:textSize="9sp"/>
+                  </LinearLayout>
+                  <ProgressBar android:id="@+id/bar_alto" style="?android:attr/progressBarStyleHorizontal" android:layout_width="match_parent" android:layout_height="6dp" android:max="100" android:progress="92" android:progressDrawable="@drawable/progress_orange"/>
+                  <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:layout_marginTop="4dp">
+                      <TextView android:layout_width="0dp" android:layout_weight="1" android:layout_height="wrap_content" android:text="BASSO" android:textColor="#7be8e8" android:textSize="7sp"/>
+                      <TextView android:id="@+id/w_basso" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="124" android:textColor="#7be8e8" android:textSize="9sp"/>
+                  </LinearLayout>
+                  <ProgressBar android:id="@+id/bar_basso" style="?android:attr/progressBarStyleHorizontal" android:layout_width="match_parent" android:layout_height="6dp" android:max="100" android:progress="10" android:progressDrawable="@drawable/progress_cyan"/>
+                  <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:layout_marginTop="4dp">
+                      <TextView android:layout_width="0dp" android:layout_weight="1" android:layout_height="wrap_content" android:text="ANAEROBICO" android:textColor="#b084ff" android:textSize="7sp"/>
+                      <TextView android:id="@+id/w_ana" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="135" android:textColor="#b084ff" android:textSize="9sp"/>
+                  </LinearLayout>
+                  <ProgressBar android:id="@+id/bar_ana" style="?android:attr/progressBarStyleHorizontal" android:layout_width="match_parent" android:layout_height="6dp" android:max="100" android:progress="7" android:progressDrawable="@drawable/progress_purple"/>
+              </LinearLayout>
+              <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:layout_marginTop="8dp">
+                  <LinearLayout android:layout_width="0dp" android:layout_weight="1" android:layout_height="wrap_content" android:orientation="vertical" android:background="#111f11" android:padding="6dp">
+                      <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="HRV" android:textColor="#6b8a6b" android:textSize="7sp"/>
+                      <TextView android:id="@+id/w_hrv" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="45 ms" android:textColor="#ffffff" android:textSize="12sp" android:textStyle="bold"/>
+                  </LinearLayout>
+                  <LinearLayout android:layout_width="0dp" android:layout_weight="1" android:layout_height="wrap_content" android:orientation="vertical" android:background="#111f11" android:padding="6dp" android:layout_marginStart="4dp">
+                      <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="RHR" android:textColor="#6b8a6b" android:textSize="7sp"/>
+                      <TextView android:id="@+id/w_rhr" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="50 bpm" android:textColor="#ffffff" android:textSize="12sp" android:textStyle="bold"/>
+                  </LinearLayout>
+                  <LinearLayout android:layout_width="0dp" android:layout_weight="1" android:layout_height="wrap_content" android:orientation="vertical" android:background="#111f11" android:padding="6dp" android:layout_marginStart="4dp">
+                      <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="RECUPERO" android:textColor="#6b8a6b" android:textSize="7sp"/>
+                      <TextView android:id="@+id/w_rec" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="12h" android:textColor="#00ff41" android:textSize="12sp" android:textStyle="bold"/>
+                  </LinearLayout>
+              </LinearLayout>
+              <ImageView android:id="@+id/w_chart" android:layout_width="match_parent" android:layout_height="60dp" android:layout_marginTop="8dp" android:background="#081208"/>
+          </LinearLayout>
+          ENDOFF
+          cat > app/src/main/res/drawable/progress_orange.xml << 'ENDOFF'
+          <?xml version="1.0"?><layer-list xmlns:android="http://schemas.android.com/apk/res/android"><item android:id="@android:id/background"><shape><solid android:color="#1a1a0a"/></shape></item><item android:id="@android:id/progress"><clip><shape><solid android:color="#ffb84d"/></shape></clip></item></layer-list>
+          ENDOFF
+          cat > app/src/main/res/drawable/progress_cyan.xml << 'ENDOFF'
+          <?xml version="1.0"?><layer-list xmlns:android="http://schemas.android.com/apk/res/android"><item android:id="@android:id/background"><shape><solid android:color="#1a1a0a"/></shape></item><item android:id="@android:id/progress"><clip><shape><solid android:color="#7be8e8"/></shape></clip></item></layer-list>
+          ENDOFF
+          cat > app/src/main/res/drawable/progress_purple.xml << 'ENDOFF'
+          <?xml version="1.0"?><layer-list xmlns:android="http://schemas.android.com/apk/res/android"><item android:id="@android:id/background"><shape><solid android:color="#1a1a0a"/></shape></item><item android:id="@android:id/progress"><clip><shape><solid android:color="#b084ff"/></shape></clip></item></layer-list>
           ENDOFF
           cat > app/src/main/AndroidManifest.xml << 'ENDOFF'
           <?xml version="1.0" encoding="utf-8"?>
           <manifest xmlns:android="http://schemas.android.com/apk/res/android">
             <uses-permission android:name="android.permission.INTERNET"/>
             <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
-            <application android:allowBackup="true" android:label="Garmin Matrix" android:usesCleartextTraffic="true" android:theme="@style/Theme.AppCompat.Light.NoActionBar">
+            <application android:allowBackup="true" android:label="RAZIEL" android:usesCleartextTraffic="true" android:theme="@style/Theme.AppCompat.Light.NoActionBar">
               <activity android:name=".MainActivity" android:exported="true">
                 <intent-filter><action android:name="android.intent.action.MAIN"/><category android:name="android.intent.category.LAUNCHER"/></intent-filter>
               </activity>
+              <receiver android:name=".RazielWidgetProvider" android:exported="true">
+                <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE"/></intent-filter>
+                <meta-data android:name="android.appwidget.provider" android:resource="@xml/widget_raziel_info"/>
+              </receiver>
             </application>
           </manifest>
           ENDOFF
@@ -96,7 +162,7 @@ jobs:
               wv.setWebChromeClient(new WebChromeClient() {
                 @Override public boolean onJsPrompt(WebView view, String url, String message, String defaultValue, final JsPromptResult result) {
                   final EditText input = new EditText(MainActivity.this);
-                  input.setText(defaultValue != null ? defaultValue : "");
+                  input.setText(defaultValue!= null? defaultValue : "");
                   new AlertDialog.Builder(MainActivity.this).setTitle("Gemini Key").setMessage(message).setView(input).setPositiveButton("OK", (d,w)-> result.confirm(input.getText().toString())).setNegativeButton("Annulla", (d,w)-> result.cancel()).setCancelable(false).show();
                   return true;
                 }
@@ -105,9 +171,101 @@ jobs:
             }
           }
           ENDOFF
+          cat > app/src/main/java/com/garminmatrix/RazielWidgetProvider.java << 'ENDOFF'
+          package com.garminmatrix;
+          import android.appwidget.AppWidgetManager;
+          import android.appwidget.AppWidgetProvider;
+          import android.content.Context;
+          import android.graphics.*;
+          import android.widget.RemoteViews;
+          import org.json.JSONArray;
+          import org.json.JSONObject;
+          import java.text.SimpleDateFormat;
+          import java.util.*;
+          public class RazielWidgetProvider extends AppWidgetProvider {
+            @Override public void onUpdate(Context context, AppWidgetManager mgr, int[] ids) {
+              for (int id : ids) update(context, mgr, id);
+            }
+            private void update(Context ctx, AppWidgetManager mgr, int wid) {
+              RemoteViews views = new RemoteViews(ctx.getPackageName(), R.layout.widget_raziel);
+              try {
+                String jsonStr = ctx.getAssets().open("database.json").bufferedReader().readLine();
+                StringBuilder sb = new StringBuilder();
+                try (java.io.BufferedReader r = new java.io.BufferedReader(new java.io.InputStreamReader(ctx.getAssets().open("database.json")))) {
+                  String line; while ((line = r.readLine())!= null) sb.append(line);
+                }
+                JSONObject db = new JSONObject(sb.toString());
+                JSONObject bilancio = db.optJSONObject("bilancio_carico");
+                if (bilancio == null) bilancio = new JSONObject();
+                int alto = bilancio.optInt("aerobico_alto", 1758);
+                int basso = bilancio.optInt("aerobico_basso", 124);
+                int ana = bilancio.optInt("anaerobico", 135);
+                int maxV = Math.max(Math.max(alto, basso), Math.max(ana, 1));
+                views.setTextViewText(R.id.w_alto, String.valueOf(alto));
+                views.setTextViewText(R.id.w_basso, String.valueOf(basso));
+                views.setTextViewText(R.id.w_ana, String.valueOf(ana));
+                views.setProgressBar(R.id.bar_alto, 100, Math.min(100, alto*100/maxV), false);
+                views.setProgressBar(R.id.bar_basso, 100, Math.min(100, basso*100/maxV), false);
+                views.setProgressBar(R.id.bar_ana, 100, Math.min(100, ana*100/maxV), false);
+                JSONArray giorni = db.optJSONArray("giorni");
+                if (giorni!= null && giorni.length()>0) {
+                  JSONObject last = giorni.getJSONObject(giorni.length()-1);
+                  views.setTextViewText(R.id.w_hrv, last.optInt("hrv",45)+" ms");
+                  views.setTextViewText(R.id.w_rhr, last.optInt("fc_riposo",50)+" bpm");
+                  views.setTextViewText(R.id.w_rec, last.optInt("recovery_time_h",12)+"h");
+                  String d = last.optString("data","");
+                  if (d.length()>=10) views.setTextViewText(R.id.w_title, "RAZIEL // "+d.substring(0,10));
+                }
+                views.setImageViewBitmap(R.id.w_chart, drawWeek(db.optJSONArray("attivita")));
+              } catch (Exception e) {
+                views.setTextViewText(R.id.w_title, "RAZIEL // ERR "+e.getMessage());
+              }
+              mgr.updateAppWidget(wid, views);
+            }
+            private Bitmap drawWeek(JSONArray att) {
+              int w=600,h=120;
+              Bitmap bmp = Bitmap.createBitmap(w,h,Bitmap.Config.ARGB_8888);
+              Canvas c = new Canvas(bmp);
+              c.drawColor(Color.parseColor("#081208"));
+              if (att==null) return bmp;
+              try {
+                Calendar cal=Calendar.getInstance();
+                cal.setFirstDayOfWeek(Calendar.MONDAY);
+                cal.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY);
+                long mon=cal.getTimeInMillis();
+                float[] days=new float[7];
+                SimpleDateFormat sdf=new SimpleDateFormat("yyyy-MM-dd", Locale.US);
+                for (int i=0;i<att.length();i++) {
+                  try {
+                    JSONObject a=att.getJSONObject(i);
+                    String iso=a.optString("inizio","");
+                    if (iso.length()<10) continue;
+                    Date d=sdf.parse(iso.substring(0,10));
+                    if (d==null) continue;
+                    int diff=(int)((d.getTime()-mon)/(1000*60*60*24));
+                    if (diff>=0 && diff<7) days[diff]+=(float)(a.optDouble("distanza_m",0)/1000.0);
+                  } catch (Exception ignored){}
+                }
+                float max=5f; for (float v:days) if (v>max) max=v;
+                Paint p=new Paint(); p.setAntiAlias(true);
+                String[] labs={"LUN","MAR","MER","GIO","VEN","SAB","DOM"};
+                int[] cols={Color.parseColor("#ffb84d"),Color.parseColor("#7be8e8"),Color.parseColor("#b084ff"),Color.parseColor("#00ff41"),Color.parseColor("#6366f1"),Color.parseColor("#38bdf8"),Color.parseColor("#ff6b6b")};
+                for (int i=0;i<7;i++) {
+                  float bh=days[i]/max*(h-30); if (bh<2) bh=2;
+                  p.setColor(cols[i%cols.length]);
+                  if (days[i]>0) c.drawRoundRect(i*(w/7f)+4, h-20-bh, i*(w/7f)+4+(w/7f-8), h-20f, 4f,4f,p);
+                  p.setColor(Color.parseColor("#6b8a6b")); p.setTextSize(14f);
+                  c.drawText(labs[i], i*(w/7f)+8, h-4f, p);
+                  if (days[i]>0){ p.setColor(Color.WHITE); p.setTextSize(11f); c.drawText(String.format(Locale.US,"%.1f",days[i]), i*(w/7f)+4, h-24-bh, p); }
+                }
+              } catch (Exception ignored){}
+              return bmp;
+            }
+          }
+          ENDOFF
           gradle assembleDebug
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: GarminMatrix-V32-APK
+          name: RAZIEL-V33-APK
           path: app/build/outputs/apk/debug/*.apk
