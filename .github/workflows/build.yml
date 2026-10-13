@@ -15,14 +15,25 @@ jobs:
         with:
           gradle-version: 8.4
       - name: Create project
+        env:
+          GEMINI_KEY: ${{ secrets.GEMINI_API_KEY }}
         run: |
           rm -rf app build .gradle
           mkdir -p app/src/main/assets
           mkdir -p app/src/main/java/com/garminmatrix
           
-          # COPIA DB E HTML DA ROOT (materia prima)
+          # COPIA DB E HTML DA ROOT
           [ -f index.html ] && cp index.html app/src/main/assets/ || echo '<html><body><h1>Garmin Matrix</h1></body></html>' > app/src/main/assets/index.html
           [ -f database.json ] && cp database.json app/src/main/assets/ || echo '{"giorni":[],"attivita":[],"bilancio_carico":{"anaerobico":0,"aerobico_alto":0,"aerobico_basso":0}}' > app/src/main/assets/database.json
+          
+          # INIETTA GEMINI KEY SE C'E' SECRET
+          if [ -n "$GEMINI_KEY" ]; then
+            echo "Inietto GEMINI key nel build APK"
+            sed -i "s|__GEMINI_KEY__|${GEMINI_KEY}|g" app/src/main/assets/index.html
+          else
+            echo "Nessun secret GEMINI_API_KEY trovato - APK chiedera key manualmente"
+            sed -i "s|__GEMINI_KEY__||g" app/src/main/assets/index.html
+          fi
           
           echo "include ':app'" > settings.gradle
           echo "sdk.dir=$ANDROID_HOME" > local.properties
@@ -39,7 +50,7 @@ jobs:
           android {
             namespace 'com.garminmatrix'
             compileSdk 34
-            defaultConfig { applicationId "com.garminmatrix"; minSdk 24; targetSdk 34; versionCode 11; versionName "1.4-auto-fix" }
+            defaultConfig { applicationId "com.garminmatrix"; minSdk 24; targetSdk 34; versionCode 12; versionName "1.5-chat-gemini" }
           }
           dependencies { 
             implementation 'androidx.appcompat:appcompat:1.6.1'
@@ -88,7 +99,6 @@ jobs:
             }
           }
           EOF
-          # DEBUG: vediamo se i file sono dentro
           ls -lh app/src/main/assets/
           wc -c app/src/main/assets/database.json
           gradle assembleDebug --stacktrace
