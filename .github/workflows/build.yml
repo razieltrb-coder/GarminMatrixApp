@@ -15,24 +15,20 @@ jobs:
         with:
           gradle-version: 8.4
 
-      - name: Generate project V57 - keep dash intact
+      - name: Fix old Brazil dash and generate project V58
         shell: python
         run: |
-          import os, textwrap, shutil
+          import os, textwrap, shutil, base64
           os.makedirs("app/src/main/java/com/garminmatrix", exist_ok=True)
           os.makedirs("app/src/main/res/xml", exist_ok=True)
           os.makedirs("app/src/main/res/layout", exist_ok=True)
           os.makedirs("app/src/main/assets", exist_ok=True)
+
           open("settings.gradle","w").write("include ':app'\n")
           open("local.properties","w").write(f"sdk.dir={os.environ['ANDROID_HOME']}\n")
           open("gradle.properties","w").write("android.useAndroidX=true\n")
-          open("build.gradle","w").write(textwrap.dedent('''
-            buildscript {
-                repositories { google(); mavenCentral() }
-                dependencies { classpath 'com.android.tools.build:gradle:8.2.2' }
-            }
-            allprojects { repositories { google(); mavenCentral() } }
-          '''))
+          open("build.gradle","w").write("buildscript {\n repositories { google(); mavenCentral() }\n dependencies { classpath 'com.android.tools.build:gradle:8.2.2' }\n}\nallprojects { repositories { google(); mavenCentral() } }\n")
+
           open("app/build.gradle","w").write(textwrap.dedent('''
             apply plugin: 'com.android.application'
             android {
@@ -42,8 +38,8 @@ jobs:
                     applicationId "com.garminmatrix"
                     minSdk 24
                     targetSdk 34
-                    versionCode 85
-                    versionName "V57-KEEP-DASH"
+                    versionCode 86
+                    versionName "V58-FIX-DATE"
                 }
             }
             dependencies {
@@ -53,16 +49,42 @@ jobs:
           '''))
           open("app/src/main/res/xml/widget_raziel_info.xml","w").write('<?xml version="1.0"?><appwidget-provider xmlns:android="http://schemas.android.com/apk/res/android" android:minWidth="320dp" android:minHeight="420dp" android:updatePeriodMillis="1800000" android:initialLayout="@layout/widget_raziel" android:resizeMode="horizontal|vertical" android:widgetCategory="home_screen"/>')
           open("app/src/main/res/layout/widget_raziel.xml","w").write('<?xml version="1.0" encoding="utf-8"?><LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent" android:layout_height="wrap_content"><ImageView android:id="@+id/w_full" android:layout_width="match_parent" android:layout_height="wrap_content" android:adjustViewBounds="true"/></LinearLayout>')
-          open("app/src/main/res/layout/activity_main.xml","w").write('<?xml version="1.0" encoding="utf-8"?><LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent" android:layout_height="match_parent" android:orientation="vertical" android:background="#0d1a0d"><LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:padding="12dp" android:background="#111f11"><TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="RAZIEL V57" android:textColor="#5afc7a" android:textStyle="bold"/><TextView android:id="@+id/txt_status" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="--" android:textColor="#8acf8a"/><TextView android:id="@+id/txt_path" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="--" android:textColor="#6b9a6b"/><LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:layout_marginTop="8dp"><Button android:id="@+id/btn_auto" android:layout_width="0dp" android:layout_weight="1" android:layout_height="48dp" android:text="AUTO ONEDRIVE" android:backgroundTint="#00e5ff"/><Button android:id="@+id/btn_import" android:layout_width="0dp" android:layout_weight="1" android:layout_height="48dp" android:text="SCEGLI JSON" android:backgroundTint="#5afc7a" android:layout_marginStart="6dp"/></LinearLayout></LinearLayout><WebView android:id="@+id/webview" android:layout_width="match_parent" android:layout_height="match_parent"/></LinearLayout>')
+          open("app/src/main/res/layout/activity_main.xml","w").write('<?xml version="1.0" encoding="utf-8"?><LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent" android:layout_height="match_parent" android:orientation="vertical" android:background="#0d1a0d"><LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:padding="12dp" android:background="#111f11"><TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="RAZIEL V58 FIX DATE" android:textColor="#5afc7a" android:textStyle="bold"/><TextView android:id="@+id/txt_status" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="--" android:textColor="#8acf8a"/><TextView android:id="@+id/txt_path" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="--" android:textColor="#6b9a6b"/><LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:layout_marginTop="8dp"><Button android:id="@+id/btn_auto" android:layout_width="0dp" android:layout_weight="1" android:layout_height="48dp" android:text="AUTO ONEDRIVE" android:backgroundTint="#00e5ff"/><Button android:id="@+id/btn_import" android:layout_width="0dp" android:layout_weight="1" android:layout_height="48dp" android:text="SCEGLI JSON" android:backgroundTint="#5afc7a" android:layout_marginStart="6dp"/></LinearLayout></LinearLayout><WebView android:id="@+id/webview" android:layout_width="match_parent" android:layout_height="match_parent"/></LinearLayout>')
           open("app/src/main/AndroidManifest.xml","w").write('<?xml version="1.0" encoding="utf-8"?><manifest xmlns:android="http://schemas.android.com/apk/res/android"><uses-permission android:name="android.permission.INTERNET"/><application android:allowBackup="true" android:label="RAZIEL" android:usesCleartextTraffic="true" android:theme="@style/Theme.AppCompat.Light.NoActionBar"><activity android:name=".MainActivity" android:exported="true"><intent-filter><action android:name="android.intent.action.MAIN"/><category android:name="android.intent.category.LAUNCHER"/></intent-filter></activity><receiver android:name=".RazielWidgetProvider" android:exported="true"><intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE"/></intent-filter><meta-data android:name="android.appwidget.provider" android:resource="@xml/widget_raziel_info"/></receiver></application></manifest>')
-          # DASH INTACTA - non la genero, copio quella che hai nel repo
-          if os.path.exists("index.html"):
-              shutil.copyfile("index.html","app/src/main/assets/index.html")
-              print("Dashboard kept as is")
-          else:
-              open("app/src/main/assets/index.html","w").write("<html><body>RAZIEL</body></html>")
 
-          open("app/src/main/java/com/garminmatrix/MainActivity.java","w").write('package com.garminmatrix; import android.os.Bundle; import android.webkit.WebView; import android.webkit.WebSettings; import android.widget.TextView; import android.content.Intent; import android.content.ComponentName; import android.content.SharedPreferences; import android.appwidget.AppWidgetManager; import android.net.Uri; import android.database.Cursor; import org.json.*; import java.io.*; import androidx.appcompat.app.AppCompatActivity; import androidx.webkit.WebViewAssetLoader; public class MainActivity extends AppCompatActivity { WebView wv; TextView st, pathTxt; static final int PICK_JSON=1001; SharedPreferences prefs; @Override protected void onCreate(Bundle b){ super.onCreate(b); setContentView(R.layout.activity_main); wv=findViewById(R.id.webview); st=findViewById(R.id.txt_status); pathTxt=findViewById(R.id.txt_path); prefs=getSharedPreferences("raziel",MODE_PRIVATE); findViewById(R.id.btn_auto).setOnClickListener(v->autoFromSavedUri()); findViewById(R.id.btn_import).setOnClickListener(v->manualImport()); WebSettings s=wv.getSettings(); s.setJavaScriptEnabled(true); s.setDomStorageEnabled(true); s.setAllowFileAccess(true); s.setAllowContentAccess(true); s.setAllowFileAccessFromFileURLs(true); s.setAllowUniversalAccessFromFileURLs(true); s.setMixedContentMode(WebSettings.MIXED_CONTENT_ALWAYS_ALLOW); s.setCacheMode(WebSettings.LOAD_NO_CACHE); final WebViewAssetLoader loader=new WebViewAssetLoader.Builder().addPathHandler("/assets/", new WebViewAssetLoader.AssetsPathHandler(this)).addPathHandler("/data/", new WebViewAssetLoader.InternalStoragePathHandler(this, getFilesDir())).build(); wv.setWebViewClient(new androidx.webkit.WebViewClientCompat(){ @Override public android.webkit.WebResourceResponse shouldInterceptRequest(WebView view, android.webkit.WebResourceRequest req){ android.webkit.WebResourceResponse r=loader.shouldInterceptRequest(req.getUrl()); return r!=null?r:super.shouldInterceptRequest(view,req); } }); openDash(); String last=prefs.getString("last_uri",null); if(last!=null){ pathTxt.setText("Ultimo: "+prefs.getString("last_name","OneDrive")); wv.postDelayed(()->autoFromSavedUri(),800); } } void openDash(){ wv.clearCache(true); wv.loadUrl("https://appassets.androidplatform.net/assets/index.html?nocache="+System.currentTimeMillis()); } void autoFromSavedUri(){ String uriStr=prefs.getString("last_uri",null); if(uriStr==null){ st.setText("Nessun file salvato - SCEGLI JSON"); return; } try{ Uri uri=Uri.parse(uriStr); try{ getContentResolver().takePersistableUriPermission(uri, Intent.FLAG_GRANT_READ_URI_PERMISSION); }catch(Exception ignored){} InputStream is=getContentResolver().openInputStream(uri); BufferedReader r=new BufferedReader(new InputStreamReader(is)); StringBuilder sb=new StringBuilder(); String l; while((l=r.readLine())!=null) sb.append(l); r.close(); JSONObject db=new JSONObject(sb.toString()); File outf=new File(getFilesDir(),"database.json"); FileWriter fw=new FileWriter(outf); fw.write(db.toString(2)); fw.close(); st.setText("AUTO OK basso="+db.optJSONObject("bilancio_carico").optInt("aerobico_basso")); openDash(); updateWidget(); }catch(Exception e){ st.setText("Auto err: "+e.getMessage()); } } void manualImport(){ Intent it=new Intent(Intent.ACTION_OPEN_DOCUMENT); it.addCategory(Intent.CATEGORY_OPENABLE); it.setType("*/*"); it.addFlags(Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION | Intent.FLAG_GRANT_READ_URI_PERMISSION); startActivityForResult(it,PICK_JSON); } @Override protected void onActivityResult(int rc,int res,Intent data){ super.onActivityResult(rc,res,data); if(rc==PICK_JSON && res==RESULT_OK && data!=null){ Uri uri=data.getData(); try{ getContentResolver().takePersistableUriPermission(uri, data.getFlags() & (Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION)); InputStream is=getContentResolver().openInputStream(uri); BufferedReader r=new BufferedReader(new InputStreamReader(is)); StringBuilder sb=new StringBuilder(); String l; while((l=r.readLine())!=null) sb.append(l); r.close(); JSONObject db=new JSONObject(sb.toString()); File outf=new File(getFilesDir(),"database.json"); FileWriter fw=new FileWriter(outf); fw.write(db.toString(2)); fw.close(); String name=getFileName(uri); prefs.edit().putString("last_uri",uri.toString()).putString("last_name",name).apply(); st.setText("SALVATO basso="+db.optJSONObject("bilancio_carico").optInt("aerobico_basso")); pathTxt.setText(name); openDash(); updateWidget(); }catch(Exception e){ st.setText("Import err: "+e.getMessage()); } } } String getFileName(Uri uri){ try{ Cursor c=getContentResolver().query(uri,null,null,null,null); if(c!=null){ if(c.moveToFirst()){ int idx=c.getColumnIndex("_display_name"); if(idx>=0) return c.getString(idx); } c.close(); } return uri.getLastPathSegment(); }catch(Exception e){ return uri.toString(); } } void updateWidget(){ Intent it=new Intent(this,RazielWidgetProvider.class); it.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE); int[] ids=AppWidgetManager.getInstance(this).getAppWidgetIds(new ComponentName(this,RazielWidgetProvider.class)); it.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS,ids); sendBroadcast(it); } }')
+          # DASH FIX - sovrascrivo la vecchia Brazil con versione che legge date-only
+          fixed_dash = """<!DOCTYPE html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><style>body{background:#0a1210;color:#7dff8a;font-family:monospace;margin:0;padding:8px}.card{background:#111d16;border:2px solid #5afc7a;border-radius:12px;padding:10px;margin-bottom:10px}</style></head><body>
+          <div id="hdr">RAZIEL LOADING</div><div id="bil"></div><div id="weekly"></div><div id="acts"></div>
+          <script>
+          async function loadDash(){
+            let res = await fetch('https://appassets.androidplatform.net/data/database.json?nocache='+Date.now(),{cache:'no-store'});
+            let db = await res.json();
+            let bil = db.bilancio_carico || {};
+            let periodo = db.periodo?.a || '2026-10-14';
+            document.getElementById('hdr').innerHTML = 'RAZIEL // '+periodo+'<br>ANA '+bil.anaerobico+' ALTO '+bil.aerobico_alto+' BASSO '+bil.aerobico_basso+' - '+bil.feedback;
+            // weekly FIX - uso solo YYYY-MM-DD e mezzogiorno per evitare shift timezone
+            let kms=[0,0,0,0,0,0,0];
+            let now=new Date(); let mon=new Date(); let day=now.getDay(); let diffToMon = (day===0? -6 : 1-day); mon.setDate(now.getDate()+diffToMon); mon.setHours(0,0,0,0);
+            (db.attivita||[]).forEach(a=>{
+              let t=(a.tipo||'').toLowerCase(); if(!(t.includes('running')||t.includes('trail'))) return;
+              let ds=a.inizio.substring(0,10); // YYYY-MM-DD only
+              let d=new Date(ds+'T12:00:00'); // mezzogiorno evita shift
+              let diff=Math.floor((d-mon)/86400000);
+              if(diff>=0 && diff<7) kms[diff]+=a.distanza_m/1000;
+            });
+            document.getElementById('weekly').innerHTML='WEEKLY FIXED (date-only) LUN-DOM: '+kms.map(k=>k.toFixed(1)).join(' / ');
+            let last10=(db.attivita||[]).slice(0,10).map(a=>a.inizio.substring(0,10)+' - '+a.tipo+' - '+a.nome+' - '+(a.distanza_m/1000).toFixed(2)+'km').join('<br>');
+            document.getElementById('acts').innerHTML='<br>ULTIME 10<br>'+last10;
+            document.getElementById('bil').innerHTML='TOT ATT: '+(db.attivita||[]).length;
+          }
+          loadDash();
+          setInterval(loadDash,5000);
+          </script></body></html>"""
+          # scrivo dash fixata sia in assets che in root (cosi non hai piu BRAZIL)
+          open("app/src/main/assets/index.html","w",encoding="utf-8").write(fixed_dash)
+          open("index.html","w",encoding="utf-8").write(fixed_dash)
+
+          open("app/src/main/java/com/garminmatrix/MainActivity.java","w").write('package com.garminmatrix; import android.os.Bundle; import android.webkit.WebView; import android.webkit.WebSettings; import android.widget.TextView; import android.content.Intent; import android.content.ComponentName; import android.content.SharedPreferences; import android.appwidget.AppWidgetManager; import android.net.Uri; import android.database.Cursor; import org.json.*; import java.io.*; import androidx.appcompat.app.AppCompatActivity; import androidx.webkit.WebViewAssetLoader; public class MainActivity extends AppCompatActivity { WebView wv; TextView st, pathTxt; static final int PICK_JSON=1001; SharedPreferences prefs; @Override protected void onCreate(Bundle b){ super.onCreate(b); setContentView(R.layout.activity_main); wv=findViewById(R.id.webview); st=findViewById(R.id.txt_status); pathTxt=findViewById(R.id.txt_path); prefs=getSharedPreferences("raziel",MODE_PRIVATE); findViewById(R.id.btn_auto).setOnClickListener(v->autoFromSavedUri()); findViewById(R.id.btn_import).setOnClickListener(v->manualImport()); WebSettings s=wv.getSettings(); s.setJavaScriptEnabled(true); s.setDomStorageEnabled(true); s.setAllowFileAccess(true); s.setAllowContentAccess(true); s.setAllowFileAccessFromFileURLs(true); s.setAllowUniversalAccessFromFileURLs(true); s.setMixedContentMode(WebSettings.MIXED_CONTENT_ALWAYS_ALLOW); s.setCacheMode(WebSettings.LOAD_NO_CACHE); s.setDomStorageEnabled(true); final WebViewAssetLoader loader=new WebViewAssetLoader.Builder().addPathHandler("/assets/", new WebViewAssetLoader.AssetsPathHandler(this)).addPathHandler("/data/", new WebViewAssetLoader.InternalStoragePathHandler(this, getFilesDir())).build(); wv.setWebViewClient(new androidx.webkit.WebViewClientCompat(){ @Override public android.webkit.WebResourceResponse shouldInterceptRequest(WebView view, android.webkit.WebResourceRequest req){ android.webkit.WebResourceResponse r=loader.shouldInterceptRequest(req.getUrl()); return r!=null?r:super.shouldInterceptRequest(view,req); } }); openDash(); String last=prefs.getString("last_uri",null); if(last!=null){ pathTxt.setText("Ultimo: "+prefs.getString("last_name","OneDrive")); wv.postDelayed(()->autoFromSavedUri(),800); } } void openDash(){ wv.clearCache(true); wv.clearHistory(); android.webkit.CookieManager.getInstance().removeAllCookies(null); wv.loadUrl("https://appassets.androidplatform.net/assets/index.html?nocache="+System.currentTimeMillis()); } void autoFromSavedUri(){ String uriStr=prefs.getString("last_uri",null); if(uriStr==null){ st.setText("Nessun file salvato - SCEGLI JSON"); return; } try{ Uri uri=Uri.parse(uriStr); try{ getContentResolver().takePersistableUriPermission(uri, Intent.FLAG_GRANT_READ_URI_PERMISSION); }catch(Exception ignored){} InputStream is=getContentResolver().openInputStream(uri); BufferedReader r=new BufferedReader(new InputStreamReader(is)); StringBuilder sb=new StringBuilder(); String l; while((l=r.readLine())!=null) sb.append(l); r.close(); JSONObject db=new JSONObject(sb.toString()); File outf=new File(getFilesDir(),"database.json"); FileWriter fw=new FileWriter(outf); fw.write(db.toString()); fw.close(); st.setText("AUTO OK basso="+db.optJSONObject("bilancio_carico").optInt("aerobico_basso")+" att="+db.optJSONArray("attivita").length()); openDash(); updateWidget(); }catch(Exception e){ st.setText("Auto err: "+e.getMessage()); } } void manualImport(){ Intent it=new Intent(Intent.ACTION_OPEN_DOCUMENT); it.addCategory(Intent.CATEGORY_OPENABLE); it.setType("*/*"); it.addFlags(Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION | Intent.FLAG_GRANT_READ_URI_PERMISSION); startActivityForResult(it,PICK_JSON); } @Override protected void onActivityResult(int rc,int res,Intent data){ super.onActivityResult(rc,res,data); if(rc==PICK_JSON && res==RESULT_OK && data!=null){ Uri uri=data.getData(); try{ getContentResolver().takePersistableUriPermission(uri, data.getFlags() & (Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION)); InputStream is=getContentResolver().openInputStream(uri); BufferedReader r=new BufferedReader(new InputStreamReader(is)); StringBuilder sb=new StringBuilder(); String l; while((l=r.readLine())!=null) sb.append(l); r.close(); JSONObject db=new JSONObject(sb.toString()); File outf=new File(getFilesDir(),"database.json"); FileWriter fw=new FileWriter(outf); fw.write(db.toString()); fw.close(); String name=getFileName(uri); prefs.edit().putString("last_uri",uri.toString()).putString("last_name",name).apply(); st.setText("SALVATO basso="+db.optJSONObject("bilancio_carico").optInt("aerobico_basso")); pathTxt.setText(name); openDash(); updateWidget(); }catch(Exception e){ st.setText("Import err: "+e.getMessage()); } } } String getFileName(Uri uri){ try{ Cursor c=getContentResolver().query(uri,null,null,null,null); if(c!=null){ if(c.moveToFirst()){ int idx=c.getColumnIndex("_display_name"); if(idx>=0) return c.getString(idx); } c.close(); } return uri.getLastPathSegment(); }catch(Exception e){ return uri.toString(); } } void updateWidget(){ Intent it=new Intent(this,RazielWidgetProvider.class); it.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE); int[] ids=AppWidgetManager.getInstance(this).getAppWidgetIds(new ComponentName(this,RazielWidgetProvider.class)); it.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS,ids); sendBroadcast(it); } }')
 
           open("app/src/main/java/com/garminmatrix/RazielWidgetProvider.java","w").write('''
           package com.garminmatrix;
@@ -110,9 +132,42 @@ jobs:
                   Paint lb=new Paint(Paint.ANTI_ALIAS_FLAG); lb.setColor(Color.parseColor("#7dff8a")); lb.setTextSize(30); lb.setFakeBoldText(true); Paint vb=new Paint(Paint.ANTI_ALIAS_FLAG); vb.setColor(Color.WHITE); vb.setTextSize(46); vb.setFakeBoldText(true);
                   cv.drawText("HRV",80,boxY+50,lb); cv.drawText(hrv+" ms",80,boxY+110,vb); cv.drawText("RHR",410,boxY+50,lb); cv.drawText(rhr+" bpm",410,boxY+110,vb); cv.drawText("RECUPERO",740,boxY+50,lb); cv.drawText(((int)rec)+"h",740,boxY+110,vb);
                   Paint wkBg=new Paint(); wkBg.setColor(Color.parseColor("#0a1a12")); cv.drawRoundRect(new RectF(30,760,W-30,H-20),20,20,wkBg);
-                  Paint wkTitle=new Paint(Paint.ANTI_ALIAS_FLAG); wkTitle.setColor(Color.parseColor("#7dff8a")); wkTitle.setTextSize(32); wkTitle.setFakeBoldText(true); cv.drawText("WEEKLY - RUN/TRAIL ONLY",50,810,wkTitle);
+                  Paint wkTitle=new Paint(Paint.ANTI_ALIAS_FLAG); wkTitle.setColor(Color.parseColor("#7dff8a")); wkTitle.setTextSize(32); wkTitle.setFakeBoldText(true); cv.drawText("WEEKLY - FIXED DATE-ONLY",50,810,wkTitle);
                   float[] kms=new float[7];
-                  try{ JSONArray att=db.optJSONArray("attivita"); Calendar cal=Calendar.getInstance(); cal.setFirstDayOfWeek(Calendar.MONDAY); cal.set(Calendar.DAY_OF_WEEK,Calendar.MONDAY); cal.set(Calendar.HOUR_OF_DAY,0); cal.set(Calendar.MINUTE,0); cal.set(Calendar.SECOND,0); cal.set(Calendar.MILLISECOND,0); long mon=cal.getTimeInMillis(); if(att!=null){ SimpleDateFormat sdf=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss",Locale.US); SimpleDateFormat sdf2=new SimpleDateFormat("yyyy-MM-dd",Locale.US); for(int i=0;i<att.length();i++){ JSONObject a=att.getJSONObject(i); String tipo=(a.optString("tipo","")+" "+a.optString("sport","")).toLowerCase(); if(!(tipo.contains("running")||tipo.contains("trail"))) continue; String iso=a.optString("inizio",""); if(iso.length()<10) continue; try{ Date d=null; try{d=sdf.parse(iso);}catch(Exception e){ d=sdf2.parse(iso.substring(0,10));} if(d==null) continue; int diff=(int)((d.getTime()-mon)/86400000L); if(diff>=0 && diff<7) kms[diff]+=a.optDouble("distanza_m",0)/1000f; }catch(Exception ignored){} } } }catch(Exception e){}
+                  try{
+                      JSONArray att=db.optJSONArray("attivita");
+                      SimpleDateFormat sdfDateOnly=new SimpleDateFormat("yyyy-MM-dd",Locale.US);
+                      Calendar cal=Calendar.getInstance(Locale.ITALY);
+                      cal.setFirstDayOfWeek(Calendar.MONDAY);
+                      // lunedi di questa settimana
+                      Calendar mon=Calendar.getInstance(Locale.ITALY);
+                      mon.setFirstDayOfWeek(Calendar.MONDAY);
+                      int dow=mon.get(Calendar.DAY_OF_WEEK);
+                      int diffToMon = (dow==Calendar.SUNDAY? -6 : Calendar.MONDAY-dow);
+                      mon.add(Calendar.DAY_OF_MONTH, diffToMon);
+                      mon.set(Calendar.HOUR_OF_DAY,0); mon.set(Calendar.MINUTE,0); mon.set(Calendar.SECOND,0); mon.set(Calendar.MILLISECOND,0);
+                      long monMs=mon.getTimeInMillis();
+                      if(att!=null){
+                          for(int i=0;i<att.length();i++){
+                              JSONObject a=att.getJSONObject(i);
+                              String tipo=(a.optString("tipo","")+" "+a.optString("sport","")).toLowerCase();
+                              if(!(tipo.contains("running")||tipo.contains("trail"))) continue;
+                              String iso=a.optString("inizio",""); if(iso.length()<10) continue;
+                              String dateOnly=iso.substring(0,10); // FIX: solo data, niente ora
+                              try{
+                                  Date d=sdfDateOnly.parse(dateOnly);
+                                  Calendar c=Calendar.getInstance(Locale.ITALY);
+                                  c.setTime(d);
+                                  c.set(Calendar.HOUR_OF_DAY,12); // mezzogiorno evita shift
+                                  long t=c.getTimeInMillis();
+                                  int diffDay=(int)((t-monMs)/86400000L);
+                                  if(diffDay>=0 && diffDay<7){
+                                      kms[diffDay]+=a.optDouble("distanza_m",0)/1000f;
+                                  }
+                              }catch(Exception ignored){}
+                          }
+                      }
+                  }catch(Exception e){}
                   float max=1f; for(float k:kms) if(k>max) max=k; if(max<5) max=12;
                   String[] days={"LUN","MAR","MER","GIO","VEN","SAB","DOM"}; Paint barG=new Paint(Paint.ANTI_ALIAS_FLAG); barG.setColor(Color.parseColor("#5afc6a")); Paint dayT=new Paint(Paint.ANTI_ALIAS_FLAG); dayT.setColor(Color.parseColor("#7dff8a")); dayT.setTextSize(28); dayT.setTextAlign(Paint.Align.CENTER); dayT.setFakeBoldText(true); Paint kmT=new Paint(Paint.ANTI_ALIAS_FLAG); kmT.setColor(Color.parseColor("#7dff8a")); kmT.setTextSize(30); kmT.setTextAlign(Paint.Align.CENTER); kmT.setFakeBoldText(true); int baseY=1100; for(int i=0;i<7;i++){ int x=80+i*140; float h=(kms[i]/max)*180; if(kms[i]<0.1f) h=8; RectF r=new RectF(x,baseY-h,x+90,baseY); Paint p = kms[i]>0.1f? barG : new Paint(){{setColor(Color.parseColor("#1a3a1a"));}}; p.setAntiAlias(true); cv.drawRoundRect(r,14,14,p); String valStr = kms[i]>0.1f? String.format(Locale.US,"%.1f",kms[i]) : "0.0"; cv.drawText(valStr,x+45,baseY-h-14,kmT); cv.drawText(days[i],x+45,baseY+32,dayT); } return bmp; }
           }
@@ -124,5 +179,5 @@ jobs:
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: RAZIEL-V57-APK
+          name: RAZIEL-V58-APK
           path: app/build/outputs/apk/debug/*.apk
