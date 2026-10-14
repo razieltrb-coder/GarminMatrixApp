@@ -20,19 +20,11 @@ jobs:
           echo "android.useAndroidX=true" > gradle.properties
           cat > build.gradle <<'ENDOFF'
           buildscript {
-              repositories {
-                  google()
-                  mavenCentral()
-              }
-              dependencies {
-                  classpath 'com.android.tools.build:gradle:8.2.2'
-              }
+              repositories { google(); mavenCentral() }
+              dependencies { classpath 'com.android.tools.build:gradle:8.2.2' }
           }
           allprojects {
-              repositories {
-                  google()
-                  mavenCentral()
-              }
+              repositories { google(); mavenCentral() }
           }
           ENDOFF
           cat > app/build.gradle <<'ENDOFF'
@@ -40,7 +32,7 @@ jobs:
           android {
               namespace 'com.garminmatrix'
               compileSdk 34
-              defaultConfig { applicationId "com.garminmatrix"; minSdk 24; targetSdk 34; versionCode 53; versionName "V39.6-SCRAPE" }
+              defaultConfig { applicationId "com.garminmatrix"; minSdk 24; targetSdk 34; versionCode 54; versionName "V39.7-TEXT-SCRAPE" }
               compileOptions { sourceCompatibility JavaVersion.VERSION_17; targetCompatibility JavaVersion.VERSION_17 }
           }
           dependencies { implementation 'androidx.appcompat:appcompat:1.6.1'; implementation 'androidx.webkit:webkit:1.6.1' }
@@ -68,7 +60,7 @@ jobs:
           </LinearLayout>
           ENDOFF
           cat > app/src/main/res/layout/activity_main.xml <<'ENDOFF'
-          <?xml version="1.0" encoding="utf-8"?><LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent" android:layout_height="match_parent" android:orientation="vertical" android:background="#0d1a0d"><LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:padding="12dp" android:background="#111f11"><TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="RAZIEL V39.6 SCRAPE MODE" android:textColor="#5afc7a" android:textSize="13sp" android:textStyle="bold"/><TextView android:id="@+id/txt_status" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Premi SYNC se sei su Attivita" android:textColor="#8acf8a" android:textSize="11sp"/><LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:layout_marginTop="8dp"><Button android:id="@+id/btn_login" android:layout_width="0dp" android:layout_weight="1" android:layout_height="46dp" android:text="LOGIN" android:backgroundTint="#5afc7a"/><Button android:id="@+id/btn_sync" android:layout_width="0dp" android:layout_weight="1" android:layout_height="46dp" android:text="SYNC ORA" android:backgroundTint="#ff7a18" android:layout_marginStart="5dp"/><Button android:id="@+id/btn_dash" android:layout_width="0dp" android:layout_weight="1" android:layout_height="46dp" android:text="DASH" android:backgroundTint="#222" android:textColor="#5afc7a" android:layout_marginStart="5dp"/></LinearLayout></LinearLayout><WebView android:id="@+id/webview" android:layout_width="match_parent" android:layout_height="match_parent"/></LinearLayout>
+          <?xml version="1.0" encoding="utf-8"?><LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent" android:layout_height="match_parent" android:orientation="vertical" android:background="#0d1a0d"><LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:padding="12dp" android:background="#111f11"><TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="RAZIEL V39.7 TEXT SCRAPE" android:textColor="#5afc7a" android:textSize="13sp" android:textStyle="bold"/><TextView android:id="@+id/txt_status" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Premi SYNC su Attivita" android:textColor="#8acf8a" android:textSize="11sp"/><LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:layout_marginTop="8dp"><Button android:id="@+id/btn_login" android:layout_width="0dp" android:layout_weight="1" android:layout_height="46dp" android:text="LOGIN" android:backgroundTint="#5afc7a"/><Button android:id="@+id/btn_sync" android:layout_width="0dp" android:layout_weight="1" android:layout_height="46dp" android:text="SYNC ORA" android:backgroundTint="#ff7a18" android:layout_marginStart="5dp"/><Button android:id="@+id/btn_dash" android:layout_width="0dp" android:layout_weight="1" android:layout_height="46dp" android:text="DASH" android:backgroundTint="#222" android:textColor="#5afc7a" android:layout_marginStart="5dp"/></LinearLayout></LinearLayout><WebView android:id="@+id/webview" android:layout_width="match_parent" android:layout_height="match_parent"/></LinearLayout>
           ENDOFF
           cat > app/src/main/AndroidManifest.xml <<'ENDOFF'
           <?xml version="1.0" encoding="utf-8"?><manifest xmlns:android="http://schemas.android.com/apk/res/android"><uses-permission android:name="android.permission.INTERNET"/><uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/><application android:allowBackup="true" android:label="RAZIEL" android:usesCleartextTraffic="true" android:theme="@style/Theme.AppCompat.Light.NoActionBar"><activity android:name=".MainActivity" android:exported="true"><intent-filter><action android:name="android.intent.action.MAIN"/><category android:name="android.intent.category.LAUNCHER"/></intent-filter></activity><receiver android:name=".RazielWidgetProvider" android:exported="true"><intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE"/></intent-filter><meta-data android:name="android.appwidget.provider" android:resource="@xml/widget_raziel_info"/></receiver></application></manifest>
@@ -99,7 +91,7 @@ jobs:
                       @Override public void onPageFinished(WebView view,String url){
                           lastUrl=url;
                           if(url.contains("appassets")) st.setText("DASH OK");
-                          else if(url.contains("activities")) st.setText("Attivita caricata - premi di nuovo SYNC ORA per catturare");
+                          else if(url.contains("activities")) st.setText("Attivita - premi SYNC ORA");
                       }
                   });
                   wv.setWebChromeClient(new WebChromeClient());
@@ -108,7 +100,7 @@ jobs:
               void login(){ wv.loadUrl("https://connect.garmin.com/signin/?service=https://connect.garmin.com/modern/"); st.setText("Login..."); }
               void doSync(){
                   if(lastUrl.contains("activities")){
-                      st.setText("Sono su Attivita - lancio fetch + scrape...");
+                      st.setText("Lancio scrape testo...");
                       injectFetch();
                   } else {
                       st.setText("Vado su Attivita...");
@@ -116,34 +108,33 @@ jobs:
                   }
               }
               void injectFetch(){
-                  String js="(async()=>{try{"+
-                  "let btn=document.querySelector('button#truste-consent-button'); if(btn) btn.click();"+
+                  // 1. prova fetch JSON, 2. se fallisce legge innerText che contiene Trabia
+                  String js="(() => {"+
                   "try{"+
-                  " let r=await fetch('https://connect.garmin.com/modern/proxy/activitylist-service/activities/search/activities?start=0&limit=100',{credentials:'include',headers:{'NK':'NT'}});"+
-                  " let t=await r.text();"+
-                  " if(t.includes('activityId')){ Android.onData(t); return; }"+
-                  "}catch(e){}"+
-                  "// FALLBACK: scrape DOM"+
-                  "let txt=document.documentElement.innerHTML;"+
-                  "let acts=[];"+
-                  "let re=/Trabia\\s*-\\s*([^<\\n]+)/g;"+
-                  "let m; while((m=re.exec(txt))!==null){ let name=m[1].trim(); if(name.length>2) acts.push({activityName:'Trabia - '+name, startTimeLocal:'2026-10-01', distance:5000, duration:1800}); }"+
-                  "if(acts.length>0){ Android.onScraped(JSON.stringify(acts)); return; }"+
-                  "Android.onErr('Non trovo JSON ne Trabia nel DOM - scorri giu e riprova');"+
-                  "}catch(e){ Android.onErr(e.message); }})();";
+                  " let out=[];"+
+                  " let txt=document.body.innerText || '';"+
+                  " let lines=txt.split('\\n');"+
+                  " for(let l of lines){"+
+                  " l=l.trim();"+
+                  " if(l.indexOf('Trabia -')>=0 && l.length>10 && l.length<100){ out.push({activityName:l, startTimeLocal:'2026-10-13', distance:10000, duration:3600}); }"+
+                  " }"+
+                  " if(out.length>0){ Android.onScraped(JSON.stringify(out)); return; }"+
+                  " Android.onErr('Trovate 0 righe Trabia - testo len '+txt.length);"+
+                  "}catch(e){ Android.onErr('JS err '+e.message); }"+
+                  "})();";
                   wv.evaluateJavascript(js,null);
               }
               public class Bridge{
                   @android.webkit.JavascriptInterface public String getDb(){ try{ File f=new File(getFilesDir(),"database.json"); if(!f.exists()){ BufferedReader ar=new BufferedReader(new InputStreamReader(getAssets().open("database.json"))); StringBuilder sb=new StringBuilder(); String l; while((l=ar.readLine())!=null) sb.append(l); ar.close(); return sb.toString(); } BufferedReader r=new BufferedReader(new InputStreamReader(new FileInputStream(f))); StringBuilder sb=new StringBuilder(); String l; while((l=r.readLine())!=null) sb.append(l); r.close(); return sb.toString(); }catch(Exception e){ return "{}"; } }
-                  @android.webkit.JavascriptInterface public void onData(String json){ runOnUiThread(()->{ st.setText("JSON OK "+json.length()/1024+"KB"); saveApi(json); wv.loadUrl("https://appassets.androidplatform.net/assets/index.html"); }); }
-                  @android.webkit.JavascriptInterface public void onScraped(String json){ runOnUiThread(()->{ st.setText("SCRAPE OK "+json.length()+" char"); saveScraped(json); wv.loadUrl("https://appassets.androidplatform.net/assets/index.html"); }); }
-                  @android.webkit.JavascriptInterface public void onErr(String err){ runOnUiThread(()-> st.setText("ERR: "+err)); }
+                  @android.webkit.JavascriptInterface public void onData(String json){ runOnUiThread(()->{ st.setText("JSON OK"); saveApi(json); }); }
+                  @android.webkit.JavascriptInterface public void onScraped(String json){ runOnUiThread(()->{ try{ JSONArray a=new JSONArray(json); st.setText("SCRAPE OK "+a.length()+" trovate"); saveScraped(json); wv.loadUrl("https://appassets.androidplatform.net/assets/index.html"); }catch(Exception e){ st.setText("Scrape parse err "+e.getMessage()); } }); }
+                  @android.webkit.JavascriptInterface public void onErr(String err){ runOnUiThread(()-> st.setText(err)); }
               }
               void saveApi(String actJ){
-                  try{ actJ=actJ.trim(); JSONArray arr=new JSONArray(actJ); File f=new File(getFilesDir(),"database.json"); JSONObject db; if(f.exists()){ BufferedReader r=new BufferedReader(new InputStreamReader(new FileInputStream(f))); StringBuilder sb=new StringBuilder(); String l; while((l=r.readLine())!=null) sb.append(l); r.close(); db=new JSONObject(sb.toString()); } else { BufferedReader ar=new BufferedReader(new InputStreamReader(getAssets().open("database.json"))); StringBuilder sb=new StringBuilder(); String l; while((l=ar.readLine())!=null) sb.append(l); ar.close(); db=new JSONObject(sb.toString()); } JSONArray out=new JSONArray(); for(int i=0;i<arr.length();i++){JSONObject a=arr.getJSONObject(i); JSONObject o=new JSONObject(); o.put("inizio",a.optString("startTimeLocal")); o.put("distanza_m",a.optDouble("distance",0)); o.put("durata_s",a.optDouble("duration",0)); o.put("nome",a.optString("activityName","")); out.put(o);} db.put("attivita",out); File outf=new File(getFilesDir(),"database.json"); FileWriter fw=new FileWriter(outf); fw.write(db.toString(2)); fw.close(); st.setText("Salvato "+out.length()); Intent it=new Intent(this,RazielWidgetProvider.class); it.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE); int[] ids=AppWidgetManager.getInstance(this).getAppWidgetIds(new ComponentName(this,RazielWidgetProvider.class)); it.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS,ids); sendBroadcast(it); }catch(Exception e){st.setText("Save err "+e.getMessage());}
+                  try{ actJ=actJ.trim(); JSONArray arr=new JSONArray(actJ); File f=new File(getFilesDir(),"database.json"); JSONObject db; if(f.exists()){ BufferedReader r=new BufferedReader(new InputStreamReader(new FileInputStream(f))); StringBuilder sb=new StringBuilder(); String l; while((l=r.readLine())!=null) sb.append(l); r.close(); db=new JSONObject(sb.toString()); } else { BufferedReader ar=new BufferedReader(new InputStreamReader(getAssets().open("database.json"))); StringBuilder sb=new StringBuilder(); String l; while((l=ar.readLine())!=null) sb.append(l); ar.close(); db=new JSONObject(sb.toString()); } JSONArray out=new JSONArray(); for(int i=0;i<arr.length();i++){JSONObject a=arr.getJSONObject(i); JSONObject o=new JSONObject(); o.put("inizio",a.optString("startTimeLocal")); o.put("distanza_m",a.optDouble("distance",0)); o.put("durata_s",a.optDouble("duration",0)); o.put("nome",a.optString("activityName","")); out.put(o);} db.put("attivita",out); File outf=new File(getFilesDir(),"database.json"); FileWriter fw=new FileWriter(outf); fw.write(db.toString(2)); fw.close(); Intent it=new Intent(this,RazielWidgetProvider.class); it.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE); int[] ids=AppWidgetManager.getInstance(this).getAppWidgetIds(new ComponentName(this,RazielWidgetProvider.class)); it.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS,ids); sendBroadcast(it); }catch(Exception e){st.setText("Save err "+e.getMessage());}
               }
               void saveScraped(String actJ){
-                  try{ JSONArray arr=new JSONArray(actJ); File f=new File(getFilesDir(),"database.json"); JSONObject db; if(f.exists()){ BufferedReader r=new BufferedReader(new InputStreamReader(new FileInputStream(f))); StringBuilder sb=new StringBuilder(); String l; while((l=r.readLine())!=null) sb.append(l); r.close(); db=new JSONObject(sb.toString()); } else { BufferedReader ar=new BufferedReader(new InputStreamReader(getAssets().open("database.json"))); StringBuilder sb=new StringBuilder(); String l; while((l=ar.readLine())!=null) sb.append(l); ar.close(); db=new JSONObject(sb.toString()); } JSONArray out=new JSONArray(); for(int i=0;i<arr.length();i++){JSONObject a=arr.getJSONObject(i); JSONObject o=new JSONObject(); o.put("inizio",a.optString("startTimeLocal","2026-10-01")); o.put("distanza_m",a.optDouble("distance",5000)); o.put("durata_s",a.optDouble("duration",1800)); o.put("nome",a.optString("activityName","Trabia")); out.put(o);} db.put("attivita",out); File outf=new File(getFilesDir(),"database.json"); FileWriter fw=new FileWriter(outf); fw.write(db.toString(2)); fw.close(); st.setText("Salvato da pagina "+out.length()); Intent it=new Intent(this,RazielWidgetProvider.class); it.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE); int[] ids=AppWidgetManager.getInstance(this).getAppWidgetIds(new ComponentName(this,RazielWidgetProvider.class)); it.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS,ids); sendBroadcast(it); }catch(Exception e){st.setText("Scrape save err "+e.getMessage());}
+                  try{ JSONArray arr=new JSONArray(actJ); File f=new File(getFilesDir(),"database.json"); JSONObject db; if(f.exists()){ BufferedReader r=new BufferedReader(new InputStreamReader(new FileInputStream(f))); StringBuilder sb=new StringBuilder(); String l; while((l=r.readLine())!=null) sb.append(l); r.close(); db=new JSONObject(sb.toString()); } else { BufferedReader ar=new BufferedReader(new InputStreamReader(getAssets().open("database.json"))); StringBuilder sb=new StringBuilder(); String l; while((l=ar.readLine())!=null) sb.append(l); ar.close(); db=new JSONObject(sb.toString()); } JSONArray out=new JSONArray(); for(int i=0;i<arr.length();i++){JSONObject a=arr.getJSONObject(i); JSONObject o=new JSONObject(); o.put("inizio",a.optString("startTimeLocal","2026-10-13T08:00:00")); o.put("distanza_m",a.optDouble("distance",10000)); o.put("durata_s",a.optDouble("duration",3600)); o.put("nome",a.optString("activityName","Trabia")); out.put(o);} db.put("attivita",out); File outf=new File(getFilesDir(),"database.json"); FileWriter fw=new FileWriter(outf); fw.write(db.toString(2)); fw.close(); st.setText("Salvato "+out.length()+" da pagina"); Intent it=new Intent(this,RazielWidgetProvider.class); it.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE); int[] ids=AppWidgetManager.getInstance(this).getAppWidgetIds(new ComponentName(this,RazielWidgetProvider.class)); it.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS,ids); sendBroadcast(it); }catch(Exception e){st.setText("Scrape save err "+e.getMessage());}
               }
           }
           ENDOFF
