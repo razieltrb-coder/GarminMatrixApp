@@ -19,10 +19,7 @@ jobs:
           echo "sdk.dir=$ANDROID_HOME" > local.properties
           echo "android.useAndroidX=true" > gradle.properties
           cat > build.gradle <<'ENDOFF'
-          buildscript {
-              repositories { google(); mavenCentral() }
-              dependencies { classpath 'com.android.tools.build:gradle:8.2.2' }
-          }
+          buildscript { repositories { google(); mavenCentral() } dependencies { classpath 'com.android.tools.build:gradle:8.2.2' } }
           allprojects { repositories { google(); mavenCentral() } }
           ENDOFF
           cat > app/build.gradle <<'ENDOFF'
@@ -30,7 +27,7 @@ jobs:
           android {
               namespace 'com.garminmatrix'
               compileSdk 34
-              defaultConfig { applicationId "com.garminmatrix"; minSdk 24; targetSdk 34; versionCode 50; versionName "V39.3-DIRECT-FIX2" }
+              defaultConfig { applicationId "com.garminmatrix"; minSdk 24; targetSdk 34; versionCode 51; versionName "V39.4-FETCH-OK" }
               compileOptions { sourceCompatibility JavaVersion.VERSION_17; targetCompatibility JavaVersion.VERSION_17 }
           }
           dependencies { implementation 'androidx.appcompat:appcompat:1.6.1'; implementation 'androidx.webkit:webkit:1.6.1' }
@@ -58,7 +55,7 @@ jobs:
           </LinearLayout>
           ENDOFF
           cat > app/src/main/res/layout/activity_main.xml <<'ENDOFF'
-          <?xml version="1.0" encoding="utf-8"?><LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent" android:layout_height="match_parent" android:orientation="vertical" android:background="#0d1a0d"><LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:padding="12dp" android:background="#111f11"><TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="RAZIEL V39.3 DIRECT" android:textColor="#5afc7a" android:textSize="13sp" android:textStyle="bold"/><TextView android:id="@+id/txt_status" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Carica JSON come pagina" android:textColor="#8acf8a" android:textSize="11sp"/><LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:layout_marginTop="8dp"><Button android:id="@+id/btn_login" android:layout_width="0dp" android:layout_weight="1" android:layout_height="46dp" android:text="LOGIN" android:backgroundTint="#5afc7a"/><Button android:id="@+id/btn_sync" android:layout_width="0dp" android:layout_weight="1" android:layout_height="46dp" android:text="SYNC ORA" android:backgroundTint="#ff7a18" android:layout_marginStart="5dp"/><Button android:id="@+id/btn_dash" android:layout_width="0dp" android:layout_weight="1" android:layout_height="46dp" android:text="DASH" android:backgroundTint="#222" android:textColor="#5afc7a" android:layout_marginStart="5dp"/></LinearLayout></LinearLayout><WebView android:id="@+id/webview" android:layout_width="match_parent" android:layout_height="match_parent"/></LinearLayout>
+          <?xml version="1.0" encoding="utf-8"?><LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent" android:layout_height="match_parent" android:orientation="vertical" android:background="#0d1a0d"><LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:padding="12dp" android:background="#111f11"><TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="RAZIEL V39.4 FETCH FIX" android:textColor="#5afc7a" android:textSize="13sp" android:textStyle="bold"/><TextView android:id="@+id/txt_status" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Premi LOGIN poi SYNC" android:textColor="#8acf8a" android:textSize="11sp"/><LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:layout_marginTop="8dp"><Button android:id="@+id/btn_login" android:layout_width="0dp" android:layout_weight="1" android:layout_height="46dp" android:text="LOGIN" android:backgroundTint="#5afc7a"/><Button android:id="@+id/btn_sync" android:layout_width="0dp" android:layout_weight="1" android:layout_height="46dp" android:text="SYNC ORA" android:backgroundTint="#ff7a18" android:layout_marginStart="5dp"/><Button android:id="@+id/btn_dash" android:layout_width="0dp" android:layout_weight="1" android:layout_height="46dp" android:text="DASH" android:backgroundTint="#222" android:textColor="#5afc7a" android:layout_marginStart="5dp"/></LinearLayout></LinearLayout><WebView android:id="@+id/webview" android:layout_width="match_parent" android:layout_height="match_parent"/></LinearLayout>
           ENDOFF
           cat > app/src/main/AndroidManifest.xml <<'ENDOFF'
           <?xml version="1.0" encoding="utf-8"?><manifest xmlns:android="http://schemas.android.com/apk/res/android"><uses-permission android:name="android.permission.INTERNET"/><uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/><application android:allowBackup="true" android:label="RAZIEL" android:usesCleartextTraffic="true" android:theme="@style/Theme.AppCompat.Light.NoActionBar"><activity android:name=".MainActivity" android:exported="true"><intent-filter><action android:name="android.intent.action.MAIN"/><category android:name="android.intent.category.LAUNCHER"/></intent-filter></activity><receiver android:name=".RazielWidgetProvider" android:exported="true"><intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE"/></intent-filter><meta-data android:name="android.appwidget.provider" android:resource="@xml/widget_raziel_info"/></receiver></application></manifest>
@@ -67,14 +64,13 @@ jobs:
           package com.garminmatrix;
           import android.os.Bundle; import android.webkit.WebView; import android.webkit.WebSettings; import android.webkit.WebChromeClient; import android.webkit.WebResourceRequest; import android.widget.TextView; import android.content.Intent; import android.content.ComponentName; import android.appwidget.AppWidgetManager; import org.json.JSONArray; import org.json.JSONObject; import java.io.BufferedReader; import java.io.InputStreamReader; import java.io.File; import java.io.FileWriter; import java.io.FileInputStream; import androidx.appcompat.app.AppCompatActivity; import androidx.webkit.WebViewAssetLoader;
           public class MainActivity extends AppCompatActivity {
-              WebView wv; TextView st; boolean isSyncMode=false;
-              String API_URL="https://connect.garmin.com/modern/proxy/activitylist-service/activities/search/activities?start=0&limit=100";
+              WebView wv; TextView st; boolean pendingSync=false;
               @Override protected void onCreate(Bundle b){
                   super.onCreate(b); setContentView(R.layout.activity_main);
                   wv=findViewById(R.id.webview); st=findViewById(R.id.txt_status);
                   findViewById(R.id.btn_login).setOnClickListener(v->login());
-                  findViewById(R.id.btn_sync).setOnClickListener(v->syncDirect());
-                  findViewById(R.id.btn_dash).setOnClickListener(v->{ isSyncMode=false; st.setText("DASH..."); wv.loadUrl("https://appassets.androidplatform.net/assets/index.html"); });
+                  findViewById(R.id.btn_sync).setOnClickListener(v->doSync());
+                  findViewById(R.id.btn_dash).setOnClickListener(v->{ pendingSync=false; wv.loadUrl("https://appassets.androidplatform.net/assets/index.html"); });
                   WebSettings s=wv.getSettings();
                   s.setJavaScriptEnabled(true); s.setDomStorageEnabled(true); s.setAllowFileAccess(true); s.setAllowContentAccess(true); s.setAllowFileAccessFromFileURLs(true); s.setAllowUniversalAccessFromFileURLs(true); s.setMixedContentMode(WebSettings.MIXED_CONTENT_ALWAYS_ALLOW);
                   s.setUserAgentString("Mozilla/5.0 (Linux; Android 13) AppleWebKit/537.36 Chrome/120 Mobile Safari/537.36");
@@ -88,37 +84,53 @@ jobs:
                           return super.shouldInterceptRequest(view,req);
                       }
                       @Override public void onPageFinished(WebView view,String url){
-                          if(url.contains("activitylist-service")){
-                              st.setText("JSON caricato, leggo...");
-                              view.evaluateJavascript("document.documentElement.innerText", value->{
-                                  try{
-                                      String unescaped=decode(value);
-                                      if(unescaped.contains("activityId")){
-                                          save(unescaped);
-                                          view.post(()->{ isSyncMode=false; st.setText("JSON OK "+unescaped.length()/1024+"KB"); wv.loadUrl("https://appassets.androidplatform.net/assets/index.html"); });
-                                      } else {
-                                          st.setText("Non JSON: "+unescaped.substring(0,Math.min(150,unescaped.length())));
-                                          if(unescaped.contains("<!DOCTYPE")){ st.setText("Garmin login - rifai LOGIN"); isSyncMode=false; }
-                                      }
-                                  }catch(Exception e){ st.setText("Parse err "+e.getMessage()); }
-                              });
-                          } else if(url.contains("connect.garmin.com") &&!url.contains("signin") &&!isSyncMode){
-                              st.setText("Garmin OK - premi SYNC ORA");
+                          if(url.contains("/modern") && pendingSync){
+                              // siamo su Connect, ora lancio fetch interno
+                              st.setText("Su Connect, lancio fetch...");
+                              view.postDelayed(()-> injectFetch(), 2000);
                           }
+                          if(url.contains("appassets")) st.setText("DASH OK");
                       }
                   });
                   wv.setWebChromeClient(new WebChromeClient());
                   wv.loadUrl("https://appassets.androidplatform.net/assets/index.html");
               }
-              String decode(String v){
-                  try{ if(v.length()>=2 && v.startsWith("\"") && v.endsWith("\"")){ v=v.substring(1,v.length()-1); v=v.replace("\\n","\n").replace("\\r","").replace("\\\"","\"").replace("\\/","/").replace("\\t"," "); } return v; }catch(Exception e){ return v; }
+              void login(){ pendingSync=false; wv.loadUrl("https://connect.garmin.com/signin/?service=https://connect.garmin.com/modern/"); st.setText("Login..."); }
+              void doSync(){
+                  pendingSync=true;
+                  st.setText("Vado su Attivita...");
+                  // vado sulla pagina attivita che ha i cookie giusti
+                  wv.loadUrl("https://connect.garmin.com/modern/activities");
               }
-              void login(){ isSyncMode=false; wv.loadUrl("https://connect.garmin.com/signin/?service=https://connect.garmin.com/modern/"); }
-              void syncDirect(){ isSyncMode=true; st.setText("Carico API..."); wv.loadUrl(API_URL); }
+              void injectFetch(){
+                  String js="(async()=>{"+
+                  "try{"+
+                  "let btn=document.querySelector('button#truste-consent-button'); if(btn) btn.click();"+
+                  "let urls=["+
+                  "'https://connect.garmin.com/modern/proxy/activitylist-service/activities/search/activities?start=0&limit=100',"+
+                  "'https://connect.garmin.com/activitylist-service/activities/search/activities?start=0&limit=100',"+
+                  "'https://connect.garmin.com/modern/proxy/activity-service/activities?start=0&limit=100'"+
+                  "];"+
+                  "for(let u of urls){"+
+                  " try{"+
+                  " let r=await fetch(u,{credentials:'include',headers:{'NK':'NT','Accept':'application/json'}});"+
+                  " let t=await r.text();"+
+                  " if(t.includes('activityId')||t.includes('activityName')){ Android.onData(t); return; }"+
+                  " Android.onLog('URL '+u+' len '+t.length()+' no json');"+
+                  " }catch(e){ Android.onLog('ERR '+u+' '+e.message); }"+
+                  "}"+
+                  " Android.onErr('Nessun endpoint JSON - prova a scorrere pagina attivita e ripremi SYNC');"+
+                  "}catch(e){ Android.onErr(e.message); }"+
+                  "})();";
+                  wv.evaluateJavascript(js,null);
+              }
               public class Bridge{
                   @android.webkit.JavascriptInterface public String getDb(){
                       try{ File f=new File(getFilesDir(),"database.json"); if(!f.exists()){ BufferedReader ar=new BufferedReader(new InputStreamReader(getAssets().open("database.json"))); StringBuilder sb=new StringBuilder(); String l; while((l=ar.readLine())!=null) sb.append(l); ar.close(); return sb.toString(); } BufferedReader r=new BufferedReader(new InputStreamReader(new FileInputStream(f))); StringBuilder sb=new StringBuilder(); String l; while((l=r.readLine())!=null) sb.append(l); r.close(); return sb.toString(); }catch(Exception e){ return "{}"; }
                   }
+                  @android.webkit.JavascriptInterface public void onData(String json){ runOnUiThread(()->{ pendingSync=false; st.setText("JSON OK "+json.length()/1024+"KB - salvo"); save(json); wv.loadUrl("https://appassets.androidplatform.net/assets/index.html"); }); }
+                  @android.webkit.JavascriptInterface public void onErr(String err){ runOnUiThread(()->{ pendingSync=false; st.setText("ERR: "+err); }); }
+                  @android.webkit.JavascriptInterface public void onLog(String m){ runOnUiThread(()-> st.setText(m)); }
               }
               void save(String actJ){
                   try{
@@ -126,7 +138,7 @@ jobs:
                       if(f.exists()){ BufferedReader r=new BufferedReader(new InputStreamReader(new FileInputStream(f))); StringBuilder sb=new StringBuilder(); String l; while((l=r.readLine())!=null) sb.append(l); r.close(); db=new JSONObject(sb.toString()); }
                       else { BufferedReader ar=new BufferedReader(new InputStreamReader(getAssets().open("database.json"))); StringBuilder sb=new StringBuilder(); String l; while((l=ar.readLine())!=null) sb.append(l); ar.close(); db=new JSONObject(sb.toString()); }
                       JSONArray out=new JSONArray(); for(int i=0;i<arr.length();i++){JSONObject a=arr.getJSONObject(i); JSONObject o=new JSONObject(); o.put("inizio",a.optString("startTimeLocal")); o.put("distanza_m",a.optDouble("distance",0)); o.put("durata_s",a.optDouble("duration",0)); o.put("nome",a.optString("activityName","")); out.put(o);} db.put("attivita",out);
-                      File outf=new File(getFilesDir(),"database.json"); FileWriter fw=new FileWriter(outf); fw.write(db.toString(2)); fw.close(); st.setText("Salvato "+out.length()+" att");
+                      File outf=new File(getFilesDir(),"database.json"); FileWriter fw=new FileWriter(outf); fw.write(db.toString(2)); fw.close(); st.setText("Salvato "+out.length()+" att - DASH pronta");
                       Intent it=new Intent(this,RazielWidgetProvider.class); it.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE); int[] ids=AppWidgetManager.getInstance(this).getAppWidgetIds(new ComponentName(this,RazielWidgetProvider.class)); it.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS,ids); sendBroadcast(it);
                   }catch(Exception e){st.setText("Save err "+e.getMessage());}
               }
@@ -152,4 +164,3 @@ jobs:
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with: { name: RAZIEL-V39-APK, path: app/build/outputs/apk/debug/*.apk }
-        
