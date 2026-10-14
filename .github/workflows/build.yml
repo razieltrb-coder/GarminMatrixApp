@@ -19,7 +19,7 @@ jobs:
       - name: Build
         run: |
           python3 << 'PY'
-          import os, textwrap
+          import os
           os.makedirs("app/src/main/java/com/garminmatrix", exist_ok=True)
           os.makedirs("app/src/main/res/xml", exist_ok=True)
           os.makedirs("app/src/main/res/layout", exist_ok=True)
@@ -28,63 +28,142 @@ jobs:
           open("settings.gradle","w").write("include ':app'\n")
           open("local.properties","w").write(f"sdk.dir={os.environ['ANDROID_HOME']}\n")
           open("gradle.properties","w").write("android.useAndroidX=true\n")
-          open("build.gradle","w").write(textwrap.dedent('''
-          buildscript {
-              repositories { google(); mavenCentral() }
-              dependencies { classpath 'com.android.tools.build:gradle:8.2.2' }
-          }
-          allprojects { repositories { google(); mavenCentral() } }
-          '''))
-          open("app/build.gradle","w").write(textwrap.dedent('''
-          apply plugin: 'com.android.application'
-          android {
-              namespace 'com.garminmatrix'
-              compileSdk 34
-              defaultConfig {
-                  applicationId "com.garminmatrix"
-                  minSdk 24
-                  targetSdk 34
-                  versionCode 71
-                  versionName "V46.1-FULL"
-              }
-              compileOptions {
-                  sourceCompatibility JavaVersion.VERSION_17
-                  targetCompatibility JavaVersion.VERSION_17
-              }
-          }
-          dependencies {
-              implementation 'androidx.appcompat:appcompat:1.6.1'
-              implementation 'androidx.webkit:webkit:1.6.1'
-          }
-          '''))
+          open("build.gradle","w").write("buildscript { repositories { google(); mavenCentral() } dependencies { classpath 'com.android.tools.build:gradle:8.2.2' } } allprojects { repositories { google(); mavenCentral() } }\n")
+          open("app/build.gradle","w").write("apply plugin: 'com.android.application'\nandroid { namespace 'com.garminmatrix'; compileSdk 34; defaultConfig { applicationId \"com.garminmatrix\"; minSdk 24; targetSdk 34; versionCode 72; versionName \"V47-CLONE-100\" } compileOptions { sourceCompatibility JavaVersion.VERSION_17; targetCompatibility JavaVersion.VERSION_17 } } dependencies { implementation 'androidx.appcompat:appcompat:1.6.1'; implementation 'androidx.webkit:webkit:1.6.1' }\n")
           open("app/src/main/res/drawable/bg_main.xml","w").write('<shape xmlns:android="http://schemas.android.com/apk/res/android"><corners android:radius="20dp"/><solid android:color="#0d1a0d"/><stroke android:width="2dp" android:color="#5afc7a"/></shape>')
           open("app/src/main/res/drawable/bg_card.xml","w").write('<shape xmlns:android="http://schemas.android.com/apk/res/android"><corners android:radius="10dp"/><solid android:color="#142414"/></shape>')
           open("app/src/main/res/drawable/p_orange.xml","w").write('<layer-list xmlns:android="http://schemas.android.com/apk/res/android"><item android:id="@android:id/background"><shape><corners android:radius="6dp"/><solid android:color="#261a0a"/></shape></item><item android:id="@android:id/progress"><clip><shape><corners android:radius="6dp"/><solid android:color="#ff7a18"/></shape></clip></item></layer-list>')
           open("app/src/main/res/drawable/p_cyan.xml","w").write('<layer-list xmlns:android="http://schemas.android.com/apk/res/android"><item android:id="@android:id/background"><shape><corners android:radius="6dp"/><solid android:color="#0a2222"/></shape></item><item android:id="@android:id/progress"><clip><shape><corners android:radius="6dp"/><solid android:color="#00e5ff"/></shape></clip></item></layer-list>')
           open("app/src/main/res/drawable/p_purple.xml","w").write('<layer-list xmlns:android="http://schemas.android.com/apk/res/android"><item android:id="@android:id/background"><shape><corners android:radius="6dp"/><solid android:color="#1e1430"/></shape></item><item android:id="@android:id/progress"><clip><shape><corners android:radius="6dp"/><solid android:color="#a855f7"/></shape></clip></item></layer-list>')
           open("app/src/main/res/xml/widget_raziel_info.xml","w").write('<?xml version="1.0"?><appwidget-provider xmlns:android="http://schemas.android.com/apk/res/android" android:minWidth="300dp" android:minHeight="360dp" android:updatePeriodMillis="1800000" android:initialLayout="@layout/widget_raziel" android:resizeMode="horizontal|vertical" android:widgetCategory="home_screen"/>')
-          open("app/src/main/res/layout/widget_raziel.xml","w").write('<?xml version="1.0" encoding="utf-8"?><LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:background="@drawable/bg_main" android:padding="12dp"><LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal"><TextView android:id="@+id/w_title" android:layout_width="0dp" android:layout_weight="1" android:layout_height="wrap_content" android:text="RAZIEL" android:textColor="#7dff8a" android:textSize="13sp" android:textStyle="bold"/><TextView android:id="@+id/w_btn_update" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="[AGGIORNA]" android:textColor="#5afc7a" android:textSize="10sp" android:textStyle="bold"/></LinearLayout><TextView android:id="@+id/w_updated" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="--:--" android:textColor="#6b9a6b" android:textSize="9sp"/><TextView android:id="@+id/w_hrv" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="HRV -- FC -- VO2 --" android:textColor="#8acf8a" android:textSize="9sp" android:layout_marginTop="4dp"/><ProgressBar android:id="@+id/bar_ana" style="?android:attr/progressBarStyleHorizontal" android:layout_width="match_parent" android:layout_height="8dp" android:max="100" android:progress="0" android:progressDrawable="@drawable/p_purple" android:layout_marginTop="8dp"/><ProgressBar android:id="@+id/bar_alto" style="?android:attr/progressBarStyleHorizontal" android:layout_width="match_parent" android:layout_height="8dp" android:max="100" android:progress="0" android:progressDrawable="@drawable/p_orange" android:layout_marginTop="4dp"/><ProgressBar android:id="@+id/bar_basso" style="?android:attr/progressBarStyleHorizontal" android:layout_width="match_parent" android:layout_height="8dp" android:max="100" android:progress="0" android:progressDrawable="@drawable/p_cyan" android:layout_marginTop="4dp"/><ImageView android:id="@+id/w_chart" android:layout_width="match_parent" android:layout_height="90dp" android:layout_marginTop="10dp"/></LinearLayout>')
-          open("app/src/main/res/layout/activity_main.xml","w").write('<?xml version="1.0" encoding="utf-8"?><LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent" android:layout_height="match_parent" android:orientation="vertical" android:background="#0d1a0d"><LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:padding="12dp" android:background="#111f11"><TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="RAZIEL V46.1 FULL" android:textColor="#5afc7a" android:textSize="13sp" android:textStyle="bold"/><TextView android:id="@+id/txt_status" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Full Dashboard" android:textColor="#8acf8a" android:textSize="11sp"/><TextView android:id="@+id/txt_path" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="--" android:textColor="#6b9a6b" android:textSize="9sp" android:layout_marginTop="4dp"/><LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:layout_marginTop="8dp"><Button android:id="@+id/btn_auto" android:layout_width="0dp" android:layout_weight="1.5" android:layout_height="52dp" android:text="AUTO DA ONEDRIVE" android:backgroundTint="#00e5ff" android:textSize="11sp"/><Button android:id="@+id/btn_import" android:layout_width="0dp" android:layout_weight="1" android:layout_height="52dp" android:text="SCEGLI FILE" android:backgroundTint="#5afc7a" android:layout_marginStart="6dp" android:textSize="11sp"/></LinearLayout><Button android:id="@+id/btn_dash" android:layout_width="match_parent" android:layout_height="44dp" android:text="APRI DASH" android:backgroundTint="#222" android:textColor="#5afc7a" android:layout_marginTop="6dp"/></LinearLayout><WebView android:id="@+id/webview" android:layout_width="match_parent" android:layout_height="match_parent"/></LinearLayout>')
-          open("app/src/main/AndroidManifest.xml","w").write('<?xml version="1.0" encoding="utf-8"?><manifest xmlns:android="http://schemas.android.com/apk/res/android"><uses-permission android:name="android.permission.INTERNET"/><uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/><application android:allowBackup="true" android:label="RAZIEL" android:usesCleartextTraffic="true" android:theme="@style/Theme.AppCompat.Light.NoActionBar"><activity android:name=".MainActivity" android:exported="true"><intent-filter><action android:name="android.intent.action.MAIN"/><category android:name="android.intent.category.LAUNCHER"/></intent-filter></activity><receiver android:name=".RazielWidgetProvider" android:exported="true"><intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE"/></intent-filter><meta-data android:name="android.appwidget.provider" android:resource="@xml/widget_raziel_info"/></receiver></application></manifest>')
-          html_content = open("index.html","r").read() if os.path.exists("index.html") else ""
-          # Se esiste index.html vecchio, usalo ma pulito, altrimenti usa FULL DASH
-          if len(html_content) < 1000 or "BRAZIL" in html_content or "Brazil" in html_content:
-              html_content = r"""<!DOCTYPE html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><style>*{margin:0;padding:0;box-sizing:border-box}body{background:#070d07;color:#c8f0c8;font-family:monospace;padding:6px}.top{border:1px solid #5afc7a;border-radius:10px;padding:8px;background:#0f1f0f;margin-bottom:8px;font-size:11px;color:#5afc7a;display:flex;justify-content:space-between}.grid4{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:6px;margin-bottom:8px}.grid2{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:8px}.grid5{display:grid;grid-template-columns:1fr 1fr 1fr 1fr 1fr;gap:6px;margin-bottom:8px}.card{border:1px solid #1f4a1f;border-radius:8px;padding:8px;background:#0d1a0d}.card h3{font-size:9px;color:#5a9a5a;margin-bottom:4px;text-transform:uppercase}.big{font-size:22px;color:#fff;font-weight:bold}.small{font-size:9px;color:#7a9a7a}.bar{height:10px;background:#162916;border-radius:5px;overflow:hidden;margin-top:4px}.bar div{height:100%}canvas{width:100%;height:90px;background:#0a160a;border-radius:6px}.h2{color:#5afc7a;font-size:11px;margin:10px 0 5px 2px;font-weight:bold}.list{font-size:11px;line-height:18px}.list div{border-bottom:1px solid #1a2e1a;padding:3px 0}</style></head><body>
-          <div class="top"><span id="title">GARMIN DASHBOARD // LOADING</span><span id="info">--</span></div>
-          <div class="h2">Forma & Training Status</div>
-          <div class="grid4"><div class="card"><h3>Rapporto Acuto/Cronico</h3><div class="big" id="acwr">1.13</div><div class="small">Sovraccarico</div></div><div class="card"><h3>Training Readiness</h3><div class="big" id="readiness">25</div><div class="small">Prontezza</div></div><div class="card"><h3>Bilancio Carico</h3><div class="big" id="bilancio">Ottimale</div><div class="small" id="bil_nums">--</div></div><div class="card"><h3>Stima VO2 Max</h3><div class="big" id="vo2top">48</div></div></div>
-          <div class="grid2"><div class="card"><h3>VO2 MAX - ULTIMI 7 GIORNI</h3><canvas id="c_vo2"></canvas></div><div class="card"><h3>BILANCIO DEL CARICO</h3><canvas id="c_acuto"></canvas></div></div>
-          <div class="card" style="margin-bottom:8px"><h3 id="bil_title">BILANCIO DEL CARICO - Ultimi 28 giorni</h3><div style="font-size:10px;margin-top:6px">Anaerobico <span id="ana_v" style="float:right;color:#a855f7">--</span></div><div class="bar"><div id="ana_b" style="background:#a855f7;width:0%"></div></div><div style="font-size:10px;margin-top:6px">Aerobico alto <span id="alto_v" style="float:right;color:#ff7a18">--</span></div><div class="bar"><div id="alto_b" style="background:#ff7a18;width:0%"></div></div><div style="font-size:10px;margin-top:6px">Aerobico basso <span id="basso_v" style="float:right;color:#00e5ff">--</span></div><div class="bar"><div id="basso_b" style="background:#00e5ff;width:0%"></div></div></div>
-          <div class="h2">Salute & Recovery</div><div class="grid5"><div class="card"><h3>Sleep Score</h3><div class="big" id="sleep_s">--</div></div><div class="card"><h3>HRV</h3><div class="big" id="hrv">--</div></div><div class="card"><h3>FC Riposo</h3><div class="big" id="rhr">--</div></div><div class="card"><h3>Body Battery</h3><div class="big" id="bb">--</div></div><div class="card"><h3>Stress</h3><div class="big" id="stress">--</div></div></div>
-          <div class="grid2"><div class="card"><h3>SLEEP SCORE - ULTIMI 7</h3><canvas id="c_sleep"></canvas></div><div class="card"><h3>HRV - ULTIMI 7</h3><canvas id="c_hrv"></canvas></div><div class="card"><h3>FC A RIPOSO - ULTIMI 7</h3><canvas id="c_rhr"></canvas></div><div class="card"><h3>STRESS - ULTIMI 7</h3><canvas id="c_stress"></canvas></div><div class="card"><h3>BODY BATTERY MAX - ULTIMI 7</h3><canvas id="c_bb"></canvas></div><div class="card"><h3>ORE SONNO - ULTIMI 7</h3><canvas id="c_sonno"></canvas></div></div>
-          <div class="h2">Volume & Attivita</div><div class="card"><h3>VOLUME SETTIMANALE - PER DISCIPLINA</h3><canvas id="c_vol" style="height:160px"></canvas></div>
-          <div class="card"><div class="list" id="acts"></div></div>
+          open("app/src/main/res/layout/widget_raziel.xml","w").write('<?xml version="1.0" encoding="utf-8"?><LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:background="@drawable/bg_main" android:padding="12dp"><TextView android:id="@+id/w_title" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="RAZIEL" android:textColor="#7dff8a" android:textSize="13sp" android:textStyle="bold"/><TextView android:id="@+id/w_updated" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="--:--" android:textColor="#6b9a6b" android:textSize="9sp"/><TextView android:id="@+id/w_hrv" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="HRV --" android:textColor="#8acf8a" android:textSize="9sp"/><ProgressBar android:id="@+id/bar_ana" style="?android:attr/progressBarStyleHorizontal" android:layout_width="match_parent" android:layout_height="8dp" android:progressDrawable="@drawable/p_purple"/><ProgressBar android:id="@+id/bar_alto" style="?android:attr/progressBarStyleHorizontal" android:layout_width="match_parent" android:layout_height="8dp" android:progressDrawable="@drawable/p_orange"/><ProgressBar android:id="@+id/bar_basso" style="?android:attr/progressBarStyleHorizontal" android:layout_width="match_parent" android:layout_height="8dp" android:progressDrawable="@drawable/p_cyan"/><ImageView android:id="@+id/w_chart" android:layout_width="match_parent" android:layout_height="90dp"/></LinearLayout>')
+          open("app/src/main/res/layout/activity_main.xml","w").write('<?xml version="1.0" encoding="utf-8"?><LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent" android:layout_height="match_parent" android:orientation="vertical" android:background="#0d1a0d"><LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:padding="12dp" android:background="#111f11"><TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="RAZIEL V47 CLONE 100%" android:textColor="#5afc7a" android:textSize="13sp" android:textStyle="bold"/><TextView android:id="@+id/txt_status" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="FULL CLONE" android:textColor="#8acf8a" android:textSize="11sp"/><TextView android:id="@+id/txt_path" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="--" android:textColor="#6b9a6b" android:textSize="9sp"/><LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:layout_marginTop="8dp"><Button android:id="@+id/btn_auto" android:layout_width="0dp" android:layout_weight="1" android:layout_height="48dp" android:text="AUTO ONEDRIVE" android:backgroundTint="#00e5ff"/><Button android:id="@+id/btn_import" android:layout_width="0dp" android:layout_weight="1" android:layout_height="48dp" android:text="SCEGLI FILE" android:backgroundTint="#5afc7a" android:layout_marginStart="6dp"/></LinearLayout></LinearLayout><WebView android:id="@+id/webview" android:layout_width="match_parent" android:layout_height="match_parent"/></LinearLayout>')
+          open("app/src/main/AndroidManifest.xml","w").write('<?xml version="1.0" encoding="utf-8"?><manifest xmlns:android="http://schemas.android.com/apk/res/android"><uses-permission android:name="android.permission.INTERNET"/><application android:allowBackup="true" android:label="RAZIEL" android:usesCleartextTraffic="true" android:theme="@style/Theme.AppCompat.Light.NoActionBar"><activity android:name=".MainActivity" android:exported="true"><intent-filter><action android:name="android.intent.action.MAIN"/><category android:name="android.intent.category.LAUNCHER"/></intent-filter></activity><receiver android:name=".RazielWidgetProvider" android:exported="true"><intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE"/></intent-filter><meta-data android:name="android.appwidget.provider" android:resource="@xml/widget_raziel_info"/></receiver></application></manifest>')
+          html = r"""<!DOCTYPE html>
+          <html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+          <style>
+          *{margin:0;padding:0;box-sizing:border-box}body{background:#080f08;color:#cfe9cf;font-family:monospace;padding:4px}
+         .topbar{display:flex;justify-content:space-between;align-items:center;background:#0a1a0a;border:1px solid #1e4a1e;border-radius:8px;padding:6px 10px;font-size:10px;color:#5afc7a;margin-bottom:6px}
+         .topbar b{color:#7dff8a}
+         .btn{border:1px solid #5afc7a;background:#132913;color:#5afc7a;border-radius:12px;padding:3px 10px;font-size:9px}
+         .section{color:#4dff4d;font-size:10px;font-weight:bold;margin:12px 0 6px 2px;display:flex;align-items:center;gap:4px}
+         .grid4{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:5px;margin-bottom:6px}
+         .grid2{display:grid;grid-template-columns:1fr 1fr;gap:5px;margin-bottom:6px}
+         .grid5{display:grid;grid-template-columns:repeat(5,1fr);gap:5px;margin-bottom:6px}
+         .grid6{display:grid;grid-template-columns:repeat(6,1fr);gap:4px;margin-bottom:6px}
+         .card{background:#0d1e0d;border:1px solid #1a3a1a;border-radius:8px;padding:7px 8px;position:relative;overflow:hidden}
+         .card.hdr{font-size:8px;color:#5a8a5a;display:flex;align-items:center;gap:3px;margin-bottom:3px;text-transform:uppercase}
+         .card.val{font-size:18px;font-weight:bold;color:#eaffea;line-height:1.1}.card.sub{font-size:8px;color:#6b9a6b;margin-top:2px}
+         .barrow{display:flex;align-items:center;gap:6px;margin-top:4px}.bar{flex:1;height:8px;background:#132913;border-radius:4px;overflow:hidden}.bar div{height:100%}
+         .dot{width:8px;height:8px;border-radius:50%;display:inline-block}
+          canvas{width:100%;height:84px;display:block;margin-top:4px}
+         .bigchart canvas{height:110px}
+         .legend{display:flex;gap:8px;font-size:7px;justify-content:center;margin:4px 0}
+         .legend span{display:flex;align-items:center;gap:2px}
+         .act{border-bottom:1px solid #162916;padding:6px 0;display:flex;justify-content:space-between;font-size:10px}
+         .act.ico{width:18px;height:18px;background:#1a3a1a;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:10px;margin-right:6px}
+         .coach{background:#111;border:1px solid #222;border-radius:10px;padding:10px;margin-top:8px}
+         .coachbox{height:110px;background:#070707;border-radius:8px;margin:8px 0}
+         .coachinput{display:flex;gap:6px}.coachinput input{flex:1;background:#0f0f0f;border:1px solid #222;border-radius:14px;padding:6px 10px;color:#777;font-size:10px}.coachinput button{background:#2a5a2a;color:#8f8;border:0;border-radius:10px;padding:4px 12px;font-size:10px}
+          </style></head><body>
+          <div class="topbar"><div>GARMIN DASHBOARD // RAZ/IL - <span id="t_date">2026-10-12</span> - FC <span id="t_rhr">50</span> BPM - 7 giorni</div><div style="display:flex;gap:4px"><div style="font-size:8px;border:1px solid #2a5a2a;border-radius:10px;padding:2px 6px" id="t_info">2026-10-12</div><div class="btn">Aggiorna dati</div></div></div>
+          <div class="section">● Forma & Training Status</div>
+          <div class="grid4">
+            <div class="card"><div class="hdr">💥 SOVRACCARICO</div><div class="val" id="v_acwr">1.13</div><div class="sub">Rapporto Acuto/Cronico</div></div>
+            <div class="card"><div class="hdr">⚡ PRONTEZZA</div><div class="val" id="v_ready">25</div><div class="sub">Training Readiness</div></div>
+            <div class="card"><div class="hdr">📊 BILANCIO CARICO</div><div class="val" id="v_bil">Ottimale</div><div class="sub" id="v_bil_sub">Bilancio Carico</div></div>
+            <div class="card"><div class="hdr">💜 VO2_MAX</div><div class="val" id="v_vo2">48</div><div class="sub">Stimato ultimo 7gg</div></div>
+          </div>
+          <div class="grid2">
+            <div class="card bigchart"><div class="hdr">VO2_MAX - ULTIMI 7 GIORNI</div><canvas id="ch_vo2"></canvas></div>
+            <div class="card bigchart"><div class="hdr">● BILANCIO DEL CARICO</div><canvas id="ch_bil"></canvas></div>
+          </div>
+          <div class="card" style="margin-bottom:6px"><div class="hdr" style="color:#4dff4d" id="bil28_title">● BILANCIO DEL CARICO - Ultimi 28 giorni al 2026-10-12</div><div style="font-size:8px;color:#5a8a5a;margin-bottom:6px">Fonte: Garmin API V3 - metodo: TrainingLoadBalanceOTOMp</div>
+            <div class="barrow"><span class="dot" style="background:#a855f7"></span><span style="font-size:9px;flex:0 0 90px">Anaerobico</span><div class="bar"><div id="b_ana" style="background:#a855f7;width:10%"></div></div><span style="font-size:9px;color:#a855f7" id="n_ana">135</span></div>
+            <div class="barrow"><span class="dot" style="background:#ff7a18"></span><span style="font-size:9px;flex:0 0 90px">Aerobico alto</span><div class="bar"><div id="b_alto" style="background:#ff7a18;width:90%"></div></div><span style="font-size:9px;color:#ff7a18" id="n_alto">1758</span></div>
+            <div class="barrow"><span class="dot" style="background:#00e5ff"></span><span style="font-size:9px;flex:0 0 90px">Aerobico basso</span><div class="bar"><div id="b_basso" style="background:#00e5ff;width:12%"></div></div><span style="font-size:9px;color:#00e5ff" id="n_basso">124</span></div>
+            <div style="font-size:8px;color:#ff7a18;margin-top:6px">● AEROBIC_LOW_SHORTAGE</div>
+          </div>
+          <div class="section">● Salute & Recovery</div>
+          <div class="grid5">
+            <div class="card"><div class="hdr">😴 SLEEP SCORE</div><div class="val" id="v_sleep">57</div><div class="sub" id="s_sleep">57h Top: 91 il 10-06</div></div>
+            <div class="card"><div class="hdr" style="color:#4dff4d">💚 HRV</div><div class="val" id="v_hrv">45 ms</div><div class="sub" id="s_hrv">Top: 55 il 10-09</div></div>
+            <div class="card"><div class="hdr">❤️ FC RIPOSO</div><div class="val" id="v_rhr">50 bpm</div><div class="sub" id="s_rhr">Top: 50 il 10-11</div></div>
+            <div class="card"><div class="hdr">🔋 BODY BATTERY</div><div class="val" id="v_bb">53 / 10</div><div class="sub">Top: 95 / Max / Min oggi</div></div>
+            <div class="card"><div class="hdr">😰 STRESS</div><div class="val" id="v_stress">28</div><div class="sub">12.75 punti - 2.88h avg</div></div>
+          </div>
+          <div class="grid2">
+            <div class="card"><div class="hdr">😴 SLEEP SCORE - ULTIMI 7</div><canvas id="ch_sleep"></canvas></div>
+            <div class="card"><div class="hdr">💚 HRV - ULTIMI 7</div><canvas id="ch_hrv"></canvas></div>
+            <div class="card"><div class="hdr">❤️ FC A RIPOSO - ULTIMI 7</div><canvas id="ch_rhr"></canvas></div>
+            <div class="card"><div class="hdr">😰 STRESS - ULTIMI 7</div><canvas id="ch_str"></canvas></div>
+            <div class="card"><div class="hdr">💚 BODY BATTERY MAX - ULTIMI 7</div><canvas id="ch_bb"></canvas></div>
+            <div class="card"><div class="hdr">🌙 ORE SONNO - ULTIMI 7</div><canvas id="ch_sonno"></canvas></div>
+          </div>
+          <div class="section">● Overview - Volume settimanale</div>
+          <div class="grid6">
+            <div class="card"><div class="hdr">🏃 CORSA</div><div class="val" style="font-size:14px" id="vol_corsa">3.1h</div></div>
+            <div class="card"><div class="hdr">🏔️ TRAIL RUN</div><div class="val" style="font-size:14px" id="vol_trail">0h</div></div>
+            <div class="card"><div class="hdr">🥾 ESCURSIONISMO</div><div class="val" style="font-size:14px">0h</div></div>
+            <div class="card"><div class="hdr">🚴 BICI</div><div class="val" style="font-size:14px">0h</div></div>
+            <div class="card"><div class="hdr">🛶 KAYAK</div><div class="val" style="font-size:14px">0h</div></div>
+            <div class="card"><div class="hdr">🏊 NUOTO</div><div class="val" style="font-size:14px">0h</div></div>
+          </div>
+          <div class="card"><div class="hdr">VOLUME SETTIMANALE - PER DISCIPLINA (KM)</div><div class="legend"><span><span class="dot" style="background:#ff4444"></span>Corsa</span><span><span class="dot" style="background:#44ff44"></span>Trail</span><span><span class="dot" style="background:#44ddff"></span>Bici</span><span><span class="dot" style="background:#aaffaa"></span>Escurs</span><span><span class="dot" style="background:#8888ff"></span>Kayak</span><span><span class="dot" style="background:#0088ff"></span>Nuoto</span></div><canvas id="ch_vol" style="height:190px"></canvas></div>
+          <div class="section">● Distanza & Record - TEMPI REALI</div>
+          <div class="grid5" style="grid-template-columns:repeat(5,1fr)">
+            <div class="card"><div class="hdr">⚡ KM PIÙ VELOCE</div><div class="val" style="font-size:12px" id="r_pace">4:05</div><div class="sub">2024-07-10 Isola di Capo Rizzuto Co</div></div>
+            <div class="card"><div class="hdr">🔥 5 KM PIÙ VELOCE</div><div class="val" style="font-size:12px" id="r_5k">31:21</div><div class="sub">2025-06-25 Corsa su tapis roulant</div></div>
+            <div class="card"><div class="hdr">🏃 10 KM PIÙ VELOCE</div><div class="val" style="font-size:12px" id="r_10k">57:29</div><div class="sub">2025-06-11 Trail - Corsa finale med</div></div>
+            <div class="card"><div class="hdr">🏅 MEZZA MARATONA</div><div class="val" style="font-size:12px">--</div><div class="sub">Mai fatto</div></div>
+            <div class="card"><div class="hdr">👑 MARATONA</div><div class="val" style="font-size:12px">--</div><div class="sub">Mai fatto</div></div>
+          </div>
+          <div class="grid4" style="grid-template-columns:1fr 1fr 1fr 1fr">
+            <div class="card"><div class="hdr">🏃 CORSA PIÙ LUNGA IN KM</div><div class="val" style="font-size:12px" id="r_long">15.03 km</div><div class="sub">Trail - Lungo in zona 2 - 2025-09-28</div></div>
+            <div class="card"><div class="hdr">⛰️ DISLIVELLO + ALTO CORSA</div><div class="val" style="font-size:12px" id="r_elev">571 m</div><div class="sub">Caccomo Trail Running - 2025-07-17</div></div>
+            <div class="card"><div class="hdr">📍 USCITA PIÙ LUNGA IN KM</div><div class="val" style="font-size:12px" id="r_month">57.48 km</div><div class="sub">Trabia Gioia boscata Gimmia - 2023-09-10</div></div>
+            <div class="card"><div class="hdr">🏔️ DISLIVELLO + GIORNO BICI</div><div class="val" style="font-size:12px" id="r_bike">1379 m</div><div class="sub">Trabia Mountain bike - 2023-10-22</div></div>
+          </div>
+          <div class="section">● Ultime 10 Attività</div>
+          <div class="card"><div id="acts"></div></div>
+          <div class="coach"><div style="font-size:11px;font-weight:bold">💬 Chat col tuo Coach AI</div><div class="coachbox" id="coachbox"></div><div class="coachinput"><input placeholder="Es: come sto andando? devo fare più fondo?"><button>Invia</button></div></div>
           <script>
-          async function load(){try{let db=await (await fetch('https://appassets.androidplatform.net/data/database.json?v='+Date.now())).json();document.getElementById('title').innerText='GARMIN DASHBOARD // '+(db.periodo?.a||'');document.getElementById('info').innerText=(db.attivita?.length||0)+' att';let bil=db.bilancio_carico||{};let ana=bil.anaerobico||0,alto=bil.aerobico_alto||0,basso=bil.aerobico_basso||0;document.getElementById('ana_v').innerText=ana;document.getElementById('alto_v').innerText=alto;document.getElementById('basso_v').innerText=basso;document.getElementById('bil_nums').innerText=ana+'/'+alto+'/'+basso;let max=Math.max(ana,alto,basso,1);document.getElementById('ana_b').style.width=(ana/max*100)+'%';document.getElementById('alto_b').style.width=(alto/max*100)+'%';document.getElementById('basso_b').style.width=(basso/max*100)+'%';let giorni=db.giorni||[];let last7=giorni.slice(-7);let last=giorni.length?giorni[giorni.length-1]:{};document.getElementById('acwr').innerText=last.acwr||'1.13';document.getElementById('readiness').innerText=last.readiness||25;document.getElementById('vo2top').innerText=last.vo2max||48;document.getElementById('sleep_s').innerText=last.sleep_score||'--';document.getElementById('hrv').innerText=(last.hrv||'--')+' ms';document.getElementById('rhr').innerText=(last.fc_riposo||'--')+' bpm';document.getElementById('bb').innerText=(last.body_battery_max||'--');document.getElementById('stress').innerText=last.stress_avg||'--';function drawLine(id,vals,color){let c=document.getElementById(id);if(!c)return;let ctx=c.getContext('2d');let W=c.width=c.clientWidth*2,H=c.height=90*2;ctx.clearRect(0,0,W,H);ctx.strokeStyle=color;ctx.lineWidth=3;ctx.beginPath();let max=Math.max(...vals,1),min=Math.min(...vals);if(max==min)max=min+1;vals.forEach((v,i)=>{let x=i/(vals.length-1||1)*(W-20)+10;let y=H-20-(v-min)/(max-min||1)*(H-40);if(i==0)ctx.moveTo(x,y);else ctx.lineTo(x,y);});ctx.stroke();}function drawBar(id,vals,color){let c=document.getElementById(id);if(!c)return;let ctx=c.getContext('2d');let W=c.width=c.clientWidth*2,H=c.height=90*2;ctx.clearRect(0,0,W,H);let max=Math.max(...vals,1);vals.forEach((v,i)=>{let bw=(W-20)/vals.length-8;let x=10+i*(bw+8);let h=(v/max)*(H-30);ctx.fillStyle=color;ctx.fillRect(x,H-20-h,bw,h);});}drawLine('c_vo2',last7.map(g=>g.vo2max||48),'#5afc7a');drawBar('c_acuto',[20,60],'#00e5ff');drawBar('c_sleep',last7.map(g=>g.sleep_score||0),'#ffcc00');drawLine('c_hrv',last7.map(g=>g.hrv||40),'#00ff88');drawLine('c_rhr',last7.map(g=>g.fc_riposo||48),'#ff4444');drawLine('c_stress',last7.map(g=>g.stress_avg||20),'#ff8800');drawLine('c_bb',last7.map(g=>g.body_battery_max||50),'#44ff44');drawBar('c_sonno',last7.map(g=>g.sleep_hours||0),'#aa88ff');let cv=document.getElementById('c_vol');let ctx=cv.getContext('2d');let W=cv.width=cv.clientWidth*2,H=cv.height=160*2;ctx.clearRect(0,0,W,H);let att=db.attivita||[];let days={};att.slice(-20).forEach(a=>{let d=(a.inizio||'').slice(0,10);if(!days[d])days[d]=0;days[d]+=(a.durata_s||0)/60;});let labels=Object.keys(days).slice(-10);let vals=labels.map(k=>days[k]);let maxV=Math.max(...vals,1);labels.forEach((_,i)=>{let x=20+i*(W-40)/labels.length;let h=(vals[i]/maxV)*(H-40);ctx.fillStyle='#ff4444';ctx.fillRect(x,H-30-h,10,h);});document.getElementById('acts').innerHTML=att.slice(0,10).map(a=>{let d=(a.inizio||'').slice(0,10);return '<div>'+d+' - '+a.nome+' - '+(a.distanza_m/1000).toFixed(2)+'km</div>';}).join('');}catch(e){document.getElementById('title').innerText='ERR: '+e.message;}}load();
+          async function load(){
+            try{
+              let db = await (await fetch('https://appassets.androidplatform.net/data/database.json?v='+Date.now())).json();
+              let giorni=db.giorni||[]; let last=giorni.length?giorni[giorni.length-1]:{}; let last7=giorni.slice(-7);
+              let bil=db.bilancio_carico||{}; let ana=bil.anaerobico||135, alto=bil.aerobico_alto||1758, basso=bil.aerobico_basso||124;
+              document.getElementById('t_date').innerText=db.periodo?.a||'2026-10-12'; document.getElementById('t_info').innerText=db.periodo?.a||'2026-10-12';
+              document.getElementById('bil28_title').innerText='● BILANCIO DEL CARICO - Ultimi 28 giorni al '+(db.periodo?.a||'2026-10-12');
+              document.getElementById('v_acwr').innerText=last.acwr||1.13; document.getElementById('v_ready').innerText=last.readiness||25; document.getElementById('v_vo2').innerText=last.vo2max||48;
+              document.getElementById('v_bil').innerText='Ottimale'; document.getElementById('n_ana').innerText=ana; document.getElementById('n_alto').innerText=alto; document.getElementById('n_basso').innerText=basso;
+              let maxB=Math.max(ana,alto,basso,1); document.getElementById('b_ana').style.width=(ana/maxB*100)+'%'; document.getElementById('b_alto').style.width=(alto/maxB*100)+'%'; document.getElementById('b_basso').style.width=(basso/maxB*100)+'%';
+              document.getElementById('v_sleep').innerText=last.sleep_score||57; document.getElementById('v_hrv').innerText=(last.hrv||45)+' ms'; document.getElementById('v_rhr').innerText=(last.fc_riposo||50)+' bpm'; document.getElementById('v_bb').innerText=(last.body_battery_max||53)+' / '+(last.body_battery_min||10); document.getElementById('v_stress').innerText=last.stress_avg||28;
+              document.getElementById('t_rhr').innerText=last.fc_riposo||50;
+              function scale(c){let dpr=2; c.width=c.clientWidth*dpr; c.height=c.clientHeight*dpr; return c.getContext('2d');}
+              function drawLine(id, vals, col, fill){let c=document.getElementById(id); if(!c)return; let ctx=scale(c); let W=c.width,H=c.height; ctx.clearRect(0,0,W,H); let max=Math.max(...vals,1), min=Math.min(...vals); if(max==min)max=min+5; ctx.strokeStyle=col; ctx.lineWidth=2; ctx.beginPath(); vals.forEach((v,i)=>{let x=30+i*(W-50)/(vals.length-1||1); let y=H-20-(v-min)/(max-min||1)*(H-40); if(i==0)ctx.moveTo(x,y); else ctx.lineTo(x,y);}); ctx.stroke(); if(fill){ctx.fillStyle=col+'33'; ctx.lineTo(W-20,H-20); ctx.lineTo(30,H-20); ctx.closePath(); ctx.fill();} ctx.fillStyle='#5a8a5a'; ctx.font='10px monospace'; vals.forEach((_,i)=>{if(id.includes('vo2')||id.includes('bil'))return;});}
+              function drawBar(id, vals, col){let c=document.getElementById(id); if(!c)return; let ctx=scale(c); let W=c.width,H=c.height; ctx.clearRect(0,0,W,H); let max=Math.max(...vals,1); vals.forEach((v,i)=>{let bw=(W-40)/vals.length-6; let x=20+i*(bw+6); let h=(v/max)*(H-30); ctx.fillStyle=col; ctx.fillRect(x,H-20-h,bw,h);});}
+              drawLine('ch_vo2', last7.map(g=>g.vo2max||48), '#44ff44', true);
+              // bilancio acuto cronico
+              (function(){let c=document.getElementById('ch_bil'); let ctx=scale(c); let W=c.width,H=c.height; ctx.clearRect(0,0,W,H); ctx.fillStyle='#44ff44'; ctx.fillRect(W*0.15,H*0.3, W*0.2, H*0.5); ctx.fillStyle='#44ddff'; ctx.fillRect(W*0.6,H*0.1, W*0.25, H*0.7); ctx.fillStyle='#5a8a5a'; ctx.font='10px monospace'; ctx.fillText('Acuto',W*0.18,H-5); ctx.fillText('Cronico',W*0.62,H-5);})();
+              drawBar('ch_sleep', last7.map(g=>g.sleep_score||60), '#ffcc00');
+              drawLine('ch_hrv', last7.map(g=>g.hrv||40), '#44ff44', true);
+              drawLine('ch_rhr', last7.map(g=>g.fc_riposo||43), '#ff4444');
+              drawLine('ch_str', last7.map(g=>g.stress_avg||20), '#ff8800');
+              drawLine('ch_bb', last7.map(g=>g.body_battery_max||60), '#44ff44', true);
+              drawBar('ch_sonno', last7.map(g=>g.sleep_hours||6), '#aa88ff');
+              // volume settimanale
+              (function(){let c=document.getElementById('ch_vol'); let ctx=scale(c); let W=c.width,H=c.height; ctx.clearRect(0,0,W,H); let att=db.attivita||[]; let map={}; att.forEach(a=>{let d=(a.inizio||'').slice(0,7); if(d.startsWith('2025-')) return; let key=(a.inizio||'').slice(0,10); if(!map[key])map[key]={corsa:0,trail:0,bici:0,escurs:0}; let n=(a.nome||'').toLowerCase(); let cat='corsa'; if(n.includes('trail'))cat='trail'; else if(n.includes('bici')||n.includes('bike'))cat='bici'; else if(n.includes('escurs'))cat='escurs'; map[key][cat]+=(a.durata_s||1800)/60;}); let keys=Object.keys(map).slice(-11); let maxV=50; keys.forEach((k,i)=>{let x=20+i*(W-30)/keys.length; let d=map[k]; let y=H-20; let h1=(d.corsa/maxV)*(H-40); ctx.fillStyle='#ff4444'; ctx.fillRect(x,y-h1,6,h1); let h2=(d.bici/maxV)*(H-40); ctx.fillStyle='#44ddff'; ctx.fillRect(x,y-h1-h2,6,h2); let h3=(d.escurs/maxV)*(H-40); ctx.fillStyle='#aaffaa'; ctx.fillRect(x,y-h1-h2-h3,6,h3); let h4=(d.trail/maxV)*(H-40); ctx.fillStyle='#44ff44'; ctx.fillRect(x+7,y-h4,5,h4);});})();
+              // ultime 10
+              let acts=db.attivita||[]; document.getElementById('acts').innerHTML=acts.slice(0,10).map(a=>{let d=(a.inizio||'').slice(5,10).replace('-','/'); let name=a.nome||'Corsa'; let km=(a.distanza_m/1000).toFixed(2)+'km'; let mins=Math.round((a.durata_s||0)/60)+'min'; return '<div class="act"><div><span class="ico">🏃</span>'+d+' - Running - '+name+'</div><div>'+km+' - '+mins+'</div></div>';}).join('');
+              // vol
+              let totH=0; (db.attivita||[]).forEach(a=>{if((a.inizio||'').slice(0,10)>=new Date(Date.now()-7*86400000).toISOString().slice(0,10)) totH+=(a.durata_s||0)/3600;}); document.getElementById('vol_corsa').innerText=totH.toFixed(1)+'h';
+            }catch(e){document.body.innerHTML+='<div style="color:red">ERR '+e.message+'</div>';}
+          }
+          load();
           </script></body></html>
           """
-          open("app/src/main/assets/index.html","w").write(html_content)
-          # Java files
+          open("app/src/main/assets/index.html","w",encoding="utf-8").write(html)
           open("app/src/main/java/com/garminmatrix/MainActivity.java","w").write(r'''
           package com.garminmatrix;
           import android.os.Bundle; import android.webkit.WebView; import android.webkit.WebSettings; import android.webkit.WebChromeClient; import android.webkit.WebResourceRequest; import android.widget.TextView; import android.content.Intent; import android.content.ComponentName; import android.content.SharedPreferences; import android.appwidget.AppWidgetManager; import android.net.Uri; import android.provider.DocumentsContract; import android.database.Cursor; import org.json.*; import java.io.*; import androidx.appcompat.app.AppCompatActivity; import androidx.webkit.WebViewAssetLoader;
@@ -96,7 +175,6 @@ jobs:
                   prefs=getSharedPreferences("raziel",MODE_PRIVATE);
                   findViewById(R.id.btn_auto).setOnClickListener(v->autoFromSavedUri());
                   findViewById(R.id.btn_import).setOnClickListener(v->manualImport());
-                  findViewById(R.id.btn_dash).setOnClickListener(v->openDash());
                   WebSettings s=wv.getSettings(); s.setJavaScriptEnabled(true); s.setDomStorageEnabled(true); s.setAllowFileAccess(true); s.setAllowContentAccess(true); s.setAllowFileAccessFromFileURLs(true); s.setAllowUniversalAccessFromFileURLs(true); s.setMixedContentMode(WebSettings.MIXED_CONTENT_ALWAYS_ALLOW); s.setCacheMode(WebSettings.LOAD_NO_CACHE);
                   final WebViewAssetLoader loader=new WebViewAssetLoader.Builder().addPathHandler("/assets/", new WebViewAssetLoader.AssetsPathHandler(this)).addPathHandler("/data/", new WebViewAssetLoader.InternalStoragePathHandler(this, getFilesDir())).build();
                   wv.setWebViewClient(new androidx.webkit.WebViewClientCompat(){
@@ -105,7 +183,7 @@ jobs:
                   wv.setWebChromeClient(new WebChromeClient());
                   openDash();
                   String last=prefs.getString("last_uri",null);
-                  if(last!=null){ pathTxt.setText("Ultimo: "+prefs.getString("last_name","OneDrive")); wv.postDelayed(()->autoFromSavedUri(),1000); }
+                  if(last!=null){ pathTxt.setText("Ultimo: "+prefs.getString("last_name","OneDrive")); wv.postDelayed(()->autoFromSavedUri(),800); }
               }
               void openDash(){ wv.clearCache(true); wv.loadUrl("https://appassets.androidplatform.net/assets/index.html?nocache="+System.currentTimeMillis()); }
               void autoFromSavedUri(){
@@ -119,9 +197,7 @@ jobs:
                       BufferedReader r=new BufferedReader(new InputStreamReader(is)); StringBuilder sb=new StringBuilder(); String l; while((l=r.readLine())!=null) sb.append(l); r.close();
                       String json=sb.toString(); JSONObject db=new JSONObject(json);
                       File outf=new File(getFilesDir(),"database.json"); FileWriter fw=new FileWriter(outf); fw.write(db.toString(2)); fw.close();
-                      int nAtt=db.optJSONArray("attivita")!=null?db.optJSONArray("attivita").length():0;
-                      int nGiorni=db.optJSONArray("giorni")!=null?db.optJSONArray("giorni").length():0;
-                      st.setText("AUTO OK: "+nAtt+" att + "+nGiorni+" gg da OneDrive");
+                      st.setText("AUTO OK: "+db.optJSONArray("attivita").length()+" att + "+db.optJSONArray("giorni").length()+" gg da OneDrive");
                       pathTxt.setText("Auto da: "+prefs.getString("last_name","OneDrive")+" - "+(json.length()/1024)+"KB");
                       openDash(); updateWidget();
                   }catch(Exception e){ st.setText("Auto err: "+e.getMessage()); }
@@ -140,16 +216,14 @@ jobs:
               void upd(Context ctx, AppWidgetManager mgr, int wid){
                   RemoteViews v=new RemoteViews(ctx.getPackageName(), R.layout.widget_raziel);
                   try{
-                      Intent open=new Intent(ctx, MainActivity.class); PendingIntent pi=PendingIntent.getActivity(ctx,0,open,PendingIntent.FLAG_IMMUTABLE|PendingIntent.FLAG_UPDATE_CURRENT); v.setOnClickPendingIntent(R.id.w_btn_update,pi);
                       JSONObject db=load(ctx); SimpleDateFormat tf=new SimpleDateFormat("HH:mm",Locale.US); v.setTextViewText(R.id.w_updated,"SYNC "+tf.format(new Date()));
-                      JSONObject bil=db.optJSONObject("bilancio_carico"); if(bil==null) bil=db.optJSONObject("load_focus");
-                      if(bil!=null){ int ana=bil.optInt("anaerobico",0); int alto=bil.optInt("aerobico_alto",0); int basso=bil.optInt("aerobico_basso",0); v.setProgressBar(R.id.bar_ana,2000,Math.min(ana,2000),false); v.setProgressBar(R.id.bar_alto,2000,Math.min(alto,2000),false); v.setProgressBar(R.id.bar_basso,500,Math.min(basso,500),false); }
-                      String hrvTxt=""; try{JSONArray giorni=db.optJSONArray("giorni"); JSONObject last=giorni!=null&&giorni.length()>0?giorni.getJSONObject(giorni.length()-1):null; String hrv=last!=null?last.optString("hrv",last.optString("hrv_avg","--")):"--"; String rhr=last!=null?last.optString("fc_riposo","--"):"--"; String vo2=last!=null?last.optString("vo2max","--"):"--"; hrvTxt="HRV "+hrv+" FC "+rhr+" VO2 "+vo2; }catch(Exception e){ hrvTxt="HRV -- FC -- VO2 --"; } v.setTextViewText(R.id.w_hrv,hrvTxt);
+                      JSONObject bil=db.optJSONObject("bilancio_carico"); if(bil!=null){ int ana=bil.optInt("anaerobico",0); int alto=bil.optInt("aerobico_alto",0); int basso=bil.optInt("aerobico_basso",0); v.setProgressBar(R.id.bar_ana,2000,Math.min(ana,2000),false); v.setProgressBar(R.id.bar_alto,2000,Math.min(alto,2000),false); v.setProgressBar(R.id.bar_basso,500,Math.min(basso,500),false); }
+                      JSONArray giorni=db.optJSONArray("giorni"); JSONObject last=giorni!=null&&giorni.length()>0?giorni.getJSONObject(giorni.length()-1):null; String hrv=last!=null?last.optString("hrv","--"):"--"; v.setTextViewText(R.id.w_hrv,"HRV "+hrv);
                       v.setImageViewBitmap(R.id.w_chart, chart(db.optJSONArray("attivita")));
                   }catch(Exception e){} mgr.updateAppWidget(wid,v);
               }
-              JSONObject load(Context ctx) throws Exception{File f=new File(ctx.getFilesDir(),"database.json"); StringBuilder sb=new StringBuilder(); if(f.exists() && f.length()>100){BufferedReader r=new BufferedReader(new InputStreamReader(new FileInputStream(f))); String l; while((l=r.readLine())!=null) sb.append(l); r.close(); return new JSONObject(sb.toString());} else{return new JSONObject("{\"bilancio_carico\":{\"anaerobico\":0,\"aerobico_alto\":0,\"aerobico_basso\":0},\"giorni\":[],\"attivita\":[]}");}}
-              Bitmap chart(JSONArray att){int W=700,H=90; Bitmap bmp=Bitmap.createBitmap(W,H,Bitmap.Config.ARGB_8888); Canvas c=new Canvas(bmp); c.drawColor(0); try{Calendar cal=Calendar.getInstance(); cal.setFirstDayOfWeek(Calendar.MONDAY); cal.set(Calendar.DAY_OF_WEEK,Calendar.MONDAY); cal.set(Calendar.HOUR_OF_DAY,0); cal.set(Calendar.MINUTE,0); cal.set(Calendar.SECOND,0); cal.set(Calendar.MILLISECOND,0); long mon=cal.getTimeInMillis(); float[] km=new float[7]; if(att!=null){SimpleDateFormat sdf=new SimpleDateFormat("yyyy-MM-dd'T'",Locale.US); for(int i=0;i<att.length();i++){JSONObject a=att.getJSONObject(i); String iso=a.optString("inizio",""); if(iso.length()<10) continue; try{Date d=null; try{d=sdf.parse(iso);}catch(Exception e){d=new SimpleDateFormat("yyyy-MM-dd",Locale.US).parse(iso.substring(0,10));} if(d==null) continue; int diff=(int)((d.getTime()-mon)/86400000L); if(diff>=0 && diff<7) km[diff]+=a.optDouble("distanza_m",0)/1000f;}catch(Exception ignored){}}} float max=1f; for(float k:km) if(k>max) max=k; if(max<5f) max=5f; Paint bar=new Paint(Paint.ANTI_ALIAS_FLAG); Paint txt=new Paint(Paint.ANTI_ALIAS_FLAG); txt.setColor(Color.parseColor("#7dff8a")); txt.setTextSize(18f); txt.setTextAlign(Paint.Align.CENTER); Paint val=new Paint(Paint.ANTI_ALIAS_FLAG); val.setColor(Color.WHITE); val.setTextSize(15f); val.setTextAlign(Paint.Align.CENTER); String[] labs={"LUN","MAR","MER","GIO","VEN","SAB","DOM"}; for(int i=0;i<7;i++){float x=i*(W/7f)+8; float bw=(W/7f)-16; float bh=(km[i]/max)*(H-28); if(bh<3) bh=km[i]>0?10:2; bar.setColor(km[i]>0?Color.parseColor("#5afc7a"):Color.parseColor("#1a3d1a")); c.drawRoundRect(x,H-20-bh,x+bw,H-20,6f,6f,bar); c.drawText(labs[i],x+bw/2,H-2,txt); if(km[i]>0) c.drawText(String.format(Locale.US,"%.1f",km[i]),x+bw/2,H-24-bh,val);}}catch(Exception e){} return bmp;}
+              JSONObject load(Context ctx) throws Exception{File f=new File(ctx.getFilesDir(),"database.json"); StringBuilder sb=new StringBuilder(); if(f.exists()){BufferedReader r=new BufferedReader(new InputStreamReader(new FileInputStream(f))); String l; while((l=r.readLine())!=null) sb.append(l); r.close(); return new JSONObject(sb.toString());} else return new JSONObject("{}");}
+              Bitmap chart(JSONArray att){int W=700,H=90; Bitmap bmp=Bitmap.createBitmap(W,H,Bitmap.Config.ARGB_8888); Canvas c=new Canvas(bmp); c.drawColor(0); try{Calendar cal=Calendar.getInstance(); cal.setFirstDayOfWeek(Calendar.MONDAY); cal.set(Calendar.DAY_OF_WEEK,Calendar.MONDAY); cal.set(Calendar.HOUR_OF_DAY,0); cal.set(Calendar.MINUTE,0); cal.set(Calendar.SECOND,0); cal.set(Calendar.MILLISECOND,0); long mon=cal.getTimeInMillis(); float[] km=new float[7]; if(att!=null){for(int i=0;i<att.length();i++){JSONObject a=att.getJSONObject(i); String iso=a.optString("inizio",""); if(iso.length()<10) continue; try{Date d=new SimpleDateFormat("yyyy-MM-dd'T'",Locale.US).parse(iso); int diff=(int)((d.getTime()-mon)/86400000L); if(diff>=0&&diff<7) km[diff]+=a.optDouble("distanza_m",0)/1000f;}catch(Exception ignored){}}} float max=1f; for(float k:km) if(k>max) max=k; Paint bar=new Paint(Paint.ANTI_ALIAS_FLAG); bar.setColor(Color.parseColor("#5afc7a")); for(int i=0;i<7;i++){float x=i*(W/7f)+8; float bw=(W/7f)-16; float bh=(km[i]/max)*(H-28); c.drawRect(x,H-20-bh,x+bw,H-20,bar);}}catch(Exception e){} return bmp;}
           }
           ''')
           PY
@@ -157,5 +231,5 @@ jobs:
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: RAZIEL-V46-APK
+          name: RAZIEL-V47-APK
           path: app/build/outputs/apk/debug/*.apk
