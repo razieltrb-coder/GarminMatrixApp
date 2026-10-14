@@ -12,16 +12,7 @@ jobs:
       - name: Create
         run: |
           rm -rf app build.gradle settings.gradle local.properties gradle.properties
-          mkdir -p app/src/main/assets app/src/main/java/com/garminmatrix app/src/main/res/xml app/src/main/res/layout app/src/main/res/drawable
-          # PATCH INDEX.HTML - LEVA BRAZIL OVUNQUE
-          if [ -f index.html ]; then
-            sed -i 's/BRAZIL//g; s/Brazil//g; s/2026-10-12//g; s/V35 3.8//g' index.html
-            cp index.html app/src/main/assets/index.html
-            echo "INDEX PATCHATA - BRAZIL RIMOSSO"
-          else
-            echo "<html>NO INDEX</html>" > app/src/main/assets/index.html
-          fi
-          echo '{"periodo":{"da":"","a":""},"bilancio_carico":{"aerobico_alto":0,"aerobico_basso":0,"anaerobico":0},"giorni":[],"attivita":[]}' > app/src/main/assets/database.json
+          mkdir -p app/src/main/java/com/garminmatrix app/src/main/res/xml app/src/main/res/layout app/src/main/res/drawable
           echo "include ':app'" > settings.gradle
           echo "sdk.dir=$ANDROID_HOME" > local.properties
           echo "android.useAndroidX=true" > gradle.properties
@@ -37,7 +28,7 @@ jobs:
           android {
               namespace 'com.garminmatrix'
               compileSdk 34
-              defaultConfig { applicationId "com.garminmatrix"; minSdk 24; targetSdk 34; versionCode 67; versionName "V44-AUTO-REMEMBER" }
+              defaultConfig { applicationId "com.garminmatrix"; minSdk 24; targetSdk 34; versionCode 68; versionName "V45-DASH-NUOVA-5MB-FIX" }
               compileOptions { sourceCompatibility JavaVersion.VERSION_17; targetCompatibility JavaVersion.VERSION_17 }
           }
           dependencies { implementation 'androidx.appcompat:appcompat:1.6.1'; implementation 'androidx.webkit:webkit:1.6.1' }
@@ -54,10 +45,131 @@ jobs:
           <?xml version="1.0" encoding="utf-8"?><LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:background="@drawable/bg_main" android:padding="12dp"><LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal"><TextView android:id="@+id/w_title" android:layout_width="0dp" android:layout_weight="1" android:layout_height="wrap_content" android:text="RAZIEL" android:textColor="#7dff8a" android:textSize="13sp" android:textStyle="bold"/><TextView android:id="@+id/w_btn_update" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="[AGGIORNA]" android:textColor="#5afc7a" android:textSize="10sp" android:textStyle="bold"/></LinearLayout><TextView android:id="@+id/w_updated" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="--:--" android:textColor="#6b9a6b" android:textSize="9sp"/><TextView android:id="@+id/w_hrv" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="HRV -- FC -- VO2 --" android:textColor="#8acf8a" android:textSize="9sp" android:layout_marginTop="4dp"/><ProgressBar android:id="@+id/bar_ana" style="?android:attr/progressBarStyleHorizontal" android:layout_width="match_parent" android:layout_height="8dp" android:max="100" android:progress="0" android:progressDrawable="@drawable/p_purple" android:layout_marginTop="8dp"/><ProgressBar android:id="@+id/bar_alto" style="?android:attr/progressBarStyleHorizontal" android:layout_width="match_parent" android:layout_height="8dp" android:max="100" android:progress="0" android:progressDrawable="@drawable/p_orange" android:layout_marginTop="4dp"/><ProgressBar android:id="@+id/bar_basso" style="?android:attr/progressBarStyleHorizontal" android:layout_width="match_parent" android:layout_height="8dp" android:max="100" android:progress="0" android:progressDrawable="@drawable/p_cyan" android:layout_marginTop="4dp"/><ImageView android:id="@+id/w_chart" android:layout_width="match_parent" android:layout_height="90dp" android:layout_marginTop="10dp"/></LinearLayout>
           ENDOFF
           cat > app/src/main/res/layout/activity_main.xml <<'ENDOFF'
-          <?xml version="1.0" encoding="utf-8"?><LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent" android:layout_height="match_parent" android:orientation="vertical" android:background="#0d1a0d"><LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:padding="12dp" android:background="#111f11"><TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="RAZIEL V44 AUTO REMEMBER" android:textColor="#5afc7a" android:textSize="13sp" android:textStyle="bold"/><TextView android:id="@+id/txt_status" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Auto da OneDrive cloud" android:textColor="#8acf8a" android:textSize="11sp"/><TextView android:id="@+id/txt_path" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Ultimo: --" android:textColor="#6b9a6b" android:textSize="9sp" android:layout_marginTop="4dp"/><LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:layout_marginTop="8dp"><Button android:id="@+id/btn_auto" android:layout_width="0dp" android:layout_weight="1.5" android:layout_height="52dp" android:text="AUTO DA ONEDRIVE" android:backgroundTint="#00e5ff" android:textSize="11sp"/><Button android:id="@+id/btn_import" android:layout_width="0dp" android:layout_weight="1" android:layout_height="52dp" android:text="SCEGLI FILE" android:backgroundTint="#5afc7a" android:layout_marginStart="6dp" android:textSize="11sp"/></LinearLayout><Button android:id="@+id/btn_dash" android:layout_width="match_parent" android:layout_height="44dp" android:text="APRI DASH" android:backgroundTint="#222" android:textColor="#5afc7a" android:layout_marginTop="6dp"/></LinearLayout><WebView android:id="@+id/webview" android:layout_width="match_parent" android:layout_height="match_parent"/></LinearLayout>
+          <?xml version="1.0" encoding="utf-8"?><LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent" android:layout_height="match_parent" android:orientation="vertical" android:background="#0d1a0d"><LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:padding="12dp" android:background="#111f11"><TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="RAZIEL V45 DASH FIX 5MB" android:textColor="#5afc7a" android:textSize="13sp" android:textStyle="bold"/><TextView android:id="@+id/txt_status" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Fix lettura file grande" android:textColor="#8acf8a" android:textSize="11sp"/><TextView android:id="@+id/txt_path" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="--" android:textColor="#6b9a6b" android:textSize="9sp" android:layout_marginTop="4dp"/><LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:layout_marginTop="8dp"><Button android:id="@+id/btn_auto" android:layout_width="0dp" android:layout_weight="1.5" android:layout_height="52dp" android:text="AUTO DA ONEDRIVE" android:backgroundTint="#00e5ff" android:textSize="11sp"/><Button android:id="@+id/btn_import" android:layout_width="0dp" android:layout_weight="1" android:layout_height="52dp" android:text="SCEGLI FILE" android:backgroundTint="#5afc7a" android:layout_marginStart="6dp" android:textSize="11sp"/></LinearLayout><Button android:id="@+id/btn_dash" android:layout_width="match_parent" android:layout_height="44dp" android:text="APRI DASH" android:backgroundTint="#222" android:textColor="#5afc7a" android:layout_marginTop="6dp"/></LinearLayout><WebView android:id="@+id/webview" android:layout_width="match_parent" android:layout_height="match_parent"/></LinearLayout>
           ENDOFF
           cat > app/src/main/AndroidManifest.xml <<'ENDOFF'
-          <?xml version="1.0" encoding="utf-8"?><manifest xmlns:android="http://schemas.android.com/apk/res/android"><uses-permission android:name="android.permission.INTERNET"/><uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/><uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/><application android:allowBackup="true" android:label="RAZIEL" android:usesCleartextTraffic="true" android:requestLegacyExternalStorage="true" android:theme="@style/Theme.AppCompat.Light.NoActionBar"><activity android:name=".MainActivity" android:exported="true"><intent-filter><action android:name="android.intent.action.MAIN"/><category android:name="android.intent.category.LAUNCHER"/></intent-filter></activity><receiver android:name=".RazielWidgetProvider" android:exported="true"><intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE"/></intent-filter><meta-data android:name="android.appwidget.provider" android:resource="@xml/widget_raziel_info"/></receiver></application></manifest>
+          <?xml version="1.0" encoding="utf-8"?><manifest xmlns:android="http://schemas.android.com/apk/res/android"><uses-permission android:name="android.permission.INTERNET"/><uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/><application android:allowBackup="true" android:label="RAZIEL" android:usesCleartextTraffic="true" android:theme="@style/Theme.AppCompat.Light.NoActionBar"><activity android:name=".MainActivity" android:exported="true"><intent-filter><action android:name="android.intent.action.MAIN"/><category android:name="android.intent.category.LAUNCHER"/></intent-filter></activity><receiver android:name=".RazielWidgetProvider" android:exported="true"><intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE"/></intent-filter><meta-data android:name="android.appwidget.provider" android:resource="@xml/widget_raziel_info"/></receiver></application></manifest>
+          ENDOFF
+          mkdir -p app/src/main/assets
+          cat > app/src/main/assets/index.html <<'ENDOFF'
+          <!DOCTYPE html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><style>
+          *{margin:0;padding:0;box-sizing:border-box}body{background:#0a0f0a;color:#c8f0c8;font-family:monospace;padding:8px}
+         .hdr{border:1px solid #5afc7a;border-radius:12px;padding:10px;margin-bottom:10px;background:#111f11}
+         .card{border:1px solid #2a5a2a;border-radius:10px;padding:10px;margin:6px;background:#0d1a0d}
+         .row{display:flex;gap:6px;flex-wrap:wrap}
+         .row.card{flex:1;min-width:110px}
+         .v{font-size:28px;color:#fff;font-weight:bold}
+         .l{font-size:11px;color:#7a9a7a}
+         .bar{height:14px;background:#1a2e1a;border-radius:7px;overflow:hidden;margin-top:6px}
+         .bar div{height:100%}
+         .ana{background:#a855f7}.alto{background:#ff7a18}.basso{background:#00e5ff}
+          canvas{background:#0d1a0d;border:1px solid #2a5a2a;border-radius:10px;width:100%;height:110px;margin-top:8px}
+          h2{color:#5afc7a;font-size:13px;margin:12px 0 6px 4px}
+          </style></head><body>
+          <div class="hdr"><div id="title" style="color:#5afc7a;font-weight:bold">GARMIN DASHBOARD // LOADING...</div><div id="period" style="font-size:10px;color:#6b9a6b;margin-top:4px"></div></div>
+          <h2>• Forma & Training</h2>
+          <div class="row">
+            <div class="card"><div class="l">SOVRACCARICO</div><div class="v" id="sovra">--</div><div class="l">Acuto/Cronico</div></div>
+            <div class="card"><div class="l">⚡ PRONTEZZA</div><div class="v" id="pront">--</div><div class="l">Readiness</div></div>
+            <div class="card"><div class="l">📊 BILANCIO</div><div class="v" id="bil">--</div><div class="l" id="bilnums">--</div></div>
+            <div class="card"><div class="l">💜 VO2 MAX</div><div class="v" id="vo2">--</div><div class="l">Stimato</div></div>
+          </div>
+          <div class="card"><div class="l">BILANCIO DEL CARICO - ULTIMI 28GG</div><div style="margin-top:8px"><div class="l">💜 Anaerobico <span id="ana_v" style="float:right;color:#a855f7">--</span></div><div class="bar"><div id="ana_b" class="ana" style="width:0%"></div></div></div><div style="margin-top:8px"><div class="l">🔥 Aerobico alto <span id="alto_v" style="float:right;color:#ff7a18">--</span></div><div class="bar"><div id="alto_b" class="alto" style="width:0%"></div></div></div><div style="margin-top:8px"><div class="l">💧 Aerobico basso <span id="basso_v" style="float:right;color:#00e5ff">--</span></div><div class="bar"><div id="basso_b" class="basso" style="width:0%"></div></div></div></div>
+          <h2>• Salute & Recovery</h2>
+          <div class="row">
+            <div class="card"><div class="l">😴 SLEEP SCORE</div><div class="v" id="sleep">--</div><div class="l" id="sleep_h">--</div></div>
+            <div class="card"><div class="l">💚 HRV</div><div class="v" id="hrv">--</div><div class="l">ms</div></div>
+            <div class="card"><div class="l">❤️ FC RIPOSO</div><div class="v" id="rhr">--</div><div class="l">bpm</div></div>
+            <div class="card"><div class="l">🔋 BATTERY</div><div class="v" id="batt">--</div><div class="l">Max/Min</div></div>
+            <div class="card"><div class="l">😰 STRESS</div><div class="v" id="stress">--</div></div>
+          </div>
+          <div class="card"><div class="l">GRAFICO USCITE LUN-DOM (km)</div><canvas id="chart" width="700" height="110"></canvas></div>
+          <div class="card"><div class="l">ULTIME ATTIVITA</div><div id="acts" style="font-size:11px;margin-top:6px"></div></div>
+          <script>
+          async function loadDB(){
+            try{
+              let url = 'https://appassets.androidplatform.net/data/database.json?v='+Date.now();
+              let r = await fetch(url);
+              if(!r.ok) throw 'fetch fail '+r.status;
+              let db = await r.json();
+              document.getElementById('title').innerText = 'GARMIN DASHBOARD // '+ (db.periodo?.a || db.periodo?.da || new Date().toISOString().slice(0,10));
+              document.getElementById('period').innerText = 'Attività: '+(db.attivita?.length||0)+' | Giorni: '+(db.giorni?.length||0)+' | File: '+(Math.round(JSON.stringify(db).length/1024))+'KB';
+              let bil = db.bilancio_carico || db.load_focus || {};
+              let ana = bil.anaerobico||0, alto=bil.aerobico_alto||0, basso=bil.aerobico_basso||0;
+              document.getElementById('ana_v').innerText = ana;
+              document.getElementById('alto_v').innerText = alto;
+              document.getElementById('basso_v').innerText = basso;
+              let max = Math.max(ana,alto,basso,1);
+              document.getElementById('ana_b').style.width = (ana/max*100)+'%';
+              document.getElementById('alto_b').style.width = (alto/max*100)+'%';
+              document.getElementById('basso_b').style.width = (basso/max*100)+'%';
+              document.getElementById('bilnums').innerText = ana+'/'+alto+'/'+basso;
+              // Bilancio ottimale se rapporto ok
+              let tot = ana+alto+basso; document.getElementById('bil').innerText = tot>0? 'Ottimale' : '--';
+              // Ultimi giorni
+              let giorni = db.giorni||[];
+              let last = giorni.length? giorni[giorni.length-1] : {};
+              // Giorni hanno campi diversi a seconda di estrattore
+              let hrv = last.hrv || last.hrv_avg || db.hrv_oggi || '--';
+              let rhr = last.fc_riposo || last.rhr || db.fc_riposo_oggi || '--';
+              let vo2 = last.vo2max || db.vo2max_oggi || last.vo2_max || '--';
+              let sleep = last.sleep_score || '--';
+              let batt = (last.body_battery_max!=null? last.body_battery_max+'/'+(last.body_battery_min||'--') : '--');
+              let stress = last.stress_avg || '--';
+              document.getElementById('hrv').innerText = (typeof hrv==='number'? Math.round(hrv)+' ms' : hrv);
+              document.getElementById('rhr').innerText = (typeof rhr==='number'? Math.round(rhr)+' bpm' : rhr);
+              document.getElementById('vo2').innerText = vo2;
+              document.getElementById('sleep').innerText = sleep;
+              document.getElementById('sleep_h').innerText = last.sleep_hours? last.sleep_hours.toFixed(1)+'h' : '';
+              document.getElementById('batt').innerText = batt;
+              document.getElementById('stress').innerText = stress;
+              // Sovraccarico e prontezza se presenti
+              let acwr = last.acwr || db.acwr || 1.13;
+              document.getElementById('sovra').innerText = typeof acwr==='number'? acwr.toFixed(2) : acwr;
+              let readiness = last.readiness || last.prontezza || 25;
+              document.getElementById('pront').innerText = readiness;
+              // Chart LUN-DOM
+              drawChart(db.attivita||[]);
+              // Lista attivita
+              let actsHtml = (db.attivita||[]).slice(0,7).map(a=>{
+                let km = a.distanza_m? (a.distanza_m/1000).toFixed(2)+'km' : '';
+                let nome = a.nome || a.activityName || a.sport || '';
+                let data = (a.inizio||'').slice(0,10);
+                return `<div style="padding:4px 0;border-bottom:1px solid #1a2e1a">${data} - ${nome} - ${km}</div>`;
+              }).join('');
+              document.getElementById('acts').innerHTML = actsHtml || 'Nessuna attività';
+            }catch(e){
+              document.getElementById('title').innerText = 'ERRORE CARICAMENTO: '+e;
+            }
+          }
+          function drawChart(att){
+            let canvas = document.getElementById('chart'); let ctx = canvas.getContext('2d');
+            ctx.clearRect(0,0,700,110);
+            // Calcola lunedi di questa settimana
+            let now = new Date(); let day = now.getDay(); let diff = now.getDate() - day + (day==0?-6:1);
+            let mon = new Date(now.setDate(diff)); mon.setHours(0,0,0,0);
+            let km = [0,0,0,0,0,0,0];
+            (att||[]).forEach(a=>{
+              try{
+                let d = new Date(a.inizio||a.startTime||'');
+                if(isNaN(d)) return;
+                let delta = Math.floor((d - mon)/86400000);
+                if(delta>=0 && delta<7){ km[delta] += (a.distanza_m||a.distance||0)/1000; }
+              }catch{}
+            });
+            let max = Math.max(...km,1); if(max<5) max=5;
+            ctx.fillStyle='#7dff8a'; ctx.font='12px monospace';
+            let labels=['LUN','MAR','MER','GIO','VEN','SAB','DOM'];
+            for(let i=0;i<7;i++){
+              let x = i*(100)+10; let bw=80; let bh = (km[i]/max)*70;
+              ctx.fillStyle = km[i]>0?'#5afc7a':'#1a3d1a';
+              ctx.fillRect(x, 90-bh, bw, bh);
+              ctx.fillStyle='#7dff8a'; ctx.fillText(labels[i], x+20, 105);
+              if(km[i]>0){ ctx.fillStyle='#fff'; ctx.fillText(km[i].toFixed(1), x+15, 85-bh); }
+            }
+          }
+          loadDB();
+          </script></body></html>
           ENDOFF
           cat > app/src/main/java/com/garminmatrix/MainActivity.java <<'ENDOFF'
           package com.garminmatrix;
@@ -70,29 +182,33 @@ jobs:
                   prefs=getSharedPreferences("raziel",MODE_PRIVATE);
                   findViewById(R.id.btn_auto).setOnClickListener(v->autoFromSavedUri());
                   findViewById(R.id.btn_import).setOnClickListener(v->manualImport());
-                  findViewById(R.id.btn_dash).setOnClickListener(v->openDash(true));
+                  findViewById(R.id.btn_dash).setOnClickListener(v->openDash());
                   WebSettings s=wv.getSettings(); s.setJavaScriptEnabled(true); s.setDomStorageEnabled(true); s.setAllowFileAccess(true); s.setAllowContentAccess(true); s.setAllowFileAccessFromFileURLs(true); s.setAllowUniversalAccessFromFileURLs(true); s.setMixedContentMode(WebSettings.MIXED_CONTENT_ALWAYS_ALLOW); s.setCacheMode(WebSettings.LOAD_NO_CACHE);
-                  final WebViewAssetLoader loader=new WebViewAssetLoader.Builder().addPathHandler("/assets/", new WebViewAssetLoader.AssetsPathHandler(this)).build();
-                  wv.addJavascriptInterface(new Bridge(),"Android");
+                  final WebViewAssetLoader loader=new WebViewAssetLoader.Builder()
+                     .addPathHandler("/assets/", new WebViewAssetLoader.AssetsPathHandler(this))
+                     .addPathHandler("/data/", new WebViewAssetLoader.InternalStoragePathHandler(this, getFilesDir()))
+                     .build();
                   wv.setWebViewClient(new androidx.webkit.WebViewClientCompat(){
-                      @Override public android.webkit.WebResourceResponse shouldInterceptRequest(WebView view, WebResourceRequest req){ if(req.getUrl().toString().contains("appassets.androidplatform.net")) return loader.shouldInterceptRequest(req.getUrl()); return super.shouldInterceptRequest(view,req); }
+                      @Override public android.webkit.WebResourceResponse shouldInterceptRequest(WebView view, WebResourceRequest req){
+                          android.webkit.WebResourceResponse r = loader.shouldInterceptRequest(req.getUrl());
+                          if(r!=null) return r;
+                          return super.shouldInterceptRequest(view,req);
+                      }
                   });
                   wv.setWebChromeClient(new WebChromeClient());
-                  openDash(false);
+                  openDash();
                   String last=prefs.getString("last_uri",null);
-                  if(last!=null){ pathTxt.setText("Ultimo: "+prefs.getString("last_name","OneDrive")); wv.postDelayed(()->autoFromSavedUri(),1500); }
-                  else { st.setText("Prima volta: premi SCEGLI FILE e prendi database.json da OneDrive"); }
+                  if(last!=null){ pathTxt.setText("Ultimo: "+prefs.getString("last_name","OneDrive")); wv.postDelayed(()->autoFromSavedUri(),1200); }
               }
-              void openDash(boolean clear){ if(clear){ wv.clearCache(true); wv.clearHistory(); } wv.loadUrl("https://appassets.androidplatform.net/assets/index.html?nocache="+System.currentTimeMillis()); }
+              void openDash(){ wv.clearCache(true); wv.loadUrl("https://appassets.androidplatform.net/assets/index.html?nocache="+System.currentTimeMillis()); }
               void autoFromSavedUri(){
                   String uriStr=prefs.getString("last_uri",null);
                   if(uriStr==null){ st.setText("Nessun file salvato - premi SCEGLI FILE"); return; }
                   try{
                       Uri uri=Uri.parse(uriStr);
-                      // Riprova a prendere permesso se perso
                       try{ getContentResolver().takePersistableUriPermission(uri, Intent.FLAG_GRANT_READ_URI_PERMISSION); }catch(Exception ignored){}
                       InputStream is=getContentResolver().openInputStream(uri);
-                      if(is==null){ st.setText("OneDrive non raggiungibile - riapri OneDrive e riprova"); return; }
+                      if(is==null){ st.setText("OneDrive non raggiungibile"); return; }
                       BufferedReader r=new BufferedReader(new InputStreamReader(is)); StringBuilder sb=new StringBuilder(); String l; while((l=r.readLine())!=null) sb.append(l); r.close();
                       String json=sb.toString(); JSONObject db=new JSONObject(json);
                       File outf=new File(getFilesDir(),"database.json"); FileWriter fw=new FileWriter(outf); fw.write(db.toString(2)); fw.close();
@@ -100,16 +216,13 @@ jobs:
                       int nGiorni=db.optJSONArray("giorni")!=null?db.optJSONArray("giorni").length():0;
                       st.setText("AUTO OK: "+nAtt+" att + "+nGiorni+" gg da OneDrive");
                       pathTxt.setText("Auto da: "+prefs.getString("last_name","OneDrive")+" - "+(json.length()/1024)+"KB");
-                      openDash(true); updateWidget();
-                  }catch(Exception e){ st.setText("Auto err: "+e.getMessage()+" - rifai SCEGLI FILE"); e.printStackTrace(); }
+                      openDash(); updateWidget();
+                  }catch(Exception e){ st.setText("Auto err: "+e.getMessage()); }
               }
-              void manualImport(){ Intent it=new Intent(Intent.ACTION_OPEN_DOCUMENT); it.addCategory(Intent.CATEGORY_OPENABLE); it.setType("*/*"); it.putExtra(Intent.EXTRA_MIME_TYPES,new String[]{"application/json","*/*"}); it.addFlags(Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION | Intent.FLAG_GRANT_READ_URI_PERMISSION); startActivityForResult(it,PICK_JSON); }
-              @Override protected void onActivityResult(int rc,int res,Intent data){ super.onActivityResult(rc,res,data); if(rc==PICK_JSON && res==RESULT_OK && data!=null){ Uri uri=data.getData(); try{ final int takeFlags = data.getFlags() & (Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION); getContentResolver().takePersistableUriPermission(uri, takeFlags); InputStream is=getContentResolver().openInputStream(uri); BufferedReader r=new BufferedReader(new InputStreamReader(is)); StringBuilder sb=new StringBuilder(); String l; while((l=r.readLine())!=null) sb.append(l); r.close(); String json=sb.toString(); JSONObject db=new JSONObject(json); File outf=new File(getFilesDir(),"database.json"); FileWriter fw=new FileWriter(outf); fw.write(db.toString(2)); fw.close(); String name=getFileName(uri); prefs.edit().putString("last_uri",uri.toString()).putString("last_name",name).apply(); st.setText("SALVATO: "+db.optJSONArray("attivita").length()+" att - ora auto"); pathTxt.setText("Salvato: "+name+" - auto attivo"); openDash(true); updateWidget(); }catch(Exception e){ st.setText("Import err: "+e.getMessage()); } } }
+              void manualImport(){ Intent it=new Intent(Intent.ACTION_OPEN_DOCUMENT); it.addCategory(Intent.CATEGORY_OPENABLE); it.setType("*/*"); it.addFlags(Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION | Intent.FLAG_GRANT_READ_URI_PERMISSION); startActivityForResult(it,PICK_JSON); }
+              @Override protected void onActivityResult(int rc,int res,Intent data){ super.onActivityResult(rc,res,data); if(rc==PICK_JSON && res==RESULT_OK && data!=null){ Uri uri=data.getData(); try{ final int takeFlags = data.getFlags() & (Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION); getContentResolver().takePersistableUriPermission(uri, takeFlags); InputStream is=getContentResolver().openInputStream(uri); BufferedReader r=new BufferedReader(new InputStreamReader(is)); StringBuilder sb=new StringBuilder(); String l; while((l=r.readLine())!=null) sb.append(l); r.close(); String json=sb.toString(); JSONObject db=new JSONObject(json); File outf=new File(getFilesDir(),"database.json"); FileWriter fw=new FileWriter(outf); fw.write(db.toString(2)); fw.close(); String name=getFileName(uri); prefs.edit().putString("last_uri",uri.toString()).putString("last_name",name).apply(); st.setText("SALVATO: "+db.optJSONArray("attivita").length()+" att - ora auto"); pathTxt.setText("Salvato: "+name); openDash(); updateWidget(); }catch(Exception e){ st.setText("Import err: "+e.getMessage()); } } }
               String getFileName(Uri uri){ try{ String name=null; if("content".equals(uri.getScheme())){ Cursor c=getContentResolver().query(uri,null,null,null,null); if(c!=null){ if(c.moveToFirst()){ int idx=c.getColumnIndex(DocumentsContract.Document.COLUMN_DISPLAY_NAME); if(idx>=0) name=c.getString(idx); } c.close(); } } if(name==null) name=uri.getLastPathSegment(); return name; }catch(Exception e){ return uri.toString(); } }
               void updateWidget(){ Intent it=new Intent(this,RazielWidgetProvider.class); it.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE); int[] ids=AppWidgetManager.getInstance(this).getAppWidgetIds(new ComponentName(this,RazielWidgetProvider.class)); it.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS,ids); sendBroadcast(it); }
-              public class Bridge{
-                  @android.webkit.JavascriptInterface public String getDb(){ try{ File f=new File(getFilesDir(),"database.json"); if(f.exists() && f.length()>100){ BufferedReader r=new BufferedReader(new InputStreamReader(new FileInputStream(f))); StringBuilder sb=new StringBuilder(); String l; while((l=r.readLine())!=null) sb.append(l); r.close(); String s=sb.toString(); if(s.contains("attivita")) return s; } }catch(Exception e){} try{ BufferedReader ar=new BufferedReader(new InputStreamReader(getAssets().open("database.json"))); StringBuilder sb2=new StringBuilder(); String l2; while((l2=ar.readLine())!=null) sb2.append(l2); ar.close(); return sb2.toString(); }catch(Exception e){ return "{\"bilancio_carico\":{\"anaerobico\":0,\"aerobico_alto\":0,\"aerobico_basso\":0},\"giorni\":[],\"attivita\":[]}"; } }
-              }
           }
           ENDOFF
           cat > app/src/main/java/com/garminmatrix/RazielWidgetProvider.java <<'ENDOFF'
@@ -123,16 +236,16 @@ jobs:
                       Intent open=new Intent(ctx, MainActivity.class); PendingIntent pi=PendingIntent.getActivity(ctx,0,open,PendingIntent.FLAG_IMMUTABLE|PendingIntent.FLAG_UPDATE_CURRENT); v.setOnClickPendingIntent(R.id.w_btn_update,pi);
                       JSONObject db=load(ctx); SimpleDateFormat tf=new SimpleDateFormat("HH:mm",Locale.US); v.setTextViewText(R.id.w_updated,"SYNC "+tf.format(new Date()));
                       JSONObject bil=db.optJSONObject("bilancio_carico"); if(bil==null) bil=db.optJSONObject("load_focus");
-                      if(bil!=null){ v.setProgressBar(R.id.bar_ana,2000,Math.min(bil.optInt("anaerobico",0),2000),false); v.setProgressBar(R.id.bar_alto,2000,Math.min(bil.optInt("aerobico_alto",0),2000),false); v.setProgressBar(R.id.bar_basso,500,Math.min(bil.optInt("aerobico_basso",0),500),false); }
-                      String hrvTxt=""; try{JSONArray giorni=db.optJSONArray("giorni"); JSONObject lastG=giorni!=null&&giorni.length()>0?giorni.getJSONObject(giorni.length()-1):null; String hrv=lastG!=null?lastG.optString("hrv","--"):"--"; String rhr=lastG!=null?lastG.optString("fc_riposo","--"):"--"; String vo2=db.has("vo2max_oggi")?String.format(Locale.US,"%.1f",db.optDouble("vo2max_oggi")): (lastG!=null?lastG.optString("vo2max","--"):"--"); hrvTxt="HRV "+hrv+" FC "+rhr+" VO2 "+vo2; }catch(Exception e){ hrvTxt="HRV -- FC -- VO2 --"; } v.setTextViewText(R.id.w_hrv,hrvTxt);
+                      if(bil!=null){ int ana=bil.optInt("anaerobico",0); int alto=bil.optInt("aerobico_alto",0); int basso=bil.optInt("aerobico_basso",0); v.setProgressBar(R.id.bar_ana,2000,Math.min(ana,2000),false); v.setProgressBar(R.id.bar_alto,2000,Math.min(alto,2000),false); v.setProgressBar(R.id.bar_basso,500,Math.min(basso,500),false); }
+                      String hrvTxt=""; try{JSONArray giorni=db.optJSONArray("giorni"); JSONObject last=giorni!=null&&giorni.length()>0?giorni.getJSONObject(giorni.length()-1):null; String hrv=last!=null?last.optString("hrv",last.optString("hrv_avg","--")):"--"; String rhr=last!=null?last.optString("fc_riposo","--"):"--"; String vo2=last!=null?last.optString("vo2max",last.optString("vo2_max","--")):"--"; hrvTxt="HRV "+hrv+" FC "+rhr+" VO2 "+vo2; }catch(Exception e){ hrvTxt="HRV -- FC -- VO2 --"; } v.setTextViewText(R.id.w_hrv,hrvTxt);
                       v.setImageViewBitmap(R.id.w_chart, chart(db.optJSONArray("attivita")));
                   }catch(Exception e){} mgr.updateAppWidget(wid,v);
               }
-              JSONObject load(Context ctx) throws Exception{File f=new File(ctx.getFilesDir(),"database.json"); StringBuilder sb=new StringBuilder(); if(f.exists() && f.length()>100){BufferedReader r=new BufferedReader(new InputStreamReader(new FileInputStream(f))); String l; while((l=r.readLine())!=null) sb.append(l); r.close(); return new JSONObject(sb.toString());} else{BufferedReader r=new BufferedReader(new InputStreamReader(ctx.getAssets().open("database.json"))); String l; while((l=r.readLine())!=null) sb.append(l); r.close(); return new JSONObject(sb.toString());}}
+              JSONObject load(Context ctx) throws Exception{File f=new File(ctx.getFilesDir(),"database.json"); StringBuilder sb=new StringBuilder(); if(f.exists() && f.length()>100){BufferedReader r=new BufferedReader(new InputStreamReader(new FileInputStream(f))); String l; while((l=r.readLine())!=null) sb.append(l); r.close(); return new JSONObject(sb.toString());} else{return new JSONObject("{\"bilancio_carico\":{\"anaerobico\":0,\"aerobico_alto\":0,\"aerobico_basso\":0},\"giorni\":[],\"attivita\":[]}");}}
               Bitmap chart(JSONArray att){int W=700,H=90; Bitmap bmp=Bitmap.createBitmap(W,H,Bitmap.Config.ARGB_8888); Canvas c=new Canvas(bmp); c.drawColor(0); try{Calendar cal=Calendar.getInstance(); cal.setFirstDayOfWeek(Calendar.MONDAY); cal.set(Calendar.DAY_OF_WEEK,Calendar.MONDAY); cal.set(Calendar.HOUR_OF_DAY,0); cal.set(Calendar.MINUTE,0); cal.set(Calendar.SECOND,0); cal.set(Calendar.MILLISECOND,0); long mon=cal.getTimeInMillis(); float[] km=new float[7]; if(att!=null){SimpleDateFormat sdf=new SimpleDateFormat("yyyy-MM-dd'T'",Locale.US); for(int i=0;i<att.length();i++){JSONObject a=att.getJSONObject(i); String iso=a.optString("inizio",""); if(iso.length()<10) continue; try{Date d=null; try{d=sdf.parse(iso);}catch(Exception e){d=new SimpleDateFormat("yyyy-MM-dd",Locale.US).parse(iso.substring(0,10));} if(d==null) continue; int diff=(int)((d.getTime()-mon)/86400000L); if(diff>=0 && diff<7) km[diff]+=a.optDouble("distanza_m",0)/1000f;}catch(Exception ignored){}}} float max=1f; for(float k:km) if(k>max) max=k; if(max<5f) max=5f; Paint bar=new Paint(Paint.ANTI_ALIAS_FLAG); Paint txt=new Paint(Paint.ANTI_ALIAS_FLAG); txt.setColor(Color.parseColor("#7dff8a")); txt.setTextSize(18f); txt.setTextAlign(Paint.Align.CENTER); Paint val=new Paint(Paint.ANTI_ALIAS_FLAG); val.setColor(Color.WHITE); val.setTextSize(15f); val.setTextAlign(Paint.Align.CENTER); String[] labs={"LUN","MAR","MER","GIO","VEN","SAB","DOM"}; for(int i=0;i<7;i++){float x=i*(W/7f)+8; float bw=(W/7f)-16; float bh=(km[i]/max)*(H-28); if(bh<3) bh=km[i]>0?10:2; bar.setColor(km[i]>0?Color.parseColor("#5afc7a"):Color.parseColor("#1a3d1a")); c.drawRoundRect(x,H-20-bh,x+bw,H-20,6f,6f,bar); c.drawText(labs[i],x+bw/2,H-2,txt); if(km[i]>0) c.drawText(String.format(Locale.US,"%.1f",km[i]),x+bw/2,H-24-bh,val);}}catch(Exception e){} return bmp;}
           }
           ENDOFF
           gradle assembleDebug
       - name: Upload APK
         uses: actions/upload-artifact@v4
-        with: { name: RAZIEL-V44-APK, path: app/build/outputs/apk/debug/*.apk }
+        with: { name: RAZIEL-V45-APK, path: app/build/outputs/apk/debug/*.apk }
