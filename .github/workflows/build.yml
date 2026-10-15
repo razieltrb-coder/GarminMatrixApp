@@ -15,10 +15,45 @@ jobs:
         with:
           gradle-version: 8.4
 
-      - name: Generate project V57.15 - META AI TEXT PLAIN FIX
+      - name: Generate project V57.16 - ICON + META FIX
         shell: python
         run: |
           import os, textwrap, shutil
+          from pathlib import Path
+          # --- ICON GENERATION ---
+          try:
+              from PIL import Image
+              icon_src = None
+              for name in ["app_icon.png", "icon.png", "app_icon.jpg", "wa_image_588988901748568779"]:
+                  if os.path.exists(name):
+                      icon_src = name
+                      break
+              # cerca anche in /mnt/data se siamo in locale
+              if not icon_src and os.path.exists("/tmp/icon_512.png"):
+                  icon_src = "/tmp/icon_512.png"
+
+              if icon_src:
+                  print(f"Found icon source: {icon_src}")
+                  im = Image.open(icon_src).convert("RGBA")
+                  w,h = im.size
+                  # crop center square
+                  side = min(w,h)
+                  left = (w-side)//2
+                  top = (h-side)//2
+                  im = im.crop((left, top, left+side, top+side))
+                  sizes = {"mipmap-mdpi":48, "mipmap-hdpi":72, "mipmap-xhdpi":96, "mipmap-xxhdpi":144, "mipmap-xxxhdpi":192}
+                  for folder, size in sizes.items():
+                      dest = Path(f"app/src/main/res/{folder}")
+                      dest.mkdir(parents=True, exist_ok=True)
+                      resized = im.resize((size,size), Image.LANCZOS)
+                      resized.save(dest/"ic_launcher.png", "PNG")
+                      resized.save(dest/"ic_launcher_round.png", "PNG")
+                  print("Icons created")
+              else:
+                  print("No custom icon found, using default")
+          except Exception as e:
+              print(f"Icon gen error: {e}")
+
           os.makedirs("app/src/main/java/com/garminmatrix", exist_ok=True)
           os.makedirs("app/src/main/res/xml", exist_ok=True)
           os.makedirs("app/src/main/res/layout", exist_ok=True)
@@ -42,8 +77,8 @@ jobs:
                     applicationId "com.garminmatrix"
                     minSdk 24
                     targetSdk 34
-                    versionCode 91
-                    versionName "V57.15-META-TEXT"
+                    versionCode 92
+                    versionName "V57.16-ICON-META"
                 }
             }
             configurations.all {
@@ -62,14 +97,16 @@ jobs:
           '''))
           open("app/src/main/res/xml/widget_raziel_info.xml","w").write('<?xml version="1.0"?><appwidget-provider xmlns:android="http://schemas.android.com/apk/res/android" android:minWidth="320dp" android:minHeight="420dp" android:updatePeriodMillis="1800000" android:initialLayout="@layout/widget_raziel" android:resizeMode="horizontal|vertical" android:widgetCategory="home_screen"/>')
           open("app/src/main/res/layout/widget_raziel.xml","w").write('<?xml version="1.0" encoding="utf-8"?><LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent" android:layout_height="wrap_content"><ImageView android:id="@+id/w_full" android:layout_width="match_parent" android:layout_height="wrap_content" android:adjustViewBounds="true"/></LinearLayout>')
-          open("app/src/main/res/layout/activity_main.xml","w").write('<?xml version="1.0" encoding="utf-8"?><LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent" android:layout_height="match_parent" android:orientation="vertical" android:background="#0d1a0d"><LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:padding="12dp" android:background="#111f11"><TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="RAZIEL V57.15 META TEXT" android:textColor="#5afc7a" android:textStyle="bold"/><TextView android:id="@+id/txt_status" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="--" android:textColor="#8acf8a"/><TextView android:id="@+id/txt_path" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="--" android:textColor="#6b9a6b"/><LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:layout_marginTop="8dp"><Button android:id="@+id/btn_auto" android:layout_width="0dp" android:layout_weight="1" android:layout_height="48dp" android:text="AUTO ONEDRIVE" android:backgroundTint="#00e5ff"/><Button android:id="@+id/btn_import" android:layout_width="0dp" android:layout_weight="1" android:layout_height="48dp" android:text="SCEGLI JSON" android:backgroundTint="#5afc7a" android:layout_marginStart="6dp"/></LinearLayout></LinearLayout><WebView android:id="@+id/webview" android:layout_width="match_parent" android:layout_height="match_parent"/></LinearLayout>')
-          open("app/src/main/AndroidManifest.xml","w").write('<?xml version="1.0" encoding="utf-8"?><manifest xmlns:android="http://schemas.android.com/apk/res/android"><uses-permission android:name="android.permission.INTERNET"/><application android:allowBackup="true" android:label="RAZIEL" android:usesCleartextTraffic="true" android:theme="@style/Theme.AppCompat.Light.NoActionBar"><activity android:name=".MainActivity" android:exported="true"><intent-filter><action android:name="android.intent.action.MAIN"/><category android:name="android.intent.category.LAUNCHER"/></intent-filter></activity><receiver android:name=".RazielWidgetProvider" android:exported="true"><intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE"/></intent-filter><meta-data android:name="android.appwidget.provider" android:resource="@xml/widget_raziel_info"/></receiver><provider android:name="androidx.core.content.FileProvider" android:authorities="${applicationId}.provider" android:exported="false" android:grantUriPermissions="true"><meta-data android:name="android.support.FILE_PROVIDER_PATHS" android:resource="@xml/file_provider_paths"/></provider></application></manifest>')
+          open("app/src/main/res/layout/activity_main.xml","w").write('<?xml version="1.0" encoding="utf-8"?><LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent" android:layout_height="match_parent" android:orientation="vertical" android:background="#0d1a0d"><LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:padding="12dp" android:background="#111f11"><TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="RAZIEL V57.16 ICON META" android:textColor="#5afc7a" android:textStyle="bold"/><TextView android:id="@+id/txt_status" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="--" android:textColor="#8acf8a"/><TextView android:id="@+id/txt_path" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="--" android:textColor="#6b9a6b"/><LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:layout_marginTop="8dp"><Button android:id="@+id/btn_auto" android:layout_width="0dp" android:layout_weight="1" android:layout_height="48dp" android:text="AUTO ONEDRIVE" android:backgroundTint="#00e5ff"/><Button android:id="@+id/btn_import" android:layout_width="0dp" android:layout_weight="1" android:layout_height="48dp" android:text="SCEGLI JSON" android:backgroundTint="#5afc7a" android:layout_marginStart="6dp"/></LinearLayout></LinearLayout><WebView android:id="@+id/webview" android:layout_width="match_parent" android:layout_height="match_parent"/></LinearLayout>')
+          # Manifest CON ICONA CUSTOM
+          manifest_content = '''<?xml version="1.0" encoding="utf-8"?><manifest xmlns:android="http://schemas.android.com/apk/res/android"><uses-permission android:name="android.permission.INTERNET"/><application android:allowBackup="true" android:label="RAZIEL" android:icon="@mipmap/ic_launcher" android:roundIcon="@mipmap/ic_launcher_round" android:usesCleartextTraffic="true" android:theme="@style/Theme.AppCompat.Light.NoActionBar"><activity android:name=".MainActivity" android:exported="true"><intent-filter><action android:name="android.intent.action.MAIN"/><category android:name="android.intent.category.LAUNCHER"/></intent-filter></activity><receiver android:name=".RazielWidgetProvider" android:exported="true"><intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE"/></intent-filter><meta-data android:name="android.appwidget.provider" android:resource="@xml/widget_raziel_info"/></receiver><provider android:name="androidx.core.content.FileProvider" android:authorities="${applicationId}.provider" android:exported="false" android:grantUriPermissions="true"><meta-data android:name="android.support.FILE_PROVIDER_PATHS" android:resource="@xml/file_provider_paths"/></provider></application></manifest>'''
+          open("app/src/main/AndroidManifest.xml","w").write(manifest_content)
           open("app/src/main/res/xml/file_provider_paths.xml","w").write('<?xml version="1.0" encoding="utf-8"?><paths><cache-path name="raziel_cache" path="."/><external-cache-path name="raziel_external_cache" path="."/><files-path name="raziel_files" path="."/></paths>')
 
           if os.path.exists("index.html"):
               shutil.copyfile("index.html","app/src/main/assets/index.html")
           else:
-              open("app/src/main/assets/index.html","w").write("<html><body>RAZIEL V57.15</body></html>")
+              open("app/src/main/assets/index.html","w").write("<html><body>RAZIEL V57.16</body></html>")
 
           open("app/src/main/java/com/garminmatrix/MainActivity.java","w").write('package com.garminmatrix; import android.os.Bundle; import android.webkit.WebView; import android.webkit.WebSettings; import android.widget.TextView; import android.content.Intent; import android.content.ComponentName; import android.content.SharedPreferences; import android.appwidget.AppWidgetManager; import android.net.Uri; import android.database.Cursor; import org.json.*; import java.io.*; import androidx.appcompat.app.AppCompatActivity; import androidx.webkit.WebViewAssetLoader; import androidx.core.content.FileProvider; import android.content.ClipData; import android.content.ClipboardManager; public class MainActivity extends AppCompatActivity { WebView wv; TextView st, pathTxt; static final int PICK_JSON=1001; SharedPreferences prefs; @Override protected void onCreate(Bundle b){ super.onCreate(b); setContentView(R.layout.activity_main); wv=findViewById(R.id.webview); st=findViewById(R.id.txt_status); pathTxt=findViewById(R.id.txt_path); prefs=getSharedPreferences("raziel",MODE_PRIVATE); findViewById(R.id.btn_auto).setOnClickListener(v->autoFromSavedUri()); findViewById(R.id.btn_import).setOnClickListener(v->manualImport()); WebSettings s=wv.getSettings(); s.setJavaScriptEnabled(true); s.setDomStorageEnabled(true); s.setAllowFileAccess(true); s.setAllowContentAccess(true); s.setAllowFileAccessFromFileURLs(true); s.setAllowUniversalAccessFromFileURLs(true); s.setMixedContentMode(WebSettings.MIXED_CONTENT_ALWAYS_ALLOW); s.setCacheMode(WebSettings.LOAD_NO_CACHE); final WebViewAssetLoader loader=new WebViewAssetLoader.Builder().addPathHandler("/assets/", new WebViewAssetLoader.AssetsPathHandler(this)).addPathHandler("/data/", new WebViewAssetLoader.InternalStoragePathHandler(this, getFilesDir())).build(); wv.addJavascriptInterface(new Object(){ @android.webkit.JavascriptInterface public void shareJsonToWhatsApp(String fileName, String jsonContent){ try{ File file=new File(getCacheDir(), fileName); FileWriter w=new FileWriter(file); w.write(jsonContent); w.close(); Uri uri=FileProvider.getUriForFile(MainActivity.this, getPackageName()+".provider", file); Intent intent=new Intent(Intent.ACTION_SEND); intent.setType("application/json"); intent.putExtra(Intent.EXTRA_STREAM, uri); intent.putExtra(Intent.EXTRA_TEXT, "RAZIEL - "+fileName); intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION); startActivity(Intent.createChooser(intent, "Condividi i tuoi allenamenti con...")); }catch(Exception e){ e.printStackTrace(); } } @android.webkit.JavascriptInterface public void shareToMetaAI(String fileName, String jsonContent){ try{ File file=new File(getCacheDir(), fileName); FileWriter fw=new FileWriter(file); fw.write(jsonContent); fw.close(); Uri uri=FileProvider.getUriForFile(MainActivity.this, getPackageName()+".provider", file); ClipboardManager cm=(ClipboardManager)getSystemService(CLIPBOARD_SERVICE); cm.setPrimaryClip(ClipData.newPlainText("RAZIEL JSON", jsonContent)); Intent intent=new Intent(Intent.ACTION_SEND); intent.setType("text/plain"); intent.putExtra(Intent.EXTRA_TEXT, jsonContent); intent.putExtra(Intent.EXTRA_SUBJECT, "RAZIEL - "+fileName); Intent chooser=Intent.createChooser(intent, "Interroga Meta AI - JSON copiato negli appunti"); startActivity(chooser); }catch(Exception e){ e.printStackTrace(); } } }, "Android"); wv.setWebViewClient(new androidx.webkit.WebViewClientCompat(){ @Override public android.webkit.WebResourceResponse shouldInterceptRequest(WebView view, android.webkit.WebResourceRequest req){ android.webkit.WebResourceResponse r=loader.shouldInterceptRequest(req.getUrl()); return r!=null?r:super.shouldInterceptRequest(view,req); } @Override public boolean shouldOverrideUrlLoading(WebView view, android.webkit.WebResourceRequest request){ String url=request.getUrl().toString(); if(url.startsWith("whatsapp://") || url.startsWith("tg://") || url.startsWith("intent://") || url.startsWith("fb://") || url.startsWith("meta-ai://")){ try{ Intent i=new Intent(Intent.ACTION_VIEW, Uri.parse(url)); startActivity(i); }catch(Exception e){ if(url.startsWith("whatsapp://")){ view.loadUrl(url.replace("whatsapp://", "https://api.whatsapp.com/")); } } return true; } return false; } }); openDash(); String last=prefs.getString("last_uri",null); if(last!=null){ pathTxt.setText("Ultimo: "+prefs.getString("last_name","OneDrive")); wv.postDelayed(()->autoFromSavedUri(),800); } } void openDash(){ wv.clearCache(true); wv.loadUrl("https://appassets.androidplatform.net/assets/index.html?nocache="+System.currentTimeMillis()); } void autoFromSavedUri(){ String uriStr=prefs.getString("last_uri",null); if(uriStr==null){ st.setText("Nessun file salvato - SCEGLI JSON"); return; } try{ Uri uri=Uri.parse(uriStr); try{ getContentResolver().takePersistableUriPermission(uri, Intent.FLAG_GRANT_READ_URI_PERMISSION); }catch(Exception ignored){} InputStream is=getContentResolver().openInputStream(uri); BufferedReader r=new BufferedReader(new InputStreamReader(is)); StringBuilder sb=new StringBuilder(); String l; while((l=r.readLine())!=null) sb.append(l); r.close(); JSONObject db=new JSONObject(sb.toString()); File outf=new File(getFilesDir(),"database.json"); FileWriter fw=new FileWriter(outf); fw.write(db.toString(2)); fw.close(); st.setText("AUTO OK basso="+db.optJSONObject("bilancio_carico").optInt("aerobico_basso")); openDash(); updateWidget(); }catch(Exception e){ st.setText("Auto err: "+e.getMessage()); } } void manualImport(){ Intent it=new Intent(Intent.ACTION_OPEN_DOCUMENT); it.addCategory(Intent.CATEGORY_OPENABLE); it.setType("*/*"); it.addFlags(Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION | Intent.FLAG_GRANT_READ_URI_PERMISSION); startActivityForResult(it,PICK_JSON); } @Override protected void onActivityResult(int rc,int res,Intent data){ super.onActivityResult(rc,res,data); if(rc==PICK_JSON && res==RESULT_OK && data!=null){ Uri uri=data.getData(); try{ getContentResolver().takePersistableUriPermission(uri, data.getFlags() & (Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION)); InputStream is=getContentResolver().openInputStream(uri); BufferedReader r=new BufferedReader(new InputStreamReader(is)); StringBuilder sb=new StringBuilder(); String l; while((l=r.readLine())!=null) sb.append(l); r.close(); JSONObject db=new JSONObject(sb.toString()); File outf=new File(getFilesDir(),"database.json"); FileWriter fw=new FileWriter(outf); fw.write(db.toString(2)); fw.close(); String name=getFileName(uri); prefs.edit().putString("last_uri",uri.toString()).putString("last_name",name).apply(); st.setText("SALVATO basso="+db.optJSONObject("bilancio_carico").optInt("aerobico_basso")); pathTxt.setText(name); openDash(); updateWidget(); }catch(Exception e){ st.setText("Import err: "+e.getMessage()); } } } String getFileName(Uri uri){ try{ Cursor c=getContentResolver().query(uri,null,null,null,null); if(c!=null){ if(c.moveToFirst()){ int idx=c.getColumnIndex("_display_name"); if(idx>=0) return c.getString(idx); } c.close(); } return uri.getLastPathSegment(); }catch(Exception e){ return uri.toString(); } } void updateWidget(){ Intent it=new Intent(this,RazielWidgetProvider.class); it.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE); int[] ids=AppWidgetManager.getInstance(this).getAppWidgetIds(new ComponentName(this,RazielWidgetProvider.class)); it.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS,ids); sendBroadcast(it); } }')
 
@@ -150,25 +187,6 @@ jobs:
                           else rec=0;
                           if(rec>200) rec=rec/60.0;
                       }
-                      if(rec==0){
-                          try{
-                              JSONArray att=db.optJSONArray("attivita");
-                              if(att!=null && att.length()>0){
-                                  JSONObject lastA=null;
-                                  for(int i=0;i<att.length();i++){
-                                      JSONObject a=att.getJSONObject(i);
-                                      if(lastA==null || a.optString("inizio","").compareTo(lastA.optString("inizio",""))>0) lastA=a;
-                                  }
-                                  if(lastA!=null){
-                                      if(lastA.has("tempo_recupero")) rec=lastA.optDouble("tempo_recupero",0);
-                                      else if(lastA.has("tempo_recupero_ore")) rec=lastA.optDouble("tempo_recupero_ore",0);
-                                      else if(lastA.has("recovery_time")) rec=lastA.optDouble("recovery_time",0);
-                                      else if(lastA.has("recupero")) rec=lastA.optDouble("recupero",0);
-                                      if(rec>200) rec=rec/60.0;
-                                  }
-                              }
-                          }catch(Exception ignored){}
-                      }
                   }catch(Exception e){}
                   int total=ana+alto+basso; int pAna= total>0?(int)Math.round(ana*100f/total):0; int pAlto= total>0?(int)Math.round(alto*100f/total):0; int pBasso= total>0?(int)Math.round(basso*100f/total):0;
                   Paint pPurple=new Paint(Paint.ANTI_ALIAS_FLAG); pPurple.setColor(Color.parseColor("#a855f7")); Paint pOrange=new Paint(Paint.ANTI_ALIAS_FLAG); pOrange.setColor(Color.parseColor("#ff7a18")); Paint pCyan=new Paint(Paint.ANTI_ALIAS_FLAG); pCyan.setColor(Color.parseColor("#00e5ff"));
@@ -186,7 +204,7 @@ jobs:
                   drawRedHeartRHR(cv, 410, boxY+18); cv.drawText("RHR",445,boxY+50,lb); cv.drawText(rhr+" bpm",410,boxY+115,vb);
                   drawBedRecupero(cv, 760, boxY+18); cv.drawText("RECUPERO",805,boxY+50,lb); cv.drawText(((int)rec)+"h",740,boxY+115,vb);
                   Paint wkBg=new Paint(); wkBg.setColor(Color.parseColor("#0a1a12")); cv.drawRoundRect(new RectF(30,760,W-30,H-20),20,20,wkBg);
-                  Paint wkTitle=new Paint(Paint.ANTI_ALIAS_FLAG); wkTitle.setColor(Color.parseColor("#7dff8a")); wkTitle.setTextSize(32); wkTitle.setFakeBoldText(true); cv.drawText("WEEKLY - RUN/TRAIL ONLY - RECUPERO FIX",50,810,wkTitle);
+                  Paint wkTitle=new Paint(Paint.ANTI_ALIAS_FLAG); wkTitle.setColor(Color.parseColor("#7dff8a")); wkTitle.setTextSize(32); wkTitle.setFakeBoldText(true); cv.drawText("WEEKLY - RUN/TRAIL ONLY",50,810,wkTitle);
                   float[] kms=new float[7];
                   try{
                       JSONArray att=db.optJSONArray("attivita");
@@ -196,10 +214,7 @@ jobs:
                       int dow=monCal.get(Calendar.DAY_OF_WEEK);
                       int diffToMon = (dow==Calendar.SUNDAY? -6 : Calendar.MONDAY-dow);
                       monCal.add(Calendar.DAY_OF_MONTH, diffToMon);
-                      monCal.set(Calendar.HOUR_OF_DAY,12);
-                      monCal.set(Calendar.MINUTE,0);
-                      monCal.set(Calendar.SECOND,0);
-                      monCal.set(Calendar.MILLISECOND,0);
+                      monCal.set(Calendar.HOUR_OF_DAY,12); monCal.set(Calendar.MINUTE,0); monCal.set(Calendar.SECOND,0); monCal.set(Calendar.MILLISECOND,0);
                       long monMs=monCal.getTimeInMillis();
                       if(att!=null){
                           for(int i=0;i<att.length();i++){
@@ -211,17 +226,10 @@ jobs:
                               try{
                                   Date d=sdfDateOnly.parse(dateOnly);
                                   Calendar c=Calendar.getInstance(Locale.ITALY);
-                                  c.setTime(d);
-                                  c.set(Calendar.HOUR_OF_DAY,12);
-                                  c.set(Calendar.MINUTE,0);
-                                  c.set(Calendar.SECOND,0);
-                                  c.set(Calendar.MILLISECOND,0);
-                                  long t=c.getTimeInMillis();
-                                  long diffMs=t-monMs;
+                                  c.setTime(d); c.set(Calendar.HOUR_OF_DAY,12); c.set(Calendar.MINUTE,0); c.set(Calendar.SECOND,0); c.set(Calendar.MILLISECOND,0);
+                                  long t=c.getTimeInMillis(); long diffMs=t-monMs;
                                   int diffDay=(int)java.lang.Math.floorDiv(diffMs,86400000L);
-                                  if(diffDay>=0 && diffDay<7){
-                                      kms[diffDay]+=a.optDouble("distanza_m",0)/1000f;
-                                  }
+                                  if(diffDay>=0 && diffDay<7){ kms[diffDay]+=a.optDouble("distanza_m",0)/1000f; }
                               }catch(Exception ignored){}
                           }
                       }
@@ -237,5 +245,5 @@ jobs:
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: RAZIEL-V57.15-META-TEXT
+          name: RAZIEL-V57.16-ICON-META
           path: app/build/outputs/apk/debug/*.apk
