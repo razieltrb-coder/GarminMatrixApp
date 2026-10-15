@@ -16,7 +16,7 @@ jobs:
           gradle-version: 8.4
       - name: Install Pillow
         run: pip install Pillow
-      - name: Generate project V57.18i - META FILE FIX
+      - name: Generate project V57.18j - TEXT + DOWNLOAD
         shell: python
         run: |
           import os, textwrap, shutil
@@ -63,8 +63,8 @@ jobs:
                     applicationId "com.garminmatrix"
                     minSdk 24
                     targetSdk 34
-                    versionCode 103
-                    versionName "V57.18i-RAZMIN-META-FIX"
+                    versionCode 104
+                    versionName "V57.18j-RAZMIN-DL-FIX"
                 }
             }
             configurations.all {
@@ -83,14 +83,14 @@ jobs:
           '''))
           open("app/src/main/res/xml/widget_raziel_info.xml","w").write('<?xml version="1.0"?><appwidget-provider xmlns:android="http://schemas.android.com/apk/res/android" android:minWidth="320dp" android:minHeight="420dp" android:updatePeriodMillis="1800000" android:initialLayout="@layout/widget_raziel" android:resizeMode="horizontal|vertical" android:widgetCategory="home_screen"/>')
           open("app/src/main/res/layout/widget_raziel.xml","w").write('<?xml version="1.0" encoding="utf-8"?><LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent" android:layout_height="wrap_content"><ImageView android:id="@+id/w_full" android:layout_width="match_parent" android:layout_height="wrap_content" android:adjustViewBounds="true"/></LinearLayout>')
-          open("app/src/main/res/layout/activity_main.xml","w").write('<?xml version="1.0" encoding="utf-8"?><LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent" android:layout_height="match_parent" android:orientation="vertical" android:background="#0d1a0d"><LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:padding="12dp" android:background="#111f11"><TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="RAZMIN V57.18i META FILE" android:textColor="#5afc7a" android:textStyle="bold"/><TextView android:id="@+id/txt_status" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="--" android:textColor="#8acf8a"/><TextView android:id="@+id/txt_path" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="--" android:textColor="#6b9a6b"/><LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:layout_marginTop="8dp"><Button android:id="@+id/btn_auto" android:layout_width="0dp" android:layout_weight="1" android:layout_height="48dp" android:text="AUTO ONEDRIVE" android:backgroundTint="#00e5ff"/><Button android:id="@+id/btn_import" android:layout_width="0dp" android:layout_weight="1" android:layout_height="48dp" android:text="SCEGLI JSON" android:backgroundTint="#5afc7a" android:layout_marginStart="6dp"/></LinearLayout></LinearLayout><WebView android:id="@+id/webview" android:layout_width="match_parent" android:layout_height="match_parent"/></LinearLayout>')
-          open("app/src/main/AndroidManifest.xml","w").write('<?xml version="1.0" encoding="utf-8"?><manifest xmlns:android="http://schemas.android.com/apk/res/android"><uses-permission android:name="android.permission.INTERNET"/><queries><package android:name="com.facebook.stella"/><package android:name="com.whatsapp"/><package android:name="com.whatsapp.w4b"/></queries><application android:allowBackup="true" android:label="RAZMIN" android:icon="@mipmap/ic_launcher" android:roundIcon="@mipmap/ic_launcher_round" android:usesCleartextTraffic="true" android:theme="@style/Theme.AppCompat.Light.NoActionBar"><activity android:name=".MainActivity" android:exported="true"><intent-filter><action android:name="android.intent.action.MAIN"/><category android:name="android.intent.category.LAUNCHER"/></intent-filter></activity><receiver android:name=".RazielWidgetProvider" android:exported="true"><intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE"/></intent-filter><meta-data android:name="android.appwidget.provider" android:resource="@xml/widget_raziel_info"/></receiver><provider android:name="androidx.core.content.FileProvider" android:authorities="${applicationId}.provider" android:exported="false" android:grantUriPermissions="true"><meta-data android:name="android.support.FILE_PROVIDER_PATHS" android:resource="@xml/file_provider_paths"/></provider></application></manifest>')
-          open("app/src/main/res/xml/file_provider_paths.xml","w").write('<?xml version="1.0" encoding="utf-8"?><paths><cache-path name="raziel_cache" path="."/><external-cache-path name="raziel_external_cache" path="."/><files-path name="raziel_files" path="."/></paths>')
+          open("app/src/main/res/layout/activity_main.xml","w").write('<?xml version="1.0" encoding="utf-8"?><LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent" android:layout_height="match_parent" android:orientation="vertical" android:background="#0d1a0d"><LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:padding="12dp" android:background="#111f11"><TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="RAZMIN V57.18j FILE IN DL" android:textColor="#5afc7a" android:textStyle="bold"/><TextView android:id="@+id/txt_status" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="--" android:textColor="#8acf8a"/><TextView android:id="@+id/txt_path" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="--" android:textColor="#6b9a6b"/><LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:layout_marginTop="8dp"><Button android:id="@+id/btn_auto" android:layout_width="0dp" android:layout_weight="1" android:layout_height="48dp" android:text="AUTO ONEDRIVE" android:backgroundTint="#00e5ff"/><Button android:id="@+id/btn_import" android:layout_width="0dp" android:layout_weight="1" android:layout_height="48dp" android:text="SCEGLI JSON" android:backgroundTint="#5afc7a" android:layout_marginStart="6dp"/></LinearLayout></LinearLayout><WebView android:id="@+id/webview" android:layout_width="match_parent" android:layout_height="match_parent"/></LinearLayout>')
+          open("app/src/main/AndroidManifest.xml","w").write('<?xml version="1.0" encoding="utf-8"?><manifest xmlns:android="http://schemas.android.com/apk/res/android"><uses-permission android:name="android.permission.INTERNET"/><uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" android:maxSdkVersion="28"/><queries><package android:name="com.facebook.stella"/><package android:name="com.whatsapp"/><package android:name="com.whatsapp.w4b"/></queries><application android:allowBackup="true" android:label="RAZMIN" android:icon="@mipmap/ic_launcher" android:roundIcon="@mipmap/ic_launcher_round" android:usesCleartextTraffic="true" android:theme="@style/Theme.AppCompat.Light.NoActionBar" android:requestLegacyExternalStorage="true"><activity android:name=".MainActivity" android:exported="true"><intent-filter><action android:name="android.intent.action.MAIN"/><category android:name="android.intent.category.LAUNCHER"/></intent-filter></activity><receiver android:name=".RazielWidgetProvider" android:exported="true"><intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE"/></intent-filter><meta-data android:name="android.appwidget.provider" android:resource="@xml/widget_raziel_info"/></receiver><provider android:name="androidx.core.content.FileProvider" android:authorities="${applicationId}.provider" android:exported="false" android:grantUriPermissions="true"><meta-data android:name="android.support.FILE_PROVIDER_PATHS" android:resource="@xml/file_provider_paths"/></provider></application></manifest>')
+          open("app/src/main/res/xml/file_provider_paths.xml","w").write('<?xml version="1.0" encoding="utf-8"?><paths><cache-path name="raziel_cache" path="."/><external-cache-path name="raziel_external_cache" path="."/><files-path name="raziel_files" path="."/><external-path name="external_files" path="."/></paths>')
           if os.path.exists("index.html"):
               shutil.copyfile("index.html","app/src/main/assets/index.html")
           open("app/src/main/java/com/garminmatrix/MainActivity.java","w").write('''
           package com.garminmatrix;
-          import android.os.Bundle; import android.webkit.WebView; import android.webkit.WebSettings; import android.widget.TextView; import android.content.Intent; import android.content.ComponentName; import android.content.SharedPreferences; import android.appwidget.AppWidgetManager; import android.net.Uri; import android.database.Cursor; import org.json.*; import java.io.*; import androidx.appcompat.app.AppCompatActivity; import androidx.webkit.WebViewAssetLoader; import androidx.core.content.FileProvider; import android.widget.Toast; import android.content.pm.PackageManager; import android.content.ClipData;
+          import android.os.Bundle; import android.webkit.WebView; import android.webkit.WebSettings; import android.widget.TextView; import android.content.Intent; import android.content.ComponentName; import android.content.SharedPreferences; import android.appwidget.AppWidgetManager; import android.net.Uri; import android.database.Cursor; import org.json.*; import java.io.*; import androidx.appcompat.app.AppCompatActivity; import androidx.webkit.WebViewAssetLoader; import androidx.core.content.FileProvider; import android.widget.Toast; import android.content.pm.PackageManager; import android.os.Environment;
 
           public class MainActivity extends AppCompatActivity {
               WebView wv; TextView st, pathTxt; static final int PICK_JSON=1001; SharedPreferences prefs;
@@ -111,37 +111,37 @@ jobs:
                           runOnUiThread(new Runnable(){
                               @Override public void run(){
                                   try{
-                                      File file=new File(getCacheDir(), fileName);
-                                      FileWriter fw=new FileWriter(file); fw.write(jsonContent); fw.close();
-                                      Uri uri=FileProvider.getUriForFile(MainActivity.this, getPackageName()+".provider", file);
+                                      // 1. Salva in Download/RAZMIN per allegarlo manualmente con +
+                                      File dlDir=new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), "RAZMIN");
+                                      dlDir.mkdirs();
+                                      File dlFile=new File(dlDir, fileName);
+                                      FileWriter fwDl=new FileWriter(dlFile); fwDl.write(jsonContent); fwDl.close();
 
-                                      String prompt="RAZMIN "+fileName+" - Analizza i miei allenamenti. File JSON allegato con "+ (jsonContent.length()/1024) +"KB. Report su carico, HRV, RHR, recupero.";
+                                      // 2. Salva anche in cache per eventuale share
+                                      File cacheFile=new File(getCacheDir(), fileName);
+                                      FileWriter fwCache=new FileWriter(cacheFile); fwCache.write(jsonContent); fwCache.close();
 
-                                      // FIX: usa */* che Meta AI accetta, non application/json
+                                      String prompt="RAZMIN "+fileName+" ("+(jsonContent.length()/1024)+"KB) - Ho salvato il file in Download/RAZMIN/"+fileName+" - Per favore allegalo con il tasto + e analizza: carico anaerobico/aerobico, HRV, RHR, recupero, forma, ultime 10 attivita. File: "+dlFile.getAbsolutePath();
+
+                                      // 3. Apri Meta AI con SOLO testo - cosi' si apre sicuro
                                       try{
                                           getPackageManager().getPackageInfo("com.facebook.stella",0);
                                           Intent i=new Intent(Intent.ACTION_SEND);
-                                          i.setType("*/*");
+                                          i.setType("text/plain");
                                           i.setPackage("com.facebook.stella");
-                                          i.putExtra(Intent.EXTRA_STREAM, uri);
                                           i.putExtra(Intent.EXTRA_TEXT, prompt);
-                                          i.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-                                          i.setClipData(ClipData.newRawUri("", uri));
-                                          i.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
                                           startActivity(i);
-                                          Toast.makeText(MainActivity.this, "File "+fileName+" inviato a Meta AI", Toast.LENGTH_LONG).show();
+                                          Toast.makeText(MainActivity.this, "Aperto Meta AI + file salvato in Download/RAZMIN/"+fileName+" - premi + per allegarlo", Toast.LENGTH_LONG).show();
                                           return;
                                       }catch(PackageManager.NameNotFoundException ignore){
-                                          Toast.makeText(MainActivity.this, "Meta AI app non trovata, apro chooser", Toast.LENGTH_SHORT).show();
+                                          Toast.makeText(MainActivity.this, "Meta AI non trovata", Toast.LENGTH_SHORT).show();
                                       }
 
+                                      // Fallback chooser testo
                                       Intent fallback=new Intent(Intent.ACTION_SEND);
-                                      fallback.setType("*/*");
-                                      fallback.putExtra(Intent.EXTRA_STREAM, uri);
+                                      fallback.setType("text/plain");
                                       fallback.putExtra(Intent.EXTRA_TEXT, prompt);
-                                      fallback.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-                                      fallback.setClipData(ClipData.newRawUri("", uri));
-                                      startActivity(Intent.createChooser(fallback, "Invia a Meta AI - file "+fileName));
+                                      startActivity(Intent.createChooser(fallback, "Apri Meta AI - file in Download/RAZMIN"));
 
                                   }catch(Exception e){
                                       e.printStackTrace();
@@ -261,5 +261,5 @@ jobs:
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: RAZMIN-V57.18i-META-FIX
+          name: RAZMIN-V57.18j-DL-FIX
           path: app/build/outputs/apk/debug/*.apk
