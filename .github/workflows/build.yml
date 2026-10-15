@@ -16,7 +16,7 @@ jobs:
           gradle-version: 8.4
       - name: Install Pillow
         run: pip install Pillow
-      - name: Generate project V57.18n - FULL FIX + NO AUTO TEXT
+      - name: Generate project V57.18o - RESTORE WORKING NO TEXT
         shell: python
         run: |
           import os, textwrap, shutil
@@ -70,8 +70,8 @@ jobs:
                     applicationId "com.garminmatrix"
                     minSdk 24
                     targetSdk 34
-                    versionCode 109
-                    versionName "V57.18n-FULL-FIX-NO-TEXT"
+                    versionCode 110
+                    versionName "V57.18o-RESTORE-NO-TEXT"
                 }
                 compileOptions {
                     sourceCompatibility JavaVersion.VERSION_17
@@ -100,7 +100,7 @@ jobs:
           '''))
           open("app/src/main/res/xml/widget_raziel_info.xml","w").write('<?xml version="1.0"?><appwidget-provider xmlns:android="http://schemas.android.com/apk/res/android" android:minWidth="320dp" android:minHeight="420dp" android:updatePeriodMillis="1800000" android:initialLayout="@layout/widget_raziel" android:resizeMode="horizontal|vertical" android:widgetCategory="home_screen"/>')
           open("app/src/main/res/layout/widget_raziel.xml","w").write('<?xml version="1.0" encoding="utf-8"?><LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent" android:layout_height="wrap_content"><ImageView android:id="@+id/w_full" android:layout_width="match_parent" android:layout_height="wrap_content" android:adjustViewBounds="true"/></LinearLayout>')
-          open("app/src/main/res/layout/activity_main.xml","w").write('<?xml version="1.0" encoding="utf-8"?><LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent" android:layout_height="match_parent" android:orientation="vertical" android:background="#0d1a0d"><LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:padding="12dp" android:background="#111f11"><TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="RAZMIN V57.18n FULL FIX" android:textColor="#5afc7a" android:textStyle="bold"/><TextView android:id="@+id/txt_status" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="--" android:textColor="#8acf8a"/><TextView android:id="@+id/txt_path" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="--" android:textColor="#6b9a6b"/><LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:layout_marginTop="8dp"><Button android:id="@+id/btn_auto" android:layout_width="0dp" android:layout_weight="1" android:layout_height="48dp" android:text="AUTO ONEDRIVE" android:backgroundTint="#00e5ff"/><Button android:id="@+id/btn_import" android:layout_width="0dp" android:layout_weight="1" android:layout_height="48dp" android:text="SCEGLI JSON" android:backgroundTint="#5afc7a" android:layout_marginStart="6dp"/></LinearLayout></LinearLayout><WebView android:id="@+id/webview" android:layout_width="match_parent" android:layout_height="match_parent"/></LinearLayout>')
+          open("app/src/main/res/layout/activity_main.xml","w").write('<?xml version="1.0" encoding="utf-8"?><LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent" android:layout_height="match_parent" android:orientation="vertical" android:background="#0d1a0d"><LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:padding="12dp" android:background="#111f11"><TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="RAZMIN V57.18o RESTORE" android:textColor="#5afc7a" android:textStyle="bold"/><TextView android:id="@+id/txt_status" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="--" android:textColor="#8acf8a"/><TextView android:id="@+id/txt_path" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="--" android:textColor="#6b9a6b"/><LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:layout_marginTop="8dp"><Button android:id="@+id/btn_auto" android:layout_width="0dp" android:layout_weight="1" android:layout_height="48dp" android:text="AUTO ONEDRIVE" android:backgroundTint="#00e5ff"/><Button android:id="@+id/btn_import" android:layout_width="0dp" android:layout_weight="1" android:layout_height="48dp" android:text="SCEGLI JSON" android:backgroundTint="#5afc7a" android:layout_marginStart="6dp"/></LinearLayout></LinearLayout><WebView android:id="@+id/webview" android:layout_width="match_parent" android:layout_height="match_parent"/></LinearLayout>')
           open("app/src/main/AndroidManifest.xml","w").write('<?xml version="1.0" encoding="utf-8"?><manifest xmlns:android="http://schemas.android.com/apk/res/android"><uses-permission android:name="android.permission.INTERNET"/><queries><package android:name="com.facebook.stella"/></queries><application android:allowBackup="true" android:label="RAZMIN" android:icon="@mipmap/ic_launcher" android:roundIcon="@mipmap/ic_launcher_round" android:usesCleartextTraffic="true" android:theme="@style/Theme.AppCompat.Light.NoActionBar" android:requestLegacyExternalStorage="true"><activity android:name=".MainActivity" android:exported="true"><intent-filter><action android:name="android.intent.action.MAIN"/><category android:name="android.intent.category.LAUNCHER"/></intent-filter></activity><receiver android:name=".RazielWidgetProvider" android:exported="true"><intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE"/></intent-filter><meta-data android:name="android.appwidget.provider" android:resource="@xml/widget_raziel_info"/></receiver><provider android:name="androidx.core.content.FileProvider" android:authorities="${applicationId}.provider" android:exported="false" android:grantUriPermissions="true"><meta-data android:name="android.support.FILE_PROVIDER_PATHS" android:resource="@xml/file_provider_paths"/></provider></application></manifest>')
           open("app/src/main/res/xml/file_provider_paths.xml","w").write('<?xml version="1.0" encoding="utf-8"?><paths><cache-path name="raziel_cache" path="."/><external-cache-path name="raziel_external_cache" path="."/><files-path name="raziel_files" path="."/><external-path name="external_files" path="."/></paths>')
           if os.path.exists("index.html"): shutil.copyfile("index.html","app/src/main/assets/index.html")
@@ -119,81 +119,68 @@ jobs:
                   WebSettings s=wv.getSettings(); s.setJavaScriptEnabled(true); s.setDomStorageEnabled(true); s.setAllowFileAccess(true); s.setAllowContentAccess(true); s.setAllowFileAccessFromFileURLs(true); s.setAllowUniversalAccessFromFileURLs(true); s.setMixedContentMode(WebSettings.MIXED_CONTENT_ALWAYS_ALLOW); s.setCacheMode(WebSettings.LOAD_NO_CACHE);
                   final WebViewAssetLoader loader=new WebViewAssetLoader.Builder().addPathHandler("/assets/", new WebViewAssetLoader.AssetsPathHandler(this)).addPathHandler("/data/", new WebViewAssetLoader.InternalStoragePathHandler(this, getFilesDir())).build();
                   wv.addJavascriptInterface(new Object(){
-                      @android.webkit.JavascriptInterface public void shareJsonToWhatsApp(String fileName, String jsonContent){ shareLightClip(fileName, jsonContent); }
-                      @android.webkit.JavascriptInterface public void shareToMetaAI(String fileName, String jsonContent){ shareLightClip(fileName, jsonContent); }
-                      private void shareLightClip(String fileName, String jsonContent){
+                      @android.webkit.JavascriptInterface public void shareJsonToWhatsApp(String fileName, String jsonContent){ share(fileName, jsonContent); }
+                      @android.webkit.JavascriptInterface public void shareToMetaAI(String fileName, String jsonContent){ share(fileName, jsonContent); }
+                      private void share(String fileName, String jsonContent){
                           runOnUiThread(new Runnable(){ @Override public void run(){
                               try{
                                   String lightJson = createLightJson(jsonContent);
                                   String lightName = fileName.replace(".json","_LIGHT.json");
-                                  // 1. COPIA LIGHT NEGLI APPUNTI - gia funzionante
+                                  // SAVE COME PRIMA - FUNZIONANTE IN Download/RAZMIN
+                                  saveToDownloadRAZMIN(fileName, jsonContent);
+                                  saveToDownloadRAZMIN(lightName, lightJson);
+                                  // CLIPBOARD LIGHT
                                   try{
                                       ClipboardManager cm=(ClipboardManager)getSystemService(CLIPBOARD_SERVICE);
-                                      ClipData clip=ClipData.newPlainText("RAZMIN LIGHT", lightJson);
-                                      cm.setPrimaryClip(clip);
+                                      cm.setPrimaryClip(ClipData.newPlainText("RAZMIN LIGHT", lightJson));
+                                      Toast.makeText(MainActivity.this, "LIGHT "+(lightJson.length()/1024)+"KB copiato | FULL in Download/RAZMIN/", Toast.LENGTH_LONG).show();
                                   }catch(Exception e){}
-                                  // 2. SALVA FULL + LIGHT IN DOWNLOAD/RAZMIN con metodo robusto
-                                  boolean okFull = saveRobust(fileName, jsonContent);
-                                  boolean okLight = saveRobust(lightName, lightJson);
-                                  String msg = "LIGHT "+(lightJson.length()/1024)+"KB negli appunti";
-                                  msg += okFull? " | FULL "+(jsonContent.length()/1024)+"KB in Download/RAZMIN/" : " | FULL ERR - vedi toast";
-                                  Toast.makeText(MainActivity.this, msg, Toast.LENGTH_LONG).show();
-                                  // 3. APRI META AI VUOTA - niente testo automatico
+                                  // APRI META AI SENZA TESTO AUTOMATICO - FIX APERTURA
                                   try{
-                                      getPackageManager().getPackageInfo("com.facebook.stella",0);
-                                      Intent i=new Intent(Intent.ACTION_MAIN);
+                                      // Metodo 1: launch intent diretto (quello che funziona sempre)
+                                      Intent launch = getPackageManager().getLaunchIntentForPackage("com.facebook.stella");
+                                      if(launch!=null){ launch.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK); startActivity(launch); return; }
+                                  }catch(Exception ignored){}
+                                  try{
+                                      // Metodo 2: ACTION_MAIN con package
+                                      Intent i = new Intent(Intent.ACTION_MAIN);
                                       i.setPackage("com.facebook.stella");
                                       i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                                       startActivity(i);
                                       return;
-                                  }catch(PackageManager.NameNotFoundException ignore){}
-                                  // fallback: intent vuoto senza EXTRA_TEXT
-                                  Intent fallback=new Intent(Intent.ACTION_MAIN);
-                                  fallback.setPackage("com.facebook.stella");
-                                  try{ startActivity(fallback); }catch(Exception e){
-                                      Toast.makeText(MainActivity.this, "Apri Meta AI e incolla - LIGHT negli appunti", Toast.LENGTH_LONG).show();
+                                  }catch(Exception ignored){}
+                                  try{
+                                      // Metodo 3: VIEW vuota
+                                      Intent i2 = new Intent(Intent.ACTION_VIEW);
+                                      i2.setPackage("com.facebook.stella");
+                                      i2.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                                      startActivity(i2);
+                                  }catch(Exception e){
+                                      Toast.makeText(MainActivity.this, "Apri Meta AI - LIGHT negli appunti (incolla)", Toast.LENGTH_LONG).show();
                                   }
-                              }catch(Exception e){ Toast.makeText(MainActivity.this, "Err: "+e.getMessage(), Toast.LENGTH_LONG).show(); e.printStackTrace(); }
+                              }catch(Exception e){ Toast.makeText(MainActivity.this, "Err: "+e.getMessage(), Toast.LENGTH_LONG).show(); }
                           }});
                       }
-                      private boolean saveRobust(String fileName, String content){
-                          // METODO A: MediaStore Download/RAZMIN (Android 10+)
-                          try{
-                              if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q){
-                                  ContentValues values = new ContentValues();
-                                  values.put(MediaStore.Downloads.DISPLAY_NAME, fileName);
-                                  values.put(MediaStore.Downloads.MIME_TYPE, "application/json");
-                                  values.put(MediaStore.Downloads.RELATIVE_PATH, Environment.DIRECTORY_DOWNLOADS + "/RAZMIN");
-                                  // cancella vecchio con stesso nome
-                                  try{ getContentResolver().delete(MediaStore.Downloads.EXTERNAL_CONTENT_URI, MediaStore.Downloads.DISPLAY_NAME+"=?", new String[]{fileName}); }catch(Exception ignored){}
-                                  Uri uri = getContentResolver().insert(MediaStore.Downloads.EXTERNAL_CONTENT_URI, values);
-                                  if(uri!=null){
-                                      OutputStream os = getContentResolver().openOutputStream(uri);
-                                      BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(os, "UTF-8"));
-                                      bw.write(content);
-                                      bw.close();
-                                      return true;
-                                  }
+                      private void saveToDownloadRAZMIN(String fileName, String content) throws Exception {
+                          if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q){
+                              ContentValues values = new ContentValues();
+                              values.put(MediaStore.Downloads.DISPLAY_NAME, fileName);
+                              values.put(MediaStore.Downloads.MIME_TYPE, "application/json");
+                              values.put(MediaStore.Downloads.RELATIVE_PATH, "Download/RAZMIN");
+                              values.put(MediaStore.Downloads.IS_PENDING, 1);
+                              Uri uri = getContentResolver().insert(MediaStore.Downloads.EXTERNAL_CONTENT_URI, values);
+                              if(uri!= null){
+                                  OutputStream os = getContentResolver().openOutputStream(uri);
+                                  os.write(content.getBytes("UTF-8"));
+                                  os.close();
+                                  values.clear();
+                                  values.put(MediaStore.Downloads.IS_PENDING, 0);
+                                  getContentResolver().update(uri, values, null, null);
+                                  return;
                               }
-                          }catch(Exception e){ e.printStackTrace(); }
-                          // METODO B: File diretto legacy (funziona su molti device)
-                          try{
-                              File dlDir=new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), "RAZMIN");
-                              if(!dlDir.exists()) dlDir.mkdirs();
-                              File f=new File(dlDir, fileName);
-                              FileWriter fw=new FileWriter(f); fw.write(content); fw.close();
-                              // MediaScanner per farlo vedere subito al tasto +
-                              try{ Intent scan=new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE); scan.setData(Uri.fromFile(f)); sendBroadcast(scan); }catch(Exception ignored){}
-                              return true;
-                          }catch(Exception e){ e.printStackTrace(); }
-                          // METODO C: salva in Documents/RAZMIN come fallback visibile
-                          try{
-                              File docDir=new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS), "RAZMIN");
-                              docDir.mkdirs();
-                              File f2=new File(docDir, fileName);
-                              FileWriter fw2=new FileWriter(f2); fw2.write(content); fw2.close();
-                              return true;
-                          }catch(Exception e){ return false; }
+                          }
+                          File dlDir=new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), "RAZMIN"); dlDir.mkdirs();
+                          File f=new File(dlDir, fileName); FileWriter fw=new FileWriter(f); fw.write(content); fw.close();
                       }
                       private String createLightJson(String full){
                           try{
@@ -332,5 +319,5 @@ jobs:
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: RAZMIN-V57.18n-FULL-FIX
+          name: RAZMIN-V57.18o-RESTORE-NO-TEXT
           path: app/build/outputs/apk/debug/*.apk
