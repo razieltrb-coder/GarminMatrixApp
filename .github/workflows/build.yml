@@ -16,30 +16,25 @@ jobs:
           gradle-version: 8.4
       - name: Install Pillow
         run: pip install Pillow
-      - name: Generate project V57.18j - TEXT + DOWNLOAD
+      - name: Generate project V57.18l - LIGHT CLIPBOARD
         shell: python
         run: |
           import os, textwrap, shutil
           from pathlib import Path
-          from PIL import Image, ImageDraw
+          from PIL import Image
           sizes = {"mipmap-mdpi":48, "mipmap-hdpi":72, "mipmap-xhdpi":96, "mipmap-xxhdpi":144, "mipmap-xxxhdpi":192}
-          for folder in sizes:
-              Path(f"app/src/main/res/{folder}").mkdir(parents=True, exist_ok=True)
+          for folder in sizes: Path(f"app/src/main/res/{folder}").mkdir(parents=True, exist_ok=True)
           candidates=["app_icon.png","app_icon.jpg","app_icon.webp","icon.png"]
           icon_src=next((n for n in candidates if os.path.exists(n)), None)
           if icon_src:
               try:
                   im=Image.open(icon_src).convert("RGBA")
-                  w,h=im.size
-                  side=min(w,h)
+                  w,h=im.size; side=min(w,h)
                   im=im.crop(((w-side)//2,(h-side)//2,(w-side)//2+side,(h-side)//2+side))
                   for folder,size in sizes.items():
-                      d=Path(f"app/src/main/res/{folder}")
-                      rs=im.resize((size,size), Image.LANCZOS)
-                      rs.save(d/"ic_launcher.png",format="PNG")
-                      rs.save(d/"ic_launcher_round.png",format="PNG")
-              except Exception as e:
-                  print(e)
+                      d=Path(f"app/src/main/res/{folder}"); rs=im.resize((size,size), Image.LANCZOS)
+                      rs.save(d/"ic_launcher.png",format="PNG"); rs.save(d/"ic_launcher_round.png",format="PNG")
+              except Exception as e: print(e)
           os.makedirs("app/src/main/java/com/garminmatrix",exist_ok=True)
           os.makedirs("app/src/main/res/xml",exist_ok=True)
           os.makedirs("app/src/main/res/layout",exist_ok=True)
@@ -47,50 +42,17 @@ jobs:
           open("settings.gradle","w").write("include ':app'\n")
           open("local.properties","w").write(f"sdk.dir={os.environ['ANDROID_HOME']}\n")
           open("gradle.properties","w").write("android.useAndroidX=true\n")
-          open("build.gradle","w").write(textwrap.dedent('''
-            buildscript {
-                repositories { google(); mavenCentral() }
-                dependencies { classpath 'com.android.tools.build:gradle:8.2.2' }
-            }
-            allprojects { repositories { google(); mavenCentral() } }
-          '''))
-          open("app/build.gradle","w").write(textwrap.dedent('''
-            apply plugin: 'com.android.application'
-            android {
-                namespace 'com.garminmatrix'
-                compileSdk 34
-                defaultConfig {
-                    applicationId "com.garminmatrix"
-                    minSdk 24
-                    targetSdk 34
-                    versionCode 104
-                    versionName "V57.18j-RAZMIN-DL-FIX"
-                }
-            }
-            configurations.all {
-                resolutionStrategy.force 'org.jetbrains.kotlin:kotlin-stdlib:1.8.22'
-                exclude group: 'org.jetbrains.kotlin', module: 'kotlin-stdlib-jdk7'
-                exclude group: 'org.jetbrains.kotlin', module: 'kotlin-stdlib-jdk8'
-            }
-            dependencies {
-                implementation 'androidx.appcompat:appcompat:1.6.1'
-                implementation('androidx.webkit:webkit:1.6.1'){
-                    exclude group: 'org.jetbrains.kotlin', module: 'kotlin-stdlib-jdk7'
-                    exclude group: 'org.jetbrains.kotlin', module: 'kotlin-stdlib-jdk8'
-                }
-                implementation 'androidx.core:core:1.12.0'
-            }
-          '''))
+          open("build.gradle","w").write(textwrap.dedent('''buildscript { repositories { google(); mavenCentral() } dependencies { classpath 'com.android.tools.build:gradle:8.2.2' } } allprojects { repositories { google(); mavenCentral() } }'''))
+          open("app/build.gradle","w").write(textwrap.dedent('''apply plugin: 'com.android.application' android { namespace 'com.garminmatrix' compileSdk 34 defaultConfig { applicationId "com.garminmatrix" minSdk 24 targetSdk 34 versionCode 106 versionName "V57.18l-LIGHT-CLIP" } } configurations.all { resolutionStrategy.force 'org.jetbrains.kotlin:kotlin-stdlib:1.8.22' exclude group: 'org.jetbrains.kotlin', module: 'kotlin-stdlib-jdk7' exclude group: 'org.jetbrains.kotlin', module: 'kotlin-stdlib-jdk8' } dependencies { implementation 'androidx.appcompat:appcompat:1.6.1' implementation('androidx.webkit:webkit:1.6.1'){ exclude group: 'org.jetbrains.kotlin', module: 'kotlin-stdlib-jdk7' exclude group: 'org.jetbrains.kotlin', module: 'kotlin-stdlib-jdk8' } implementation 'androidx.core:core:1.12.0' }'''))
           open("app/src/main/res/xml/widget_raziel_info.xml","w").write('<?xml version="1.0"?><appwidget-provider xmlns:android="http://schemas.android.com/apk/res/android" android:minWidth="320dp" android:minHeight="420dp" android:updatePeriodMillis="1800000" android:initialLayout="@layout/widget_raziel" android:resizeMode="horizontal|vertical" android:widgetCategory="home_screen"/>')
           open("app/src/main/res/layout/widget_raziel.xml","w").write('<?xml version="1.0" encoding="utf-8"?><LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent" android:layout_height="wrap_content"><ImageView android:id="@+id/w_full" android:layout_width="match_parent" android:layout_height="wrap_content" android:adjustViewBounds="true"/></LinearLayout>')
-          open("app/src/main/res/layout/activity_main.xml","w").write('<?xml version="1.0" encoding="utf-8"?><LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent" android:layout_height="match_parent" android:orientation="vertical" android:background="#0d1a0d"><LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:padding="12dp" android:background="#111f11"><TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="RAZMIN V57.18j FILE IN DL" android:textColor="#5afc7a" android:textStyle="bold"/><TextView android:id="@+id/txt_status" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="--" android:textColor="#8acf8a"/><TextView android:id="@+id/txt_path" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="--" android:textColor="#6b9a6b"/><LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:layout_marginTop="8dp"><Button android:id="@+id/btn_auto" android:layout_width="0dp" android:layout_weight="1" android:layout_height="48dp" android:text="AUTO ONEDRIVE" android:backgroundTint="#00e5ff"/><Button android:id="@+id/btn_import" android:layout_width="0dp" android:layout_weight="1" android:layout_height="48dp" android:text="SCEGLI JSON" android:backgroundTint="#5afc7a" android:layout_marginStart="6dp"/></LinearLayout></LinearLayout><WebView android:id="@+id/webview" android:layout_width="match_parent" android:layout_height="match_parent"/></LinearLayout>')
-          open("app/src/main/AndroidManifest.xml","w").write('<?xml version="1.0" encoding="utf-8"?><manifest xmlns:android="http://schemas.android.com/apk/res/android"><uses-permission android:name="android.permission.INTERNET"/><uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" android:maxSdkVersion="28"/><queries><package android:name="com.facebook.stella"/><package android:name="com.whatsapp"/><package android:name="com.whatsapp.w4b"/></queries><application android:allowBackup="true" android:label="RAZMIN" android:icon="@mipmap/ic_launcher" android:roundIcon="@mipmap/ic_launcher_round" android:usesCleartextTraffic="true" android:theme="@style/Theme.AppCompat.Light.NoActionBar" android:requestLegacyExternalStorage="true"><activity android:name=".MainActivity" android:exported="true"><intent-filter><action android:name="android.intent.action.MAIN"/><category android:name="android.intent.category.LAUNCHER"/></intent-filter></activity><receiver android:name=".RazielWidgetProvider" android:exported="true"><intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE"/></intent-filter><meta-data android:name="android.appwidget.provider" android:resource="@xml/widget_raziel_info"/></receiver><provider android:name="androidx.core.content.FileProvider" android:authorities="${applicationId}.provider" android:exported="false" android:grantUriPermissions="true"><meta-data android:name="android.support.FILE_PROVIDER_PATHS" android:resource="@xml/file_provider_paths"/></provider></application></manifest>')
+          open("app/src/main/res/layout/activity_main.xml","w").write('<?xml version="1.0" encoding="utf-8"?><LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent" android:layout_height="match_parent" android:orientation="vertical" android:background="#0d1a0d"><LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:padding="12dp" android:background="#111f11"><TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="RAZMIN V57.18l LIGHT CLIP" android:textColor="#5afc7a" android:textStyle="bold"/><TextView android:id="@+id/txt_status" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="--" android:textColor="#8acf8a"/><TextView android:id="@+id/txt_path" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="--" android:textColor="#6b9a6b"/><LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:layout_marginTop="8dp"><Button android:id="@+id/btn_auto" android:layout_width="0dp" android:layout_weight="1" android:layout_height="48dp" android:text="AUTO ONEDRIVE" android:backgroundTint="#00e5ff"/><Button android:id="@+id/btn_import" android:layout_width="0dp" android:layout_weight="1" android:layout_height="48dp" android:text="SCEGLI JSON" android:backgroundTint="#5afc7a" android:layout_marginStart="6dp"/></LinearLayout></LinearLayout><WebView android:id="@+id/webview" android:layout_width="match_parent" android:layout_height="match_parent"/></LinearLayout>')
+          open("app/src/main/AndroidManifest.xml","w").write('<?xml version="1.0" encoding="utf-8"?><manifest xmlns:android="http://schemas.android.com/apk/res/android"><uses-permission android:name="android.permission.INTERNET"/><queries><package android:name="com.facebook.stella"/></queries><application android:allowBackup="true" android:label="RAZMIN" android:icon="@mipmap/ic_launcher" android:roundIcon="@mipmap/ic_launcher_round" android:usesCleartextTraffic="true" android:theme="@style/Theme.AppCompat.Light.NoActionBar" android:requestLegacyExternalStorage="true"><activity android:name=".MainActivity" android:exported="true"><intent-filter><action android:name="android.intent.action.MAIN"/><category android:name="android.intent.category.LAUNCHER"/></intent-filter></activity><receiver android:name=".RazielWidgetProvider" android:exported="true"><intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE"/></intent-filter><meta-data android:name="android.appwidget.provider" android:resource="@xml/widget_raziel_info"/></receiver><provider android:name="androidx.core.content.FileProvider" android:authorities="${applicationId}.provider" android:exported="false" android:grantUriPermissions="true"><meta-data android:name="android.support.FILE_PROVIDER_PATHS" android:resource="@xml/file_provider_paths"/></provider></application></manifest>')
           open("app/src/main/res/xml/file_provider_paths.xml","w").write('<?xml version="1.0" encoding="utf-8"?><paths><cache-path name="raziel_cache" path="."/><external-cache-path name="raziel_external_cache" path="."/><files-path name="raziel_files" path="."/><external-path name="external_files" path="."/></paths>')
-          if os.path.exists("index.html"):
-              shutil.copyfile("index.html","app/src/main/assets/index.html")
+          if os.path.exists("index.html"): shutil.copyfile("index.html","app/src/main/assets/index.html")
           open("app/src/main/java/com/garminmatrix/MainActivity.java","w").write('''
           package com.garminmatrix;
-          import android.os.Bundle; import android.webkit.WebView; import android.webkit.WebSettings; import android.widget.TextView; import android.content.Intent; import android.content.ComponentName; import android.content.SharedPreferences; import android.appwidget.AppWidgetManager; import android.net.Uri; import android.database.Cursor; import org.json.*; import java.io.*; import androidx.appcompat.app.AppCompatActivity; import androidx.webkit.WebViewAssetLoader; import androidx.core.content.FileProvider; import android.widget.Toast; import android.content.pm.PackageManager; import android.os.Environment;
+          import android.os.Bundle; import android.webkit.WebView; import android.webkit.WebSettings; import android.widget.TextView; import android.content.Intent; import android.content.ComponentName; import android.content.SharedPreferences; import android.appwidget.AppWidgetManager; import android.net.Uri; import android.database.Cursor; import org.json.*; import java.io.*; import androidx.appcompat.app.AppCompatActivity; import androidx.webkit.WebViewAssetLoader; import android.widget.Toast; import android.content.pm.PackageManager; import android.os.Environment; import android.content.ClipData; import android.content.ClipboardManager;
 
           public class MainActivity extends AppCompatActivity {
               WebView wv; TextView st, pathTxt; static final int PICK_JSON=1001; SharedPreferences prefs;
@@ -104,60 +66,73 @@ jobs:
                   WebSettings s=wv.getSettings(); s.setJavaScriptEnabled(true); s.setDomStorageEnabled(true); s.setAllowFileAccess(true); s.setAllowContentAccess(true); s.setAllowFileAccessFromFileURLs(true); s.setAllowUniversalAccessFromFileURLs(true); s.setMixedContentMode(WebSettings.MIXED_CONTENT_ALWAYS_ALLOW); s.setCacheMode(WebSettings.LOAD_NO_CACHE);
                   final WebViewAssetLoader loader=new WebViewAssetLoader.Builder().addPathHandler("/assets/", new WebViewAssetLoader.AssetsPathHandler(this)).addPathHandler("/data/", new WebViewAssetLoader.InternalStoragePathHandler(this, getFilesDir())).build();
                   wv.addJavascriptInterface(new Object(){
-                      @android.webkit.JavascriptInterface public void shareJsonToWhatsApp(String fileName, String jsonContent){ shareFileOnly(fileName, jsonContent); }
-                      @android.webkit.JavascriptInterface public void shareToMetaAI(String fileName, String jsonContent){ shareFileOnly(fileName, jsonContent); }
+                      @android.webkit.JavascriptInterface public void shareJsonToWhatsApp(String fileName, String jsonContent){ shareLightClip(fileName, jsonContent); }
+                      @android.webkit.JavascriptInterface public void shareToMetaAI(String fileName, String jsonContent){ shareLightClip(fileName, jsonContent); }
+                      private void shareLightClip(String fileName, String jsonContent){
+                          runOnUiThread(new Runnable(){ @Override public void run(){
+                              try{
+                                  String lightJson = createLightJson(jsonContent);
+                                  String lightName = fileName.replace(".json","_LIGHT.json");
 
-                      private void shareFileOnly(String fileName, String jsonContent){
-                          runOnUiThread(new Runnable(){
-                              @Override public void run(){
+                                  File dlDir=new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), "RAZMIN"); dlDir.mkdirs();
+                                  File fullFile=new File(dlDir, fileName); FileWriter fw=new FileWriter(fullFile); fw.write(jsonContent); fw.close();
+                                  File lightFile=new File(dlDir, lightName); FileWriter fw2=new FileWriter(lightFile); fw2.write(lightJson); fw2.close();
+
+                                  // COPIA LIGHT NEGLI APPUNTI SU UI THREAD - sotto 400KB quindi ok
                                   try{
-                                      // 1. Salva in Download/RAZMIN per allegarlo manualmente con +
-                                      File dlDir=new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), "RAZMIN");
-                                      dlDir.mkdirs();
-                                      File dlFile=new File(dlDir, fileName);
-                                      FileWriter fwDl=new FileWriter(dlFile); fwDl.write(jsonContent); fwDl.close();
-
-                                      // 2. Salva anche in cache per eventuale share
-                                      File cacheFile=new File(getCacheDir(), fileName);
-                                      FileWriter fwCache=new FileWriter(cacheFile); fwCache.write(jsonContent); fwCache.close();
-
-                                      String prompt="RAZMIN "+fileName+" ("+(jsonContent.length()/1024)+"KB) - Ho salvato il file in Download/RAZMIN/"+fileName+" - Per favore allegalo con il tasto + e analizza: carico anaerobico/aerobico, HRV, RHR, recupero, forma, ultime 10 attivita. File: "+dlFile.getAbsolutePath();
-
-                                      // 3. Apri Meta AI con SOLO testo - cosi' si apre sicuro
-                                      try{
-                                          getPackageManager().getPackageInfo("com.facebook.stella",0);
-                                          Intent i=new Intent(Intent.ACTION_SEND);
-                                          i.setType("text/plain");
-                                          i.setPackage("com.facebook.stella");
-                                          i.putExtra(Intent.EXTRA_TEXT, prompt);
-                                          startActivity(i);
-                                          Toast.makeText(MainActivity.this, "Aperto Meta AI + file salvato in Download/RAZMIN/"+fileName+" - premi + per allegarlo", Toast.LENGTH_LONG).show();
-                                          return;
-                                      }catch(PackageManager.NameNotFoundException ignore){
-                                          Toast.makeText(MainActivity.this, "Meta AI non trovata", Toast.LENGTH_SHORT).show();
-                                      }
-
-                                      // Fallback chooser testo
-                                      Intent fallback=new Intent(Intent.ACTION_SEND);
-                                      fallback.setType("text/plain");
-                                      fallback.putExtra(Intent.EXTRA_TEXT, prompt);
-                                      startActivity(Intent.createChooser(fallback, "Apri Meta AI - file in Download/RAZMIN"));
-
+                                      ClipboardManager cm=(ClipboardManager)getSystemService(CLIPBOARD_SERVICE);
+                                      ClipData clip=ClipData.newPlainText("RAZMIN LIGHT", lightJson);
+                                      cm.setPrimaryClip(clip);
+                                      Toast.makeText(MainActivity.this, "✅ LIGHT "+(lightJson.length()/1024)+"KB copiato negli appunti - FULL salvato in Download/RAZMIN/", Toast.LENGTH_LONG).show();
                                   }catch(Exception e){
-                                      e.printStackTrace();
-                                      Toast.makeText(MainActivity.this, "Err: "+e.getMessage(), Toast.LENGTH_LONG).show();
+                                      Toast.makeText(MainActivity.this, "Clipboard err: "+e.getMessage(), Toast.LENGTH_LONG).show();
                                   }
+
+                                  String prompt="RAZMIN LIGHT INCOLLA QUI SOTTO + FULL in Download/RAZMIN/"+fileName+" ("+(jsonContent.length()/1024)+"KB) - Incolla con tap lungo qui per analisi veloce, se vuoi dettaglio allega il FULL con + > File > RAZMIN. Analizza: carico, HRV, RHR, recupero, forma.";
+
+                                  try{
+                                      getPackageManager().getPackageInfo("com.facebook.stella",0);
+                                      Intent i=new Intent(Intent.ACTION_SEND); i.setType("text/plain"); i.setPackage("com.facebook.stella"); i.putExtra(Intent.EXTRA_TEXT, prompt); startActivity(i); return;
+                                  }catch(PackageManager.NameNotFoundException ignore){}
+                                  Intent fallback=new Intent(Intent.ACTION_SEND); fallback.setType("text/plain"); fallback.putExtra(Intent.EXTRA_TEXT, prompt); startActivity(Intent.createChooser(fallback, "Apri Meta AI - LIGHT negli appunti"));
+                              }catch(Exception e){ Toast.makeText(MainActivity.this, "Err: "+e.getMessage(), Toast.LENGTH_LONG).show(); }
+                          }});
+                      }
+                      private String createLightJson(String full){
+                          try{
+                              JSONObject db=new JSONObject(full);
+                              JSONObject light=new JSONObject();
+                              if(db.has("bilancio_carico")) light.put("bilancio_carico", db.getJSONObject("bilancio_carico"));
+                              if(db.has("periodo")) light.put("periodo", db.getJSONObject("periodo"));
+                              if(db.has("giorni")){
+                                  JSONArray giorni=db.getJSONArray("giorni");
+                                  int start=Math.max(0, giorni.length()-60);
+                                  JSONArray last60=new JSONArray();
+                                  for(int i=start;i<giorni.length();i++) last60.put(giorni.getJSONObject(i));
+                                  light.put("giorni_ultimi_60", last60);
                               }
-                          });
+                              if(db.has("attivita")){
+                                  JSONArray att=db.getJSONArray("attivita");
+                                  int start=Math.max(0, att.length()-20);
+                                  JSONArray last20=new JSONArray();
+                                  for(int i=start;i<att.length();i++){
+                                      JSONObject a=att.getJSONObject(i);
+                                      JSONObject slim=new JSONObject();
+                                      slim.put("data", a.optString("inizio","")); slim.put("tipo", a.optString("tipo","")); slim.put("distanza_km", Math.round(a.optDouble("distanza_m",0)/10.0)/100.0); slim.put("durata_min", Math.round(a.optDouble("durata_s",0)/6.0)/10.0); slim.put("fc_media", a.optInt("fc_media",0));
+                                      last20.put(slim);
+                                  }
+                                  light.put("ultime_20_attivita", last20);
+                                  light.put("totale_attivita", att.length());
+                              }
+                              String out=light.toString(2);
+                              if(out.length()>350000) out=out.substring(0,350000);
+                              return out;
+                          }catch(Exception e){ return full.length()>350000? full.substring(0,350000): full; }
                       }
                   }, "Android");
-                  wv.setWebViewClient(new androidx.webkit.WebViewClientCompat(){
-                      @Override public android.webkit.WebResourceResponse shouldInterceptRequest(WebView view, android.webkit.WebResourceRequest req){ android.webkit.WebResourceResponse r=loader.shouldInterceptRequest(req.getUrl()); return r!=null?r:super.shouldInterceptRequest(view,req); }
-                      @Override public boolean shouldOverrideUrlLoading(WebView view, android.webkit.WebResourceRequest request){ return false; }
-                  });
+                  wv.setWebViewClient(new androidx.webkit.WebViewClientCompat(){ @Override public android.webkit.WebResourceResponse shouldInterceptRequest(WebView view, android.webkit.WebResourceRequest req){ android.webkit.WebResourceResponse r=loader.shouldInterceptRequest(req.getUrl()); return r!=null?r:super.shouldInterceptRequest(view,req); } @Override public boolean shouldOverrideUrlLoading(WebView view, android.webkit.WebResourceRequest request){ return false; } });
                   openDash();
-                  String last=prefs.getString("last_uri",null);
-                  if(last!=null){ pathTxt.setText("Ultimo: "+prefs.getString("last_name","OneDrive")); wv.postDelayed(()->autoFromSavedUri(),800); }
+                  String last=prefs.getString("last_uri",null); if(last!=null){ pathTxt.setText("Ultimo: "+prefs.getString("last_name","OneDrive")); wv.postDelayed(()->autoFromSavedUri(),800); }
               }
               void openDash(){ wv.clearCache(true); wv.loadUrl("https://appassets.androidplatform.net/assets/index.html?nocache="+System.currentTimeMillis()); }
               void autoFromSavedUri(){ String uriStr=prefs.getString("last_uri",null); if(uriStr==null){ st.setText("Nessun file salvato - SCEGLI JSON"); return; } try{ Uri uri=Uri.parse(uriStr); try{ getContentResolver().takePersistableUriPermission(uri, Intent.FLAG_GRANT_READ_URI_PERMISSION); }catch(Exception ignored){} InputStream is=getContentResolver().openInputStream(uri); BufferedReader r=new BufferedReader(new InputStreamReader(is)); StringBuilder sb=new StringBuilder(); String l; while((l=r.readLine())!=null) sb.append(l); r.close(); JSONObject db=new JSONObject(sb.toString()); File outf=new File(getFilesDir(),"database.json"); FileWriter fw=new FileWriter(outf); fw.write(db.toString(2)); fw.close(); st.setText("AUTO OK basso="+db.optJSONObject("bilancio_carico").optInt("aerobico_basso")); openDash(); updateWidget(); }catch(Exception e){ st.setText("Auto err: "+e.getMessage()); } }
@@ -261,5 +236,5 @@ jobs:
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: RAZMIN-V57.18j-DL-FIX
+          name: RAZMIN-V57.18l-LIGHT-CLIP
           path: app/build/outputs/apk/debug/*.apk
