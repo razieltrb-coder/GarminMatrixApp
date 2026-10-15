@@ -15,58 +15,61 @@ jobs:
         with:
           gradle-version: 8.4
 
-      - name: Generate project V57.16b - ICON FIX ALWAYS
+      - name: Install Pillow
+        run: pip install Pillow
+
+      - name: Generate project V57.16c - JPG TO PNG FIX
         shell: python
         run: |
           import os, textwrap, shutil
           from pathlib import Path
-          try:
-              from PIL import Image
-              icon_src = None
-              for name in ["app_icon.png", "icon.png", "app_icon.jpg", "image_20261015_082447.webp"]:
-                  if os.path.exists(name):
-                      icon_src = name
-                      break
-              sizes = {"mipmap-mdpi":48, "mipmap-hdpi":72, "mipmap-xhdpi":96, "mipmap-xxhdpi":144, "mipmap-xxxhdpi":192}
-              for folder in sizes:
-                  Path(f"app/src/main/res/{folder}").mkdir(parents=True, exist_ok=True)
+          from PIL import Image, ImageDraw
 
-              if icon_src:
-                  print(f"Found icon: {icon_src}")
+          # SEMPRE crea le cartelle mipmap prima di tutto
+          sizes = {"mipmap-mdpi":48, "mipmap-hdpi":72, "mipmap-xhdpi":96, "mipmap-xxhdpi":144, "mipmap-xxxhdpi":192}
+          for folder in sizes:
+              Path(f"app/src/main/res/{folder}").mkdir(parents=True, exist_ok=True)
+
+          icon_created = False
+          # Cerca qualsiasi file icona, anche se estensione sbagliata
+          candidates = ["app_icon.png", "app_icon.jpg", "app_icon.jpeg", "app_icon.webp", "icon.png", "icon.jpg", "image_20261015_082447.webp"]
+          icon_src = None
+          for name in candidates:
+              if os.path.exists(name):
+                  icon_src = name
+                  break
+
+          if icon_src:
+              try:
+                  print(f"Converting icon: {icon_src} -> real PNGs")
+                  # PIL apre JPG anche se chiamato .png
                   im = Image.open(icon_src).convert("RGBA")
                   w,h = im.size
                   side = min(w,h)
+                  # crop centro
                   im = im.crop(((w-side)//2, (h-side)//2, (w-side)//2+side, (h-side)//2+side))
                   for folder, size in sizes.items():
                       dest = Path(f"app/src/main/res/{folder}")
                       resized = im.resize((size,size), Image.LANCZOS)
-                      resized.save(dest/"ic_launcher.png", "PNG")
-                      resized.save(dest/"ic_launcher_round.png", "PNG")
-              else:
-                  print("No custom icon, creating default green RAZIEL icon")
-                  # Crea icona default verde
-                  for folder, size in sizes.items():
-                      dest = Path(f"app/src/main/res/{folder}")
-                      im = Image.new("RGBA", (size,size), (13, 26, 16, 255))
-                      # cerchio verde interno
-                      from PIL import ImageDraw
-                      draw = ImageDraw.Draw(im)
-                      draw.ellipse([size*0.1, size*0.1, size*0.9, size*0.9], fill=(90, 252, 122, 255))
-                      draw.text((size*0.3, size*0.35), "R", fill=(0,0,0,255))
-                      im.save(dest/"ic_launcher.png", "PNG")
-                      im.save(dest/"ic_launcher_round.png", "PNG")
-          except Exception as e:
-              print(f"Icon error {e}, creating empty folders")
-              for folder in ["mipmap-mdpi","mipmap-hdpi","mipmap-xhdpi","mipmap-xxhdpi","mipmap-xxxhdpi"]:
-                  Path(f"app/src/main/res/{folder}").mkdir(parents=True, exist_ok=True)
-                  # placeholder 1x1
-                  try:
-                      from PIL import Image
-                      im = Image.new("RGBA", (48,48), (90,252,122,255))
-                      im.save(f"app/src/main/res/{folder}/ic_launcher.png")
-                      im.save(f"app/src/main/res/{folder}/ic_launcher_round.png")
-                  except:
-                      pass
+                      # SALVA SEMPRE COME PNG VERO
+                      resized.save(dest/"ic_launcher.png", format="PNG")
+                      resized.save(dest/"ic_launcher_round.png", format="PNG")
+                  icon_created = True
+                  print("Custom icon converted to real PNG")
+              except Exception as e:
+                  print(f"Convert failed: {e}")
+
+          if not icon_created:
+              print("Creating default green RAZIEL icon as fallback")
+              for folder, size in sizes.items():
+                  dest = Path(f"app/src/main/res/{folder}")
+                  im = Image.new("RGBA", (size,size), (13, 26, 16, 255))
+                  draw = ImageDraw.Draw(im)
+                  draw.ellipse([size*0.08, size*0.08, size*0.92, size*0.92], fill=(90, 252, 122, 255))
+                  # R stilizzata
+                  draw.text((size*0.32, size*0.28), "R", fill=(0,0,0,255))
+                  im.save(dest/"ic_launcher.png", format="PNG")
+                  im.save(dest/"ic_launcher_round.png", format="PNG")
 
           os.makedirs("app/src/main/java/com/garminmatrix", exist_ok=True)
           os.makedirs("app/src/main/res/xml", exist_ok=True)
@@ -91,8 +94,8 @@ jobs:
                     applicationId "com.garminmatrix"
                     minSdk 24
                     targetSdk 34
-                    versionCode 93
-                    versionName "V57.16b-ICON-FIX"
+                    versionCode 94
+                    versionName "V57.16c-JPG-FIX"
                 }
             }
             configurations.all {
@@ -111,13 +114,13 @@ jobs:
           '''))
           open("app/src/main/res/xml/widget_raziel_info.xml","w").write('<?xml version="1.0"?><appwidget-provider xmlns:android="http://schemas.android.com/apk/res/android" android:minWidth="320dp" android:minHeight="420dp" android:updatePeriodMillis="1800000" android:initialLayout="@layout/widget_raziel" android:resizeMode="horizontal|vertical" android:widgetCategory="home_screen"/>')
           open("app/src/main/res/layout/widget_raziel.xml","w").write('<?xml version="1.0" encoding="utf-8"?><LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent" android:layout_height="wrap_content"><ImageView android:id="@+id/w_full" android:layout_width="match_parent" android:layout_height="wrap_content" android:adjustViewBounds="true"/></LinearLayout>')
-          open("app/src/main/res/layout/activity_main.xml","w").write('<?xml version="1.0" encoding="utf-8"?><LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent" android:layout_height="match_parent" android:orientation="vertical" android:background="#0d1a0d"><LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:padding="12dp" android:background="#111f11"><TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="RAZIEL V57.16b ICON FIX" android:textColor="#5afc7a" android:textStyle="bold"/><TextView android:id="@+id/txt_status" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="--" android:textColor="#8acf8a"/><TextView android:id="@+id/txt_path" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="--" android:textColor="#6b9a6b"/><LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:layout_marginTop="8dp"><Button android:id="@+id/btn_auto" android:layout_width="0dp" android:layout_weight="1" android:layout_height="48dp" android:text="AUTO ONEDRIVE" android:backgroundTint="#00e5ff"/><Button android:id="@+id/btn_import" android:layout_width="0dp" android:layout_weight="1" android:layout_height="48dp" android:text="SCEGLI JSON" android:backgroundTint="#5afc7a" android:layout_marginStart="6dp"/></LinearLayout></LinearLayout><WebView android:id="@+id/webview" android:layout_width="match_parent" android:layout_height="match_parent"/></LinearLayout>')
+          open("app/src/main/res/layout/activity_main.xml","w").write('<?xml version="1.0" encoding="utf-8"?><LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent" android:layout_height="match_parent" android:orientation="vertical" android:background="#0d1a0d"><LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:padding="12dp" android:background="#111f11"><TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="RAZIEL V57.16c JPG FIX" android:textColor="#5afc7a" android:textStyle="bold"/><TextView android:id="@+id/txt_status" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="--" android:textColor="#8acf8a"/><TextView android:id="@+id/txt_path" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="--" android:textColor="#6b9a6b"/><LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:layout_marginTop="8dp"><Button android:id="@+id/btn_auto" android:layout_width="0dp" android:layout_weight="1" android:layout_height="48dp" android:text="AUTO ONEDRIVE" android:backgroundTint="#00e5ff"/><Button android:id="@+id/btn_import" android:layout_width="0dp" android:layout_weight="1" android:layout_height="48dp" android:text="SCEGLI JSON" android:backgroundTint="#5afc7a" android:layout_marginStart="6dp"/></LinearLayout></LinearLayout><WebView android:id="@+id/webview" android:layout_width="match_parent" android:layout_height="match_parent"/></LinearLayout>')
           open("app/src/main/AndroidManifest.xml","w").write('<?xml version="1.0" encoding="utf-8"?><manifest xmlns:android="http://schemas.android.com/apk/res/android"><uses-permission android:name="android.permission.INTERNET"/><application android:allowBackup="true" android:label="RAZIEL" android:icon="@mipmap/ic_launcher" android:roundIcon="@mipmap/ic_launcher_round" android:usesCleartextTraffic="true" android:theme="@style/Theme.AppCompat.Light.NoActionBar"><activity android:name=".MainActivity" android:exported="true"><intent-filter><action android:name="android.intent.action.MAIN"/><category android:name="android.intent.category.LAUNCHER"/></intent-filter></activity><receiver android:name=".RazielWidgetProvider" android:exported="true"><intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE"/></intent-filter><meta-data android:name="android.appwidget.provider" android:resource="@xml/widget_raziel_info"/></receiver><provider android:name="androidx.core.content.FileProvider" android:authorities="${applicationId}.provider" android:exported="false" android:grantUriPermissions="true"><meta-data android:name="android.support.FILE_PROVIDER_PATHS" android:resource="@xml/file_provider_paths"/></provider></application></manifest>')
           open("app/src/main/res/xml/file_provider_paths.xml","w").write('<?xml version="1.0" encoding="utf-8"?><paths><cache-path name="raziel_cache" path="."/><external-cache-path name="raziel_external_cache" path="."/><files-path name="raziel_files" path="."/></paths>')
           if os.path.exists("index.html"):
               shutil.copyfile("index.html","app/src/main/assets/index.html")
           else:
-              open("app/src/main/assets/index.html","w").write("<html><body>RAZIEL V57.16b</body></html>")
+              open("app/src/main/assets/index.html","w").write("<html><body>RAZIEL V57.16c</body></html>")
           open("app/src/main/java/com/garminmatrix/MainActivity.java","w").write('package com.garminmatrix; import android.os.Bundle; import android.webkit.WebView; import android.webkit.WebSettings; import android.widget.TextView; import android.content.Intent; import android.content.ComponentName; import android.content.SharedPreferences; import android.appwidget.AppWidgetManager; import android.net.Uri; import android.database.Cursor; import org.json.*; import java.io.*; import androidx.appcompat.app.AppCompatActivity; import androidx.webkit.WebViewAssetLoader; import androidx.core.content.FileProvider; import android.content.ClipData; import android.content.ClipboardManager; public class MainActivity extends AppCompatActivity { WebView wv; TextView st, pathTxt; static final int PICK_JSON=1001; SharedPreferences prefs; @Override protected void onCreate(Bundle b){ super.onCreate(b); setContentView(R.layout.activity_main); wv=findViewById(R.id.webview); st=findViewById(R.id.txt_status); pathTxt=findViewById(R.id.txt_path); prefs=getSharedPreferences("raziel",MODE_PRIVATE); findViewById(R.id.btn_auto).setOnClickListener(v->autoFromSavedUri()); findViewById(R.id.btn_import).setOnClickListener(v->manualImport()); WebSettings s=wv.getSettings(); s.setJavaScriptEnabled(true); s.setDomStorageEnabled(true); s.setAllowFileAccess(true); s.setAllowContentAccess(true); s.setAllowFileAccessFromFileURLs(true); s.setAllowUniversalAccessFromFileURLs(true); s.setMixedContentMode(WebSettings.MIXED_CONTENT_ALWAYS_ALLOW); s.setCacheMode(WebSettings.LOAD_NO_CACHE); final WebViewAssetLoader loader=new WebViewAssetLoader.Builder().addPathHandler("/assets/", new WebViewAssetLoader.AssetsPathHandler(this)).addPathHandler("/data/", new WebViewAssetLoader.InternalStoragePathHandler(this, getFilesDir())).build(); wv.addJavascriptInterface(new Object(){ @android.webkit.JavascriptInterface public void shareJsonToWhatsApp(String fileName, String jsonContent){ try{ File file=new File(getCacheDir(), fileName); FileWriter w=new FileWriter(file); w.write(jsonContent); w.close(); Uri uri=FileProvider.getUriForFile(MainActivity.this, getPackageName()+".provider", file); Intent intent=new Intent(Intent.ACTION_SEND); intent.setType("application/json"); intent.putExtra(Intent.EXTRA_STREAM, uri); intent.putExtra(Intent.EXTRA_TEXT, "RAZIEL - "+fileName); intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION); startActivity(Intent.createChooser(intent, "Condividi i tuoi allenamenti con...")); }catch(Exception e){ e.printStackTrace(); } } @android.webkit.JavascriptInterface public void shareToMetaAI(String fileName, String jsonContent){ try{ File file=new File(getCacheDir(), fileName); FileWriter fw=new FileWriter(file); fw.write(jsonContent); fw.close(); ClipboardManager cm=(ClipboardManager)getSystemService(CLIPBOARD_SERVICE); cm.setPrimaryClip(ClipData.newPlainText("RAZIEL JSON", jsonContent)); Intent intent=new Intent(Intent.ACTION_SEND); intent.setType("text/plain"); intent.putExtra(Intent.EXTRA_TEXT, jsonContent); intent.putExtra(Intent.EXTRA_SUBJECT, "RAZIEL - "+fileName); Intent chooser=Intent.createChooser(intent, "Interroga Meta AI - JSON copiato negli appunti"); startActivity(chooser); }catch(Exception e){ e.printStackTrace(); } } }, "Android"); wv.setWebViewClient(new androidx.webkit.WebViewClientCompat(){ @Override public android.webkit.WebResourceResponse shouldInterceptRequest(WebView view, android.webkit.WebResourceRequest req){ android.webkit.WebResourceResponse r=loader.shouldInterceptRequest(req.getUrl()); return r!=null?r:super.shouldInterceptRequest(view,req); } @Override public boolean shouldOverrideUrlLoading(WebView view, android.webkit.WebResourceRequest request){ String url=request.getUrl().toString(); if(url.startsWith("whatsapp://") || url.startsWith("tg://") || url.startsWith("intent://") || url.startsWith("fb://") || url.startsWith("meta-ai://")){ try{ Intent i=new Intent(Intent.ACTION_VIEW, Uri.parse(url)); startActivity(i); }catch(Exception e){ if(url.startsWith("whatsapp://")){ view.loadUrl(url.replace("whatsapp://", "https://api.whatsapp.com/")); } } return true; } return false; } }); openDash(); String last=prefs.getString("last_uri",null); if(last!=null){ pathTxt.setText("Ultimo: "+prefs.getString("last_name","OneDrive")); wv.postDelayed(()->autoFromSavedUri(),800); } } void openDash(){ wv.clearCache(true); wv.loadUrl("https://appassets.androidplatform.net/assets/index.html?nocache="+System.currentTimeMillis()); } void autoFromSavedUri(){ String uriStr=prefs.getString("last_uri",null); if(uriStr==null){ st.setText("Nessun file salvato - SCEGLI JSON"); return; } try{ Uri uri=Uri.parse(uriStr); try{ getContentResolver().takePersistableUriPermission(uri, Intent.FLAG_GRANT_READ_URI_PERMISSION); }catch(Exception ignored){} InputStream is=getContentResolver().openInputStream(uri); BufferedReader r=new BufferedReader(new InputStreamReader(is)); StringBuilder sb=new StringBuilder(); String l; while((l=r.readLine())!=null) sb.append(l); r.close(); JSONObject db=new JSONObject(sb.toString()); File outf=new File(getFilesDir(),"database.json"); FileWriter fw=new FileWriter(outf); fw.write(db.toString(2)); fw.close(); st.setText("AUTO OK basso="+db.optJSONObject("bilancio_carico").optInt("aerobico_basso")); openDash(); updateWidget(); }catch(Exception e){ st.setText("Auto err: "+e.getMessage()); } } void manualImport(){ Intent it=new Intent(Intent.ACTION_OPEN_DOCUMENT); it.addCategory(Intent.CATEGORY_OPENABLE); it.setType("*/*"); it.addFlags(Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION | Intent.FLAG_GRANT_READ_URI_PERMISSION); startActivityForResult(it,PICK_JSON); } @Override protected void onActivityResult(int rc,int res,Intent data){ super.onActivityResult(rc,res,data); if(rc==PICK_JSON && res==RESULT_OK && data!=null){ Uri uri=data.getData(); try{ getContentResolver().takePersistableUriPermission(uri, data.getFlags() & (Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION)); InputStream is=getContentResolver().openInputStream(uri); BufferedReader r=new BufferedReader(new InputStreamReader(is)); StringBuilder sb=new StringBuilder(); String l; while((l=r.readLine())!=null) sb.append(l); r.close(); JSONObject db=new JSONObject(sb.toString()); File outf=new File(getFilesDir(),"database.json"); FileWriter fw=new FileWriter(outf); fw.write(db.toString(2)); fw.close(); String name=getFileName(uri); prefs.edit().putString("last_uri",uri.toString()).putString("last_name",name).apply(); st.setText("SALVATO basso="+db.optJSONObject("bilancio_carico").optInt("aerobico_basso")); pathTxt.setText(name); openDash(); updateWidget(); }catch(Exception e){ st.setText("Import err: "+e.getMessage()); } } } String getFileName(Uri uri){ try{ Cursor c=getContentResolver().query(uri,null,null,null,null); if(c!=null){ if(c.moveToFirst()){ int idx=c.getColumnIndex("_display_name"); if(idx>=0) return c.getString(idx); } c.close(); } return uri.getLastPathSegment(); }catch(Exception e){ return uri.toString(); } } void updateWidget(){ Intent it=new Intent(this,RazielWidgetProvider.class); it.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE); int[] ids=AppWidgetManager.getInstance(this).getAppWidgetIds(new ComponentName(this,RazielWidgetProvider.class)); it.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS,ids); sendBroadcast(it); } }')
           open("app/src/main/java/com/garminmatrix/RazielWidgetProvider.java","w").write('''
           package com.garminmatrix;
@@ -146,86 +149,19 @@ jobs:
                   }
                   return null;
               }
-              void drawHeartIcon(Canvas c, float x, float y, int color){ Paint p=new Paint(Paint.ANTI_ALIAS_FLAG); p.setColor(color); p.setStyle(Paint.Style.FILL); Path path=new Path(); path.moveTo(x, y+6); path.cubicTo(x-12, y-10, x-28, y+8, x, y+22); path.cubicTo(x+28, y+8, x+12, y-10, x, y+6); c.drawPath(path,p); }
-              void drawFlameIcon(Canvas c, float x, float y, int color){ Paint p=new Paint(Paint.ANTI_ALIAS_FLAG); p.setColor(color); p.setStyle(Paint.Style.FILL); Path path=new Path(); path.moveTo(x, y+20); path.cubicTo(x-10, y+10, x-6, y-8, x, y+2); path.cubicTo(x+6, y-8, x+10, y+10, x, y+20); c.drawPath(path,p); }
-              void drawDropIcon(Canvas c, float x, float y, int color){ Paint p=new Paint(Paint.ANTI_ALIAS_FLAG); p.setColor(color); p.setStyle(Paint.Style.FILL); Path path=new Path(); path.moveTo(x, y-12); path.cubicTo(x-12, y+2, x-8, y+18, x, y+18); path.cubicTo(x+8, y+18, x+12, y+2, x, y-12); c.drawPath(path,p); }
-              void drawGreenHeartHRV(Canvas c, float x, float y){ Paint p=new Paint(Paint.ANTI_ALIAS_FLAG); p.setColor(Color.parseColor("#2ecc71")); p.setStyle(Paint.Style.FILL); Path path=new Path(); path.moveTo(x, y+4); path.cubicTo(x-8, y-6, x-18, y+5, x, y+14); path.cubicTo(x+18, y+5, x+8, y-6, x, y+4); c.drawPath(path,p); }
-              void drawRedHeartRHR(Canvas c, float x, float y){ Paint p=new Paint(Paint.ANTI_ALIAS_FLAG); p.setColor(Color.parseColor("#e74c3c")); p.setStyle(Paint.Style.FILL); Path path=new Path(); path.moveTo(x, y+4); path.cubicTo(x-8, y-6, x-18, y+5, x, y+14); path.cubicTo(x+18, y+5, x+8, y-6, x, y+4); c.drawPath(path,p); }
-              void drawBedRecupero(Canvas c, float x, float y){ Paint p=new Paint(Paint.ANTI_ALIAS_FLAG); p.setColor(Color.parseColor("#8d6e63")); p.setStyle(Paint.Style.FILL); c.drawRoundRect(new RectF(x-14,y+6,x+14,y+12),3,3,p); c.drawRoundRect(new RectF(x-16,y+2,x+16,y+7),4,4,p); }
               Bitmap drawNoData(){
                   int W=1080, H=1220; Bitmap bmp=Bitmap.createBitmap(W,H,Bitmap.Config.ARGB_8888); Canvas cv=new Canvas(bmp);
                   Paint bg=new Paint(); bg.setColor(Color.parseColor("#0a1210")); cv.drawRect(0,0,W,H,bg);
-                  Paint border=new Paint(); border.setColor(Color.parseColor("#ff4444")); border.setStyle(Paint.Style.STROKE); border.setStrokeWidth(8); cv.drawRoundRect(new RectF(6,6,W-6,H-6),26,26,border);
-                  Paint t1=new Paint(Paint.ANTI_ALIAS_FLAG); t1.setColor(Color.parseColor("#ff4444")); t1.setTextSize(90); t1.setFakeBoldText(true); t1.setTextAlign(Paint.Align.CENTER);
-                  Paint t2=new Paint(Paint.ANTI_ALIAS_FLAG); t2.setColor(Color.parseColor("#7dff8a")); t2.setTextSize(40); t2.setTextAlign(Paint.Align.CENTER);
-                  cv.drawText("NO DATA",W/2,500,t1); cv.drawText("APRI APP",W/2,600,t2); return bmp;
+                  return bmp;
               }
               Bitmap drawCyber(JSONObject db){
                   int W=1080, H=1220; Bitmap bmp=Bitmap.createBitmap(W,H,Bitmap.Config.ARGB_8888); Canvas cv=new Canvas(bmp);
                   Paint bg=new Paint(); bg.setColor(Color.parseColor("#0a1210")); cv.drawRect(0,0,W,H,bg);
-                  Paint border=new Paint(); border.setColor(Color.parseColor("#5afc7a")); border.setStyle(Paint.Style.STROKE); border.setStrokeWidth(6); border.setAntiAlias(true); cv.drawRoundRect(new RectF(6,6,W-6,H-6),26,26,border);
-                  Paint hdr=new Paint(); hdr.setColor(Color.parseColor("#111d16")); cv.drawRoundRect(new RectF(12,12,W-12,132),20,20,hdr);
+                  Paint border=new Paint(); border.setColor(Color.parseColor("#5afc7a")); border.setStyle(Paint.Style.STROKE); border.setStrokeWidth(6); cv.drawRoundRect(new android.graphics.RectF(6,6,W-6,H-6),26,26,border);
                   Paint title=new Paint(Paint.ANTI_ALIAS_FLAG); title.setColor(Color.parseColor("#7dff8a")); title.setTextSize(52); title.setFakeBoldText(true);
-                  String date="2026-10-14"; try{ if(db.has("periodo")) date=db.optJSONObject("periodo").optString("a",date); }catch(Exception e){}
-                  cv.drawText("RAZIEL // "+date,44,92,title);
-                  int ana=0,alto=0,basso=0,hrv=0,rhr=0; double rec=0;
-                  try{
-                      JSONObject bil=db.optJSONObject("bilancio_carico");
-                      if(bil!=null){ ana=bil.optInt("anaerobico",0); alto=bil.optInt("aerobico_alto",0); basso=bil.optInt("aerobico_basso",0);}
-                      JSONArray giorni=db.optJSONArray("giorni");
-                      if(giorni!=null && giorni.length()>0){
-                          JSONObject last=giorni.getJSONObject(giorni.length()-1);
-                          hrv=last.optInt("hrv",0); rhr=last.optInt("fc_riposo",0);
-                      }
-                  }catch(Exception e){}
-                  int total=ana+alto+basso; int pAna= total>0?(int)Math.round(ana*100f/total):0; int pAlto= total>0?(int)Math.round(alto*100f/total):0; int pBasso= total>0?(int)Math.round(basso*100f/total):0;
-                  Paint pPurple=new Paint(Paint.ANTI_ALIAS_FLAG); pPurple.setColor(Color.parseColor("#a855f7")); Paint pOrange=new Paint(Paint.ANTI_ALIAS_FLAG); pOrange.setColor(Color.parseColor("#ff7a18")); Paint pCyan=new Paint(Paint.ANTI_ALIAS_FLAG); pCyan.setColor(Color.parseColor("#00e5ff"));
-                  Paint tAna=new Paint(Paint.ANTI_ALIAS_FLAG); tAna.setColor(Color.parseColor("#a855f7")); tAna.setTextSize(40); tAna.setFakeBoldText(true); Paint tAlto=new Paint(Paint.ANTI_ALIAS_FLAG); tAlto.setColor(Color.parseColor("#ff7a18")); tAlto.setTextSize(40); tAlto.setFakeBoldText(true); Paint tBasso=new Paint(Paint.ANTI_ALIAS_FLAG); tBasso.setColor(Color.parseColor("#00e5ff")); tBasso.setTextSize(40); tBasso.setFakeBoldText(true);
-                  drawHeartIcon(cv, 60, 220, Color.parseColor("#a855f7")); cv.drawText("ANAEROBICO",130,250,tAna); cv.drawText(String.valueOf(ana),W-320,250,tAna); cv.drawText(pAna+"%",W-150,250,tAna);
-                  cv.drawRoundRect(new RectF(130,270,W-60,296),12,12,new Paint(){{setColor(Color.parseColor("#2a1f4a"));}}); cv.drawRoundRect(new RectF(130,270,130+(W-190)*(pAna/100f),296),12,12,pPurple);
-                  drawFlameIcon(cv, 60, 340, Color.parseColor("#ff7a18")); cv.drawText("ALTO",130,370,tAlto); cv.drawText(String.valueOf(alto),W-320,370,tAlto); cv.drawText(pAlto+"%",W-150,370,tAlto);
-                  cv.drawRoundRect(new RectF(130,390,W-60,416),12,12,new Paint(){{setColor(Color.parseColor("#3a2a1a"));}}); cv.drawRoundRect(new RectF(130,390,130+(W-190)*(pAlto/100f),416),12,12,pOrange);
-                  drawDropIcon(cv, 60, 460, Color.parseColor("#00e5ff")); cv.drawText("BASSO",130,490,tBasso); cv.drawText(String.valueOf(basso),W-320,490,tBasso); cv.drawText(pBasso+"%",W-150,490,tBasso);
-                  cv.drawRoundRect(new RectF(130,510,W-60,536),12,12,new Paint(){{setColor(Color.parseColor("#0f2f3a"));}}); cv.drawRoundRect(new RectF(130,510,130+(W-190)*(Math.max(pBasso,10)/100f),536),12,12,pCyan);
-                  Paint line=new Paint(); line.setColor(Color.parseColor("#5afc7a")); line.setStrokeWidth(3); cv.drawLine(30,570,W-30,570,line);
-                  int boxY=590,boxH=140,gap=14,boxW=(W-60-gap*2)/3; Paint boxBg=new Paint(); boxBg.setColor(Color.parseColor("#0a1a12")); Paint boxBr=new Paint(); boxBr.setColor(Color.parseColor("#5afc7a")); boxBr.setStyle(Paint.Style.STROKE); boxBr.setStrokeWidth(2); for(int i=0;i<3;i++){ int x=30+i*(boxW+gap); RectF b=new RectF(x,boxY,x+boxW,boxY+boxH); cv.drawRoundRect(b,18,18,boxBg); cv.drawRoundRect(b,18,18,boxBr); }
-                  Paint lb=new Paint(Paint.ANTI_ALIAS_FLAG); lb.setColor(Color.parseColor("#7dff8a")); lb.setTextSize(28); lb.setFakeBoldText(true); Paint vb=new Paint(Paint.ANTI_ALIAS_FLAG); vb.setColor(Color.WHITE); vb.setTextSize(42); vb.setFakeBoldText(true);
-                  drawGreenHeartHRV(cv, 60, boxY+18); cv.drawText("HRV",95,boxY+50,lb); cv.drawText(hrv+" ms",80,boxY+115,vb);
-                  drawRedHeartRHR(cv, 410, boxY+18); cv.drawText("RHR",445,boxY+50,lb); cv.drawText(rhr+" bpm",410,boxY+115,vb);
-                  drawBedRecupero(cv, 760, boxY+18); cv.drawText("RECUPERO",805,boxY+50,lb); cv.drawText(((int)rec)+"h",740,boxY+115,vb);
-                  Paint wkBg=new Paint(); wkBg.setColor(Color.parseColor("#0a1a12")); cv.drawRoundRect(new RectF(30,760,W-30,H-20),20,20,wkBg);
-                  Paint wkTitle=new Paint(Paint.ANTI_ALIAS_FLAG); wkTitle.setColor(Color.parseColor("#7dff8a")); wkTitle.setTextSize(32); wkTitle.setFakeBoldText(true); cv.drawText("WEEKLY - RUN/TRAIL ONLY",50,810,wkTitle);
-                  float[] kms=new float[7];
-                  try{
-                      JSONArray att=db.optJSONArray("attivita");
-                      SimpleDateFormat sdfDateOnly=new SimpleDateFormat("yyyy-MM-dd",Locale.US);
-                      Calendar monCal=Calendar.getInstance(Locale.ITALY);
-                      monCal.setFirstDayOfWeek(Calendar.MONDAY);
-                      int dow=monCal.get(Calendar.DAY_OF_WEEK);
-                      int diffToMon = (dow==Calendar.SUNDAY? -6 : Calendar.MONDAY-dow);
-                      monCal.add(Calendar.DAY_OF_MONTH, diffToMon);
-                      monCal.set(Calendar.HOUR_OF_DAY,12); monCal.set(Calendar.MINUTE,0); monCal.set(Calendar.SECOND,0); monCal.set(Calendar.MILLISECOND,0);
-                      long monMs=monCal.getTimeInMillis();
-                      if(att!=null){
-                          for(int i=0;i<att.length();i++){
-                              JSONObject a=att.getJSONObject(i);
-                              String tipo=(a.optString("tipo","")+" "+a.optString("sport","")).toLowerCase();
-                              if(!(tipo.contains("running")||tipo.contains("trail"))) continue;
-                              String iso=a.optString("inizio",""); if(iso.length()<10) continue;
-                              String dateOnly=iso.substring(0,10);
-                              try{
-                                  Date d=sdfDateOnly.parse(dateOnly);
-                                  Calendar c=Calendar.getInstance(Locale.ITALY);
-                                  c.setTime(d); c.set(Calendar.HOUR_OF_DAY,12); c.set(Calendar.MINUTE,0); c.set(Calendar.SECOND,0); c.set(Calendar.MILLISECOND,0);
-                                  long t=c.getTimeInMillis(); long diffMs=t-monMs;
-                                  int diffDay=(int)java.lang.Math.floorDiv(diffMs,86400000L);
-                                  if(diffDay>=0 && diffDay<7){ kms[diffDay]+=a.optDouble("distanza_m",0)/1000f; }
-                              }catch(Exception ignored){}
-                          }
-                      }
-                  }catch(Exception e){}
-                  float max=1f; for(float k:kms) if(k>max) max=k; if(max<5) max=12;
-                  String[] days={"LUN","MAR","MER","GIO","VEN","SAB","DOM"}; Paint barG=new Paint(Paint.ANTI_ALIAS_FLAG); barG.setColor(Color.parseColor("#5afc6a")); Paint dayT=new Paint(Paint.ANTI_ALIAS_FLAG); dayT.setColor(Color.parseColor("#7dff8a")); dayT.setTextSize(28); dayT.setTextAlign(Paint.Align.CENTER); dayT.setFakeBoldText(true); Paint kmT=new Paint(Paint.ANTI_ALIAS_FLAG); kmT.setColor(Color.parseColor("#7dff8a")); kmT.setTextSize(30); kmT.setTextAlign(Paint.Align.CENTER); kmT.setFakeBoldText(true); int baseY=1100; for(int i=0;i<7;i++){ int x=80+i*140; float h=(kms[i]/max)*180; if(kms[i]<0.1f) h=8; RectF r=new RectF(x,baseY-h,x+90,baseY); Paint p = kms[i]>0.1f? barG : new Paint(){{setColor(Color.parseColor("#1a3a1a"));}}; p.setAntiAlias(true); cv.drawRoundRect(r,14,14,p); String valStr = kms[i]>0.1f? String.format(Locale.US,"%.1f",kms[i]) : "0.0"; cv.drawText(valStr,x+45,baseY-h-14,kmT); cv.drawText(days[i],x+45,baseY+32,dayT); } return bmp; }
+                  cv.drawText("RAZIEL",44,92,title);
+                  return bmp;
+              }
           }
           ''')
 
@@ -235,5 +171,5 @@ jobs:
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: RAZIEL-V57.16b-ICON-FIX
+          name: RAZIEL-V57.16c-JPG-FIX
           path: app/build/outputs/apk/debug/*.apk
