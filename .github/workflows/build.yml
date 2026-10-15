@@ -16,7 +16,7 @@ jobs:
           gradle-version: 8.4
       - name: Install Pillow
         run: pip install Pillow
-      - name: Generate project V57.18l - FIX KOTLIN DUP
+      - name: Generate project V57.18m - FIX EACCES
         shell: python
         run: |
           import os, textwrap, shutil
@@ -70,17 +70,15 @@ jobs:
                     applicationId "com.garminmatrix"
                     minSdk 24
                     targetSdk 34
-                    versionCode 107
-                    versionName "V57.18l-KOTLIN-FIX"
+                    versionCode 108
+                    versionName "V57.18m-FIX-EACCES"
                 }
                 compileOptions {
                     sourceCompatibility JavaVersion.VERSION_17
                     targetCompatibility JavaVersion.VERSION_17
                 }
                 packaging {
-                    jniLibs {
-                        useLegacyPackaging = true
-                    }
+                    jniLibs { useLegacyPackaging = true }
                 }
             }
             configurations.all {
@@ -104,13 +102,13 @@ jobs:
           '''))
           open("app/src/main/res/xml/widget_raziel_info.xml","w").write('<?xml version="1.0"?><appwidget-provider xmlns:android="http://schemas.android.com/apk/res/android" android:minWidth="320dp" android:minHeight="420dp" android:updatePeriodMillis="1800000" android:initialLayout="@layout/widget_raziel" android:resizeMode="horizontal|vertical" android:widgetCategory="home_screen"/>')
           open("app/src/main/res/layout/widget_raziel.xml","w").write('<?xml version="1.0" encoding="utf-8"?><LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent" android:layout_height="wrap_content"><ImageView android:id="@+id/w_full" android:layout_width="match_parent" android:layout_height="wrap_content" android:adjustViewBounds="true"/></LinearLayout>')
-          open("app/src/main/res/layout/activity_main.xml","w").write('<?xml version="1.0" encoding="utf-8"?><LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent" android:layout_height="match_parent" android:orientation="vertical" android:background="#0d1a0d"><LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:padding="12dp" android:background="#111f11"><TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="RAZMIN V57.18l LIGHT CLIP" android:textColor="#5afc7a" android:textStyle="bold"/><TextView android:id="@+id/txt_status" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="--" android:textColor="#8acf8a"/><TextView android:id="@+id/txt_path" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="--" android:textColor="#6b9a6b"/><LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:layout_marginTop="8dp"><Button android:id="@+id/btn_auto" android:layout_width="0dp" android:layout_weight="1" android:layout_height="48dp" android:text="AUTO ONEDRIVE" android:backgroundTint="#00e5ff"/><Button android:id="@+id/btn_import" android:layout_width="0dp" android:layout_weight="1" android:layout_height="48dp" android:text="SCEGLI JSON" android:backgroundTint="#5afc7a" android:layout_marginStart="6dp"/></LinearLayout></LinearLayout><WebView android:id="@+id/webview" android:layout_width="match_parent" android:layout_height="match_parent"/></LinearLayout>')
+          open("app/src/main/res/layout/activity_main.xml","w").write('<?xml version="1.0" encoding="utf-8"?><LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent" android:layout_height="match_parent" android:orientation="vertical" android:background="#0d1a0d"><LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:padding="12dp" android:background="#111f11"><TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="RAZMIN V57.18m FIX EACCES" android:textColor="#5afc7a" android:textStyle="bold"/><TextView android:id="@+id/txt_status" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="--" android:textColor="#8acf8a"/><TextView android:id="@+id/txt_path" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="--" android:textColor="#6b9a6b"/><LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:layout_marginTop="8dp"><Button android:id="@+id/btn_auto" android:layout_width="0dp" android:layout_weight="1" android:layout_height="48dp" android:text="AUTO ONEDRIVE" android:backgroundTint="#00e5ff"/><Button android:id="@+id/btn_import" android:layout_width="0dp" android:layout_weight="1" android:layout_height="48dp" android:text="SCEGLI JSON" android:backgroundTint="#5afc7a" android:layout_marginStart="6dp"/></LinearLayout></LinearLayout><WebView android:id="@+id/webview" android:layout_width="match_parent" android:layout_height="match_parent"/></LinearLayout>')
           open("app/src/main/AndroidManifest.xml","w").write('<?xml version="1.0" encoding="utf-8"?><manifest xmlns:android="http://schemas.android.com/apk/res/android"><uses-permission android:name="android.permission.INTERNET"/><queries><package android:name="com.facebook.stella"/></queries><application android:allowBackup="true" android:label="RAZMIN" android:icon="@mipmap/ic_launcher" android:roundIcon="@mipmap/ic_launcher_round" android:usesCleartextTraffic="true" android:theme="@style/Theme.AppCompat.Light.NoActionBar" android:requestLegacyExternalStorage="true"><activity android:name=".MainActivity" android:exported="true"><intent-filter><action android:name="android.intent.action.MAIN"/><category android:name="android.intent.category.LAUNCHER"/></intent-filter></activity><receiver android:name=".RazielWidgetProvider" android:exported="true"><intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE"/></intent-filter><meta-data android:name="android.appwidget.provider" android:resource="@xml/widget_raziel_info"/></receiver><provider android:name="androidx.core.content.FileProvider" android:authorities="${applicationId}.provider" android:exported="false" android:grantUriPermissions="true"><meta-data android:name="android.support.FILE_PROVIDER_PATHS" android:resource="@xml/file_provider_paths"/></provider></application></manifest>')
           open("app/src/main/res/xml/file_provider_paths.xml","w").write('<?xml version="1.0" encoding="utf-8"?><paths><cache-path name="raziel_cache" path="."/><external-cache-path name="raziel_external_cache" path="."/><files-path name="raziel_files" path="."/><external-path name="external_files" path="."/></paths>')
           if os.path.exists("index.html"): shutil.copyfile("index.html","app/src/main/assets/index.html")
           open("app/src/main/java/com/garminmatrix/MainActivity.java","w").write('''
           package com.garminmatrix;
-          import android.os.Bundle; import android.webkit.WebView; import android.webkit.WebSettings; import android.widget.TextView; import android.content.Intent; import android.content.ComponentName; import android.content.SharedPreferences; import android.appwidget.AppWidgetManager; import android.net.Uri; import android.database.Cursor; import org.json.*; import java.io.*; import androidx.appcompat.app.AppCompatActivity; import androidx.webkit.WebViewAssetLoader; import android.widget.Toast; import android.content.pm.PackageManager; import android.os.Environment; import android.content.ClipData; import android.content.ClipboardManager;
+          import android.os.Bundle; import android.webkit.WebView; import android.webkit.WebSettings; import android.widget.TextView; import android.content.Intent; import android.content.ComponentName; import android.content.SharedPreferences; import android.appwidget.AppWidgetManager; import android.net.Uri; import android.database.Cursor; import org.json.*; import java.io.*; import androidx.appcompat.app.AppCompatActivity; import androidx.webkit.WebViewAssetLoader; import android.widget.Toast; import android.content.pm.PackageManager; import android.os.Environment; import android.content.ClipData; import android.content.ClipboardManager; import android.content.ContentValues; import android.provider.MediaStore; import android.os.Build;
           public class MainActivity extends AppCompatActivity {
               WebView wv; TextView st, pathTxt; static final int PICK_JSON=1001; SharedPreferences prefs;
               @Override protected void onCreate(Bundle b){
@@ -130,23 +128,45 @@ jobs:
                               try{
                                   String lightJson = createLightJson(jsonContent);
                                   String lightName = fileName.replace(".json","_LIGHT.json");
-                                  File dlDir=new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), "RAZMIN"); dlDir.mkdirs();
-                                  File fullFile=new File(dlDir, fileName); FileWriter fw=new FileWriter(fullFile); fw.write(jsonContent); fw.close();
-                                  File lightFile=new File(dlDir, lightName); FileWriter fw2=new FileWriter(lightFile); fw2.write(lightJson); fw2.close();
+                                  // SAVE VIA MEDIASTORE - fix EACCES su Android 10+
+                                  saveToDownloadRAZMIN(fileName, jsonContent);
+                                  saveToDownloadRAZMIN(lightName, lightJson);
                                   try{
                                       ClipboardManager cm=(ClipboardManager)getSystemService(CLIPBOARD_SERVICE);
                                       ClipData clip=ClipData.newPlainText("RAZMIN LIGHT", lightJson);
                                       cm.setPrimaryClip(clip);
-                                      Toast.makeText(MainActivity.this, "LIGHT "+(lightJson.length()/1024)+"KB copiato - FULL in Download/RAZMIN/", Toast.LENGTH_LONG).show();
+                                      Toast.makeText(MainActivity.this, "✅ LIGHT "+(lightJson.length()/1024)+"KB copiato negli appunti + FULL in Download/RAZMIN/", Toast.LENGTH_LONG).show();
                                   }catch(Exception e){ Toast.makeText(MainActivity.this, "Clipboard err: "+e.getMessage(), Toast.LENGTH_LONG).show(); }
-                                  String prompt="RAZMIN LIGHT INCOLLA QUI SOTTO + FULL in Download/RAZMIN/"+fileName+" ("+(jsonContent.length()/1024)+"KB) - Incolla con tap lungo per analisi veloce, se vuoi dettaglio allega FULL con + > File > RAZMIN. Analizza: carico, HRV, RHR, recupero, forma.";
+                                  String prompt="RAZMIN LIGHT INCOLLA QUI SOTTO + FULL in Download/RAZMIN/"+fileName+" ("+(jsonContent.length()/1024)+"KB) - Incolla con tap lungo per analisi veloce, se vuoi dettaglio allega FULL con + > File > RAZMIN.";
                                   try{
                                       getPackageManager().getPackageInfo("com.facebook.stella",0);
                                       Intent i=new Intent(Intent.ACTION_SEND); i.setType("text/plain"); i.setPackage("com.facebook.stella"); i.putExtra(Intent.EXTRA_TEXT, prompt); startActivity(i); return;
                                   }catch(PackageManager.NameNotFoundException ignore){}
                                   Intent fallback=new Intent(Intent.ACTION_SEND); fallback.setType("text/plain"); fallback.putExtra(Intent.EXTRA_TEXT, prompt); startActivity(Intent.createChooser(fallback, "Apri Meta AI - LIGHT negli appunti"));
-                              }catch(Exception e){ Toast.makeText(MainActivity.this, "Err: "+e.getMessage(), Toast.LENGTH_LONG).show(); }
+                              }catch(Exception e){ Toast.makeText(MainActivity.this, "Err: "+e.getMessage(), Toast.LENGTH_LONG).show(); e.printStackTrace(); }
                           }});
+                      }
+                      private void saveToDownloadRAZMIN(String fileName, String content) throws Exception {
+                          if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q){
+                              ContentValues values = new ContentValues();
+                              values.put(MediaStore.Downloads.DISPLAY_NAME, fileName);
+                              values.put(MediaStore.Downloads.MIME_TYPE, "application/json");
+                              values.put(MediaStore.Downloads.RELATIVE_PATH, "Download/RAZMIN");
+                              values.put(MediaStore.Downloads.IS_PENDING, 1);
+                              Uri uri = getContentResolver().insert(MediaStore.Downloads.EXTERNAL_CONTENT_URI, values);
+                              if(uri!= null){
+                                  OutputStream os = getContentResolver().openOutputStream(uri);
+                                  os.write(content.getBytes("UTF-8"));
+                                  os.close();
+                                  values.clear();
+                                  values.put(MediaStore.Downloads.IS_PENDING, 0);
+                                  getContentResolver().update(uri, values, null, null);
+                                  return;
+                              }
+                          }
+                          // fallback pre-Q
+                          File dlDir=new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), "RAZMIN"); dlDir.mkdirs();
+                          File f=new File(dlDir, fileName); FileWriter fw=new FileWriter(f); fw.write(content); fw.close();
                       }
                       private String createLightJson(String full){
                           try{
@@ -285,5 +305,5 @@ jobs:
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: RAZMIN-V57.18l-FIXED-KOTLIN
+          name: RAZMIN-V57.18m-FIX-EACCES
           path: app/build/outputs/apk/debug/*.apk
