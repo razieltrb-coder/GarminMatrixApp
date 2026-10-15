@@ -16,7 +16,7 @@ jobs:
           gradle-version: 8.4
       - name: Install Pillow
         run: pip install Pillow
-      - name: Generate project V57.18 - RAZMIN
+      - name: Generate project V57.18b - RAZMIN FIX
         shell: python
         run: |
           import os, textwrap, shutil
@@ -56,25 +56,51 @@ jobs:
           open("gradle.properties","w").write("android.useAndroidX=true\n")
           open("build.gradle","w").write(textwrap.dedent('''
             buildscript {
-                repositories { google(); mavenCentral() }
-                dependencies { classpath 'com.android.tools.build:gradle:8.2.2' }
+                repositories {
+                    google()
+                    mavenCentral()
+                }
+                dependencies {
+                    classpath 'com.android.tools.build:gradle:8.2.2'
+                }
             }
-            allprojects { repositories { google(); mavenCentral() } }
+            allprojects {
+                repositories {
+                    google()
+                    mavenCentral()
+                }
+            }
           '''))
           open("app/build.gradle","w").write(textwrap.dedent('''
             apply plugin: 'com.android.application'
             android {
                 namespace 'com.garminmatrix'
                 compileSdk 34
-                defaultConfig { applicationId "com.garminmatrix" minSdk 24 targetSdk 34 versionCode 96 versionName "V57.18-RAZMIN" }
+                defaultConfig {
+                    applicationId "com.garminmatrix"
+                    minSdk 24
+                    targetSdk 34
+                    versionCode 96
+                    versionName "V57.18b-RAZMIN-FIX"
+                }
             }
-            configurations.all { resolutionStrategy.force 'org.jetbrains.kotlin:kotlin-stdlib:1.8.22' exclude group: 'org.jetbrains.kotlin', module: 'kotlin-stdlib-jdk7' exclude group: 'org.jetbrains.kotlin', module: 'kotlin-stdlib-jdk8' }
-            dependencies { implementation 'androidx.appcompat:appcompat:1.6.1' implementation('androidx.webkit:webkit:1.6.1'){ exclude group: 'org.jetbrains.kotlin', module: 'kotlin-stdlib-jdk7' exclude group: 'org.jetbrains.kotlin', module: 'kotlin-stdlib-jdk8' } implementation 'androidx.core:core:1.12.0' }
+            configurations.all {
+                resolutionStrategy.force 'org.jetbrains.kotlin:kotlin-stdlib:1.8.22'
+                exclude group: 'org.jetbrains.kotlin', module: 'kotlin-stdlib-jdk7'
+                exclude group: 'org.jetbrains.kotlin', module: 'kotlin-stdlib-jdk8'
+            }
+            dependencies {
+                implementation 'androidx.appcompat:appcompat:1.6.1'
+                implementation('androidx.webkit:webkit:1.6.1'){
+                    exclude group: 'org.jetbrains.kotlin', module: 'kotlin-stdlib-jdk7'
+                    exclude group: 'org.jetbrains.kotlin', module: 'kotlin-stdlib-jdk8'
+                }
+                implementation 'androidx.core:core:1.12.0'
+            }
           '''))
           open("app/src/main/res/xml/widget_raziel_info.xml","w").write('<?xml version="1.0"?><appwidget-provider xmlns:android="http://schemas.android.com/apk/res/android" android:minWidth="320dp" android:minHeight="420dp" android:updatePeriodMillis="1800000" android:initialLayout="@layout/widget_raziel" android:resizeMode="horizontal|vertical" android:widgetCategory="home_screen"/>')
           open("app/src/main/res/layout/widget_raziel.xml","w").write('<?xml version="1.0" encoding="utf-8"?><LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent" android:layout_height="wrap_content"><ImageView android:id="@+id/w_full" android:layout_width="match_parent" android:layout_height="wrap_content" android:adjustViewBounds="true"/></LinearLayout>')
-          open("app/src/main/res/layout/activity_main.xml","w").write('<?xml version="1.0" encoding="utf-8"?><LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent" android:layout_height="match_parent" android:orientation="vertical" android:background="#0d1a0d"><LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:padding="12dp" android:background="#111f11"><TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="RAZMIN V57.18" android:textColor="#5afc7a" android:textStyle="bold"/><TextView android:id="@+id/txt_status" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="--" android:textColor="#8acf8a"/><TextView android:id="@+id/txt_path" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="--" android:textColor="#6b9a6b"/><LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:layout_marginTop="8dp"><Button android:id="@+id/btn_auto" android:layout_width="0dp" android:layout_weight="1" android:layout_height="48dp" android:text="AUTO ONEDRIVE" android:backgroundTint="#00e5ff"/><Button android:id="@+id/btn_import" android:layout_width="0dp" android:layout_weight="1" android:layout_height="48dp" android:text="SCEGLI JSON" android:backgroundTint="#5afc7a" android:layout_marginStart="6dp"/></LinearLayout></LinearLayout><WebView android:id="@+id/webview" android:layout_width="match_parent" android:layout_height="match_parent"/></LinearLayout>')
-          # NOME APP CAMBIATO A RAZMIN
+          open("app/src/main/res/layout/activity_main.xml","w").write('<?xml version="1.0" encoding="utf-8"?><LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent" android:layout_height="match_parent" android:orientation="vertical" android:background="#0d1a0d"><LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:padding="12dp" android:background="#111f11"><TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="RAZMIN V57.18b" android:textColor="#5afc7a" android:textStyle="bold"/><TextView android:id="@+id/txt_status" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="--" android:textColor="#8acf8a"/><TextView android:id="@+id/txt_path" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="--" android:textColor="#6b9a6b"/><LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:layout_marginTop="8dp"><Button android:id="@+id/btn_auto" android:layout_width="0dp" android:layout_weight="1" android:layout_height="48dp" android:text="AUTO ONEDRIVE" android:backgroundTint="#00e5ff"/><Button android:id="@+id/btn_import" android:layout_width="0dp" android:layout_weight="1" android:layout_height="48dp" android:text="SCEGLI JSON" android:backgroundTint="#5afc7a" android:layout_marginStart="6dp"/></LinearLayout></LinearLayout><WebView android:id="@+id/webview" android:layout_width="match_parent" android:layout_height="match_parent"/></LinearLayout>')
           open("app/src/main/AndroidManifest.xml","w").write('<?xml version="1.0" encoding="utf-8"?><manifest xmlns:android="http://schemas.android.com/apk/res/android"><uses-permission android:name="android.permission.INTERNET"/><application android:allowBackup="true" android:label="RAZMIN" android:icon="@mipmap/ic_launcher" android:roundIcon="@mipmap/ic_launcher_round" android:usesCleartextTraffic="true" android:theme="@style/Theme.AppCompat.Light.NoActionBar"><activity android:name=".MainActivity" android:exported="true"><intent-filter><action android:name="android.intent.action.MAIN"/><category android:name="android.intent.category.LAUNCHER"/></intent-filter></activity><receiver android:name=".RazielWidgetProvider" android:exported="true"><intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE"/></intent-filter><meta-data android:name="android.appwidget.provider" android:resource="@xml/widget_raziel_info"/></receiver><provider android:name="androidx.core.content.FileProvider" android:authorities="${applicationId}.provider" android:exported="false" android:grantUriPermissions="true"><meta-data android:name="android.support.FILE_PROVIDER_PATHS" android:resource="@xml/file_provider_paths"/></provider></application></manifest>')
           open("app/src/main/res/xml/file_provider_paths.xml","w").write('<?xml version="1.0" encoding="utf-8"?><paths><cache-path name="raziel_cache" path="."/><external-cache-path name="raziel_external_cache" path="."/><files-path name="raziel_files" path="."/></paths>')
           if os.path.exists("index.html"):
@@ -105,11 +131,11 @@ jobs:
                   return null;
               }
               void drawHeartIcon(Canvas c, float x, float y, int color){ Paint p=new Paint(Paint.ANTI_ALIAS_FLAG); p.setColor(color); p.setStyle(Paint.Style.FILL); Path path=new Path(); path.moveTo(x, y+6); path.cubicTo(x-12, y-10, x-28, y+8, x, y+22); path.cubicTo(x+28, y+8, x+12, y-10, x, y+6); c.drawPath(path,p); }
-              void drawFlameIcon(Canvas c, float x, float y, int color){ Paint p=new Paint(Paint.ANTI_ALIAS_FLAG); p.setColor(color); p.setStyle(Paint.Style.FILL); Path path=new Path(); path.moveTo(x, y+20); path.cubicTo(x-10, y+10, x-6, y-8, x, y+2); path.cubicTo(x+6, y-8, x+10, y+10, x, y+20); c.drawPath(path,p); Paint inner=new Paint(Paint.ANTI_ALIAS_FLAG); inner.setColor(Color.parseColor("#ffcc66")); Path innerP=new Path(); innerP.moveTo(x, y+16); innerP.cubicTo(x-4, y+8, x-2, y+0, x, y+6); innerP.cubicTo(x+2, y+0, x+4, y+8, x, y+16); c.drawPath(innerP,inner); }
+              void drawFlameIcon(Canvas c, float x, float y, int color){ Paint p=new Paint(Paint.ANTI_ALIAS_FLAG); p.setColor(color); p.setStyle(Paint.Style.FILL); Path path=new Path(); path.moveTo(x, y+20); path.cubicTo(x-10, y+10, x-6, y-8, x, y+2); path.cubicTo(x+6, y-8, x+10, y+10, x, y+20); c.drawPath(path,p); }
               void drawDropIcon(Canvas c, float x, float y, int color){ Paint p=new Paint(Paint.ANTI_ALIAS_FLAG); p.setColor(color); p.setStyle(Paint.Style.FILL); Path path=new Path(); path.moveTo(x, y-12); path.cubicTo(x-12, y+2, x-8, y+18, x, y+18); path.cubicTo(x+8, y+18, x+12, y+2, x, y-12); c.drawPath(path,p); }
               void drawGreenHeartHRV(Canvas c, float x, float y){ Paint p=new Paint(Paint.ANTI_ALIAS_FLAG); p.setColor(Color.parseColor("#2ecc71")); p.setStyle(Paint.Style.FILL); Path path=new Path(); path.moveTo(x, y+4); path.cubicTo(x-8, y-6, x-18, y+5, x, y+14); path.cubicTo(x+18, y+5, x+8, y-6, x, y+4); c.drawPath(path,p); }
               void drawRedHeartRHR(Canvas c, float x, float y){ Paint p=new Paint(Paint.ANTI_ALIAS_FLAG); p.setColor(Color.parseColor("#e74c3c")); p.setStyle(Paint.Style.FILL); Path path=new Path(); path.moveTo(x, y+4); path.cubicTo(x-8, y-6, x-18, y+5, x, y+14); path.cubicTo(x+18, y+5, x+8, y-6, x, y+4); c.drawPath(path,p); }
-              void drawBedRecupero(Canvas c, float x, float y){ Paint p=new Paint(Paint.ANTI_ALIAS_FLAG); p.setColor(Color.parseColor("#8d6e63")); p.setStyle(Paint.Style.FILL); c.drawRoundRect(new RectF(x-14,y+6,x+14,y+12),3,3,p); c.drawRoundRect(new RectF(x-16,y+2,x+16,y+7),4,4,p); Paint leg=new Paint(Paint.ANTI_ALIAS_FLAG); leg.setColor(Color.parseColor("#5d4037")); leg.setStrokeWidth(3); c.drawLine(x-12,y+12,x-12,y+16,leg); c.drawLine(x+12,y+12,x+12,y+16,leg); }
+              void drawBedRecupero(Canvas c, float x, float y){ Paint p=new Paint(Paint.ANTI_ALIAS_FLAG); p.setColor(Color.parseColor("#8d6e63")); p.setStyle(Paint.Style.FILL); c.drawRoundRect(new RectF(x-14,y+6,x+14,y+12),3,3,p); c.drawRoundRect(new RectF(x-16,y+2,x+16,y+7),4,4,p); }
               Bitmap drawNoData(){ int W=1080, H=1220; Bitmap bmp=Bitmap.createBitmap(W,H,Bitmap.Config.ARGB_8888); Canvas cv=new Canvas(bmp); Paint bg=new Paint(); bg.setColor(Color.parseColor("#0a1210")); cv.drawRect(0,0,W,H,bg); Paint border=new Paint(); border.setColor(Color.parseColor("#ff4444")); border.setStyle(Paint.Style.STROKE); border.setStrokeWidth(8); cv.drawRoundRect(new RectF(6,6,W-6,H-6),26,26,border); Paint t1=new Paint(Paint.ANTI_ALIAS_FLAG); t1.setColor(Color.parseColor("#ff4444")); t1.setTextSize(90); t1.setFakeBoldText(true); t1.setTextAlign(Paint.Align.CENTER); Paint t2=new Paint(Paint.ANTI_ALIAS_FLAG); t2.setColor(Color.parseColor("#7dff8a")); t2.setTextSize(40); t2.setTextAlign(Paint.Align.CENTER); cv.drawText("NO DATA",W/2,500,t1); cv.drawText("APRI APP",W/2,600,t2); return bmp; }
               Bitmap drawCyber(JSONObject db){
                   int W=1080, H=1220; Bitmap bmp=Bitmap.createBitmap(W,H,Bitmap.Config.ARGB_8888); Canvas cv=new Canvas(bmp);
@@ -120,7 +146,7 @@ jobs:
                   String date="2026-10-14"; try{ if(db.has("periodo")) date=db.optJSONObject("periodo").optString("a",date); }catch(Exception e){}
                   cv.drawText("RAZMIN // "+date,44,92,title);
                   int ana=0,alto=0,basso=0,hrv=0,rhr=0; double rec=0;
-                  try{ JSONObject bil=db.optJSONObject("bilancio_carico"); if(bil!=null){ ana=bil.optInt("anaerobico",0); alto=bil.optInt("aerobico_alto",0); basso=bil.optInt("aerobico_basso",0);} JSONArray giorni=db.optJSONArray("giorni"); if(giorni!=null && giorni.length()>0){ JSONObject last=giorni.getJSONObject(giorni.length()-1); hrv=last.optInt("hrv",0); rhr=last.optInt("fc_riposo",0); if(last.has("tempo_recupero")) rec=last.optDouble("tempo_recupero",0); else if(last.has("tempo_recupero_ore")) rec=last.optDouble("tempo_recupero_ore",0); else if(last.has("recupero")) rec=last.optDouble("recupero",0); else if(last.has("recovery_time")) rec=last.optDouble("recovery_time",0); else if(last.has("recovery_hours")) rec=last.optDouble("recovery_hours",0); else rec=0; if(rec>200) rec=rec/60.0; } }catch(Exception e){}
+                  try{ JSONObject bil=db.optJSONObject("bilancio_carico"); if(bil!=null){ ana=bil.optInt("anaerobico",0); alto=bil.optInt("aerobico_alto",0); basso=bil.optInt("aerobico_basso",0);} JSONArray giorni=db.optJSONArray("giorni"); if(giorni!=null && giorni.length()>0){ JSONObject last=giorni.getJSONObject(giorni.length()-1); hrv=last.optInt("hrv",0); rhr=last.optInt("fc_riposo",0); if(last.has("tempo_recupero")) rec=last.optDouble("tempo_recupero",0); else if(last.has("recupero")) rec=last.optDouble("recupero",0); else rec=0; if(rec>200) rec=rec/60.0; } }catch(Exception e){}
                   int total=ana+alto+basso; int pAna= total>0?(int)Math.round(ana*100f/total):0; int pAlto= total>0?(int)Math.round(alto*100f/total):0; int pBasso= total>0?(int)Math.round(basso*100f/total):0;
                   Paint pPurple=new Paint(Paint.ANTI_ALIAS_FLAG); pPurple.setColor(Color.parseColor("#a855f7")); Paint pOrange=new Paint(Paint.ANTI_ALIAS_FLAG); pOrange.setColor(Color.parseColor("#ff7a18")); Paint pCyan=new Paint(Paint.ANTI_ALIAS_FLAG); pCyan.setColor(Color.parseColor("#00e5ff"));
                   Paint tAna=new Paint(Paint.ANTI_ALIAS_FLAG); tAna.setColor(Color.parseColor("#a855f7")); tAna.setTextSize(40); tAna.setFakeBoldText(true); Paint tAlto=new Paint(Paint.ANTI_ALIAS_FLAG); tAlto.setColor(Color.parseColor("#ff7a18")); tAlto.setTextSize(40); tAlto.setFakeBoldText(true); Paint tBasso=new Paint(Paint.ANTI_ALIAS_FLAG); tBasso.setColor(Color.parseColor("#00e5ff")); tBasso.setTextSize(40); tBasso.setFakeBoldText(true);
@@ -173,5 +199,5 @@ jobs:
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: RAZMIN-V57.18
+          name: RAZMIN-V57.18b
           path: app/build/outputs/apk/debug/*.apk
