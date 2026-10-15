@@ -16,7 +16,7 @@ jobs:
           gradle-version: 8.4
       - name: Install Pillow
         run: pip install Pillow
-      - name: Generate project V57.18l - FIXED REPOS
+      - name: Generate project V57.18l - FIX KOTLIN DUP
         shell: python
         run: |
           import os, textwrap, shutil
@@ -70,18 +70,36 @@ jobs:
                     applicationId "com.garminmatrix"
                     minSdk 24
                     targetSdk 34
-                    versionCode 106
-                    versionName "V57.18l-LIGHT-CLIP-FIXED2"
+                    versionCode 107
+                    versionName "V57.18l-KOTLIN-FIX"
                 }
                 compileOptions {
                     sourceCompatibility JavaVersion.VERSION_17
                     targetCompatibility JavaVersion.VERSION_17
                 }
+                packaging {
+                    jniLibs {
+                        useLegacyPackaging = true
+                    }
+                }
+            }
+            configurations.all {
+                exclude group: 'org.jetbrains.kotlin', module: 'kotlin-stdlib-jdk7'
+                exclude group: 'org.jetbrains.kotlin', module: 'kotlin-stdlib-jdk8'
             }
             dependencies {
-                implementation 'androidx.appcompat:appcompat:1.6.1'
-                implementation 'androidx.webkit:webkit:1.6.1'
-                implementation 'androidx.core:core:1.12.0'
+                implementation('androidx.appcompat:appcompat:1.6.1') {
+                    exclude group: 'org.jetbrains.kotlin', module: 'kotlin-stdlib-jdk7'
+                    exclude group: 'org.jetbrains.kotlin', module: 'kotlin-stdlib-jdk8'
+                }
+                implementation('androidx.webkit:webkit:1.6.1') {
+                    exclude group: 'org.jetbrains.kotlin', module: 'kotlin-stdlib-jdk7'
+                    exclude group: 'org.jetbrains.kotlin', module: 'kotlin-stdlib-jdk8'
+                }
+                implementation('androidx.core:core:1.12.0') {
+                    exclude group: 'org.jetbrains.kotlin', module: 'kotlin-stdlib-jdk7'
+                    exclude group: 'org.jetbrains.kotlin', module: 'kotlin-stdlib-jdk8'
+                }
             }
           '''))
           open("app/src/main/res/xml/widget_raziel_info.xml","w").write('<?xml version="1.0"?><appwidget-provider xmlns:android="http://schemas.android.com/apk/res/android" android:minWidth="320dp" android:minHeight="420dp" android:updatePeriodMillis="1800000" android:initialLayout="@layout/widget_raziel" android:resizeMode="horizontal|vertical" android:widgetCategory="home_screen"/>')
@@ -174,7 +192,6 @@ jobs:
               void updateWidget(){ Intent it=new Intent(this,RazielWidgetProvider.class); it.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE); int[] ids=AppWidgetManager.getInstance(this).getAppWidgetIds(new ComponentName(this,RazielWidgetProvider.class)); it.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS,ids); sendBroadcast(it); }
           }
           ''')
-
           open("app/src/main/java/com/garminmatrix/RazielWidgetProvider.java","w").write('''
           package com.garminmatrix;
           import android.appwidget.*; import android.content.*; import android.app.PendingIntent; import android.graphics.*; import android.widget.RemoteViews; import org.json.*; import java.text.SimpleDateFormat; import java.util.*; import java.io.*;
@@ -268,5 +285,5 @@ jobs:
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: RAZMIN-V57.18l-FIXED2
+          name: RAZMIN-V57.18l-FIXED-KOTLIN
           path: app/build/outputs/apk/debug/*.apk
