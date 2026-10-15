@@ -16,7 +16,7 @@ jobs:
           gradle-version: 8.4
       - name: Install Pillow
         run: pip install Pillow
-      - name: Generate project V57.18l - LIGHT CLIPBOARD
+      - name: Generate project V57.18l - FIXED BUILD
         shell: python
         run: |
           import os, textwrap, shutil
@@ -39,11 +39,50 @@ jobs:
           os.makedirs("app/src/main/res/xml",exist_ok=True)
           os.makedirs("app/src/main/res/layout",exist_ok=True)
           os.makedirs("app/src/main/assets",exist_ok=True)
-          open("settings.gradle","w").write("include ':app'\n")
+          # FIX BUILD - nuova struttura compatibile Gradle 8.4 + Java21
+          open("settings.gradle","w").write(textwrap.dedent('''
+            pluginManagement {
+                repositories {
+                    google()
+                    mavenCentral()
+                    gradlePluginPortal()
+                }
+            }
+            include ':app'
+          '''))
+          open("build.gradle","w").write(textwrap.dedent('''
+            // root vuoto - fix per Gradle 8.4
+            task clean(type: Delete) {
+                delete rootProject.buildDir
+            }
+          '''))
+          open("gradle.properties","w").write("android.useAndroidX=true\nandroid.nonTransitiveRClass=true\n")
           open("local.properties","w").write(f"sdk.dir={os.environ['ANDROID_HOME']}\n")
-          open("gradle.properties","w").write("android.useAndroidX=true\n")
-          open("build.gradle","w").write(textwrap.dedent('''buildscript { repositories { google(); mavenCentral() } dependencies { classpath 'com.android.tools.build:gradle:8.2.2' } } allprojects { repositories { google(); mavenCentral() } }'''))
-          open("app/build.gradle","w").write(textwrap.dedent('''apply plugin: 'com.android.application' android { namespace 'com.garminmatrix' compileSdk 34 defaultConfig { applicationId "com.garminmatrix" minSdk 24 targetSdk 34 versionCode 106 versionName "V57.18l-LIGHT-CLIP" } } configurations.all { resolutionStrategy.force 'org.jetbrains.kotlin:kotlin-stdlib:1.8.22' exclude group: 'org.jetbrains.kotlin', module: 'kotlin-stdlib-jdk7' exclude group: 'org.jetbrains.kotlin', module: 'kotlin-stdlib-jdk8' } dependencies { implementation 'androidx.appcompat:appcompat:1.6.1' implementation('androidx.webkit:webkit:1.6.1'){ exclude group: 'org.jetbrains.kotlin', module: 'kotlin-stdlib-jdk7' exclude group: 'org.jetbrains.kotlin', module: 'kotlin-stdlib-jdk8' } implementation 'androidx.core:core:1.12.0' }'''))
+          open("app/build.gradle","w").write(textwrap.dedent('''
+            plugins {
+                id 'com.android.application' version '8.2.2'
+            }
+            android {
+                namespace 'com.garminmatrix'
+                compileSdk 34
+                defaultConfig {
+                    applicationId "com.garminmatrix"
+                    minSdk 24
+                    targetSdk 34
+                    versionCode 106
+                    versionName "V57.18l-LIGHT-CLIP-FIXED"
+                }
+                compileOptions {
+                    sourceCompatibility JavaVersion.VERSION_17
+                    targetCompatibility JavaVersion.VERSION_17
+                }
+            }
+            dependencies {
+                implementation 'androidx.appcompat:appcompat:1.6.1'
+                implementation 'androidx.webkit:webkit:1.6.1'
+                implementation 'androidx.core:core:1.12.0'
+            }
+          '''))
           open("app/src/main/res/xml/widget_raziel_info.xml","w").write('<?xml version="1.0"?><appwidget-provider xmlns:android="http://schemas.android.com/apk/res/android" android:minWidth="320dp" android:minHeight="420dp" android:updatePeriodMillis="1800000" android:initialLayout="@layout/widget_raziel" android:resizeMode="horizontal|vertical" android:widgetCategory="home_screen"/>')
           open("app/src/main/res/layout/widget_raziel.xml","w").write('<?xml version="1.0" encoding="utf-8"?><LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent" android:layout_height="wrap_content"><ImageView android:id="@+id/w_full" android:layout_width="match_parent" android:layout_height="wrap_content" android:adjustViewBounds="true"/></LinearLayout>')
           open("app/src/main/res/layout/activity_main.xml","w").write('<?xml version="1.0" encoding="utf-8"?><LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent" android:layout_height="match_parent" android:orientation="vertical" android:background="#0d1a0d"><LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:padding="12dp" android:background="#111f11"><TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="RAZMIN V57.18l LIGHT CLIP" android:textColor="#5afc7a" android:textStyle="bold"/><TextView android:id="@+id/txt_status" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="--" android:textColor="#8acf8a"/><TextView android:id="@+id/txt_path" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="--" android:textColor="#6b9a6b"/><LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:layout_marginTop="8dp"><Button android:id="@+id/btn_auto" android:layout_width="0dp" android:layout_weight="1" android:layout_height="48dp" android:text="AUTO ONEDRIVE" android:backgroundTint="#00e5ff"/><Button android:id="@+id/btn_import" android:layout_width="0dp" android:layout_weight="1" android:layout_height="48dp" android:text="SCEGLI JSON" android:backgroundTint="#5afc7a" android:layout_marginStart="6dp"/></LinearLayout></LinearLayout><WebView android:id="@+id/webview" android:layout_width="match_parent" android:layout_height="match_parent"/></LinearLayout>')
@@ -53,7 +92,6 @@ jobs:
           open("app/src/main/java/com/garminmatrix/MainActivity.java","w").write('''
           package com.garminmatrix;
           import android.os.Bundle; import android.webkit.WebView; import android.webkit.WebSettings; import android.widget.TextView; import android.content.Intent; import android.content.ComponentName; import android.content.SharedPreferences; import android.appwidget.AppWidgetManager; import android.net.Uri; import android.database.Cursor; import org.json.*; import java.io.*; import androidx.appcompat.app.AppCompatActivity; import androidx.webkit.WebViewAssetLoader; import android.widget.Toast; import android.content.pm.PackageManager; import android.os.Environment; import android.content.ClipData; import android.content.ClipboardManager;
-
           public class MainActivity extends AppCompatActivity {
               WebView wv; TextView st, pathTxt; static final int PICK_JSON=1001; SharedPreferences prefs;
               @Override protected void onCreate(Bundle b){
@@ -73,23 +111,16 @@ jobs:
                               try{
                                   String lightJson = createLightJson(jsonContent);
                                   String lightName = fileName.replace(".json","_LIGHT.json");
-
                                   File dlDir=new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), "RAZMIN"); dlDir.mkdirs();
                                   File fullFile=new File(dlDir, fileName); FileWriter fw=new FileWriter(fullFile); fw.write(jsonContent); fw.close();
                                   File lightFile=new File(dlDir, lightName); FileWriter fw2=new FileWriter(lightFile); fw2.write(lightJson); fw2.close();
-
-                                  // COPIA LIGHT NEGLI APPUNTI SU UI THREAD - sotto 400KB quindi ok
                                   try{
                                       ClipboardManager cm=(ClipboardManager)getSystemService(CLIPBOARD_SERVICE);
                                       ClipData clip=ClipData.newPlainText("RAZMIN LIGHT", lightJson);
                                       cm.setPrimaryClip(clip);
-                                      Toast.makeText(MainActivity.this, "✅ LIGHT "+(lightJson.length()/1024)+"KB copiato negli appunti - FULL salvato in Download/RAZMIN/", Toast.LENGTH_LONG).show();
-                                  }catch(Exception e){
-                                      Toast.makeText(MainActivity.this, "Clipboard err: "+e.getMessage(), Toast.LENGTH_LONG).show();
-                                  }
-
-                                  String prompt="RAZMIN LIGHT INCOLLA QUI SOTTO + FULL in Download/RAZMIN/"+fileName+" ("+(jsonContent.length()/1024)+"KB) - Incolla con tap lungo qui per analisi veloce, se vuoi dettaglio allega il FULL con + > File > RAZMIN. Analizza: carico, HRV, RHR, recupero, forma.";
-
+                                      Toast.makeText(MainActivity.this, "LIGHT "+(lightJson.length()/1024)+"KB copiato - FULL in Download/RAZMIN/", Toast.LENGTH_LONG).show();
+                                  }catch(Exception e){ Toast.makeText(MainActivity.this, "Clipboard err: "+e.getMessage(), Toast.LENGTH_LONG).show(); }
+                                  String prompt="RAZMIN LIGHT INCOLLA QUI SOTTO + FULL in Download/RAZMIN/"+fileName+" ("+(jsonContent.length()/1024)+"KB) - Incolla con tap lungo per analisi veloce, se vuoi dettaglio allega FULL con + > File > RAZMIN. Analizza: carico, HRV, RHR, recupero, forma.";
                                   try{
                                       getPackageManager().getPackageInfo("com.facebook.stella",0);
                                       Intent i=new Intent(Intent.ACTION_SEND); i.setType("text/plain"); i.setPackage("com.facebook.stella"); i.putExtra(Intent.EXTRA_TEXT, prompt); startActivity(i); return;
@@ -236,5 +267,5 @@ jobs:
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: RAZMIN-V57.18l-LIGHT-CLIP
+          name: RAZMIN-V57.18l-FIXED
           path: app/build/outputs/apk/debug/*.apk
