@@ -16,7 +16,7 @@ jobs:
           gradle-version: 8.4
       - name: Install Pillow
         run: pip install Pillow
-      - name: Generate project V57.18l - FIXED BUILD
+      - name: Generate project V57.18l - FIXED REPOS
         shell: python
         run: |
           import os, textwrap, shutil
@@ -39,7 +39,6 @@ jobs:
           os.makedirs("app/src/main/res/xml",exist_ok=True)
           os.makedirs("app/src/main/res/layout",exist_ok=True)
           os.makedirs("app/src/main/assets",exist_ok=True)
-          # FIX BUILD - nuova struttura compatibile Gradle 8.4 + Java21
           open("settings.gradle","w").write(textwrap.dedent('''
             pluginManagement {
                 repositories {
@@ -48,14 +47,16 @@ jobs:
                     gradlePluginPortal()
                 }
             }
+            dependencyResolutionManagement {
+                repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
+                repositories {
+                    google()
+                    mavenCentral()
+                }
+            }
             include ':app'
           '''))
-          open("build.gradle","w").write(textwrap.dedent('''
-            // root vuoto - fix per Gradle 8.4
-            task clean(type: Delete) {
-                delete rootProject.buildDir
-            }
-          '''))
+          open("build.gradle","w").write("task clean(type: Delete) { delete rootProject.buildDir }\n")
           open("gradle.properties","w").write("android.useAndroidX=true\nandroid.nonTransitiveRClass=true\n")
           open("local.properties","w").write(f"sdk.dir={os.environ['ANDROID_HOME']}\n")
           open("app/build.gradle","w").write(textwrap.dedent('''
@@ -70,7 +71,7 @@ jobs:
                     minSdk 24
                     targetSdk 34
                     versionCode 106
-                    versionName "V57.18l-LIGHT-CLIP-FIXED"
+                    versionName "V57.18l-LIGHT-CLIP-FIXED2"
                 }
                 compileOptions {
                     sourceCompatibility JavaVersion.VERSION_17
@@ -267,5 +268,5 @@ jobs:
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: RAZMIN-V57.18l-FIXED
+          name: RAZMIN-V57.18l-FIXED2
           path: app/build/outputs/apk/debug/*.apk
